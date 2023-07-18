@@ -14,3 +14,21 @@
         justify-content: space-between;
     }
 }
+
+@media (max-width: 896px) {
+    .wrapper {
+        padding: 48px 32px;
+
+        .title {
+            padding-bottom: 16px;
+        }
+
+        .advantages {
+            flex-wrap: wrap;
+
+            &>* {
+                padding-top: 16px;
+            }
+        }
+    }
+}

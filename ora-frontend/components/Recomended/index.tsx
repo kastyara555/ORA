@@ -74,11 +74,11 @@ const recomendedPlaces = [
 const Recomended = () => {
     const elementRef = useRef(null);
 
-    const handleHorizantalScroll = useCallback((element: Element | null, step: number) => {
+    const handleHorizantalScroll = useCallback((element: Element | null, route: number = 1) => {
         if (!element) return;
         element.scrollTo({
             top: 0,
-            left: element.scrollLeft + step,
+            left: element.scrollLeft + route * (window.innerWidth - 87),
             behavior: 'smooth',
         });
     }, []);
@@ -89,7 +89,7 @@ const Recomended = () => {
             <div className={styles.recomendedList} ref={elementRef}>
                 <Button
                     className={styles.directionButton}
-                    onClick={() => handleHorizantalScroll(elementRef.current, -864)}
+                    onClick={() => handleHorizantalScroll(elementRef.current, -1)}
                 >
                     <BsArrowLeftShort className={styles.icon} />
                 </Button>
@@ -102,7 +102,7 @@ const Recomended = () => {
                 ))}
                 <Button
                     className={classNames(styles.directionButton, styles.rightButton)}
-                    onClick={() => handleHorizantalScroll(elementRef.current, 864)}
+                    onClick={() => handleHorizantalScroll(elementRef.current)}
                 >
                     <BsArrowRightShort className={styles.icon} />
                 </Button>

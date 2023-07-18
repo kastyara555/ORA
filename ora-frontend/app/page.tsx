@@ -32,7 +32,7 @@ const Home = () => {
             Phasellus in leo tempus, convallis mi at, imperdiet massa. Nullam lacinia orci suscipit, sagittis ligula sed, facilisis purus. Nam finibus in odio cursus tempus. Etiam tempus facilisis nisi, at ultricies nibh scelerisque a. Donec cursus lacus nec tellus mattis ornare. Mauris et eros nibh.
           </p>
         </div>
-        <Image loading='lazy' src='https://s0.2mdn.net/simgad/13085765977942103482' alt='https://s0.2mdn.net/simgad/13085765977942103482' width={360} height={360} />
+        <Image className={styles.image} loading='lazy' src='https://s0.2mdn.net/simgad/13085765977942103482' alt='https://s0.2mdn.net/simgad/13085765977942103482' width={540} height={540} />
       </div>
     </div>
   )
