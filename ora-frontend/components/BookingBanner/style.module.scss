@@ -1,0 +1,13 @@
+.banner {
+    display: flex;
+    align-items: center;
+    height: 480px;
+    padding: 0 128px;
+    background-color: silver;
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        width: 480px;
+    }
+}

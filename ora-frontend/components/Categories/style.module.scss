@@ -1,0 +1,12 @@
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    height: 72px;
+    padding: 0 72px;
+
+    .link {
+        display: flex;
+        align-items: center;
+        height: 72px;
+    }
+}
