@@ -2,11 +2,25 @@
     display: flex;
     justify-content: space-between;
     height: 72px;
-    padding: 0 72px;
+    padding: 0 64px;
 
     .link {
         display: flex;
         align-items: center;
         height: 72px;
+        padding: 0 8px;
+    }
+}
+
+@media (max-width: 896px) {
+    .wrapper {
+        flex-wrap: wrap;
+        height: unset;
+        padding: 0 32px;
+
+        .link {
+            justify-content: center;
+            flex-basis: 33%;
+        }
     }
 }
