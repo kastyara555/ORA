@@ -1,0 +1,16 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 48px 160px;
+    border-bottom: 1px solid black;
+
+    .title {
+        align-self: center;
+        padding-bottom: 32px;
+    }
+
+    .advantages {
+        display: flex;
+        justify-content: space-between;
+    }
+}

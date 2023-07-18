@@ -1,0 +1,14 @@
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  padding: 64px 224px;
+
+  .textWrapper {
+    width: 560px;
+  }
+}

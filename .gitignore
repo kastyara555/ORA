@@ -1,0 +1,35 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/ora-frontend/node_modules
+/ora-frontend/.pnp
+/ora-frontend/.pnp.js
+
+# testing
+/ora-frontend/coverage
+
+# next.js
+/ora-frontend/.next/
+/ora-frontend/out/
+
+# production
+/ora-frontend/build
+
+# misc
+/ora-frontend/.DS_Store
+/ora-frontend/*.pem
+
+# debug
+/ora-frontend/npm-debug.log*
+/ora-frontend/yarn-debug.log*
+/ora-frontend/yarn-error.log*
+
+# local env files
+/ora-frontend/.env*.local
+
+# vercel
+/ora-frontend/.vercel
+
+# typescript
+/ora-frontend/*.tsbuildinfo
+/ora-frontend/next-env.d.ts
