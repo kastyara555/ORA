@@ -4,6 +4,7 @@
 /ora-frontend/node_modules
 /ora-frontend/.pnp
 /ora-frontend/.pnp.js
+/ora-backend/node_modules
 
 # testing
 /ora-frontend/coverage
