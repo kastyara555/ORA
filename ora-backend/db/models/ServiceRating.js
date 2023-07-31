@@ -1,37 +1,36 @@
 const { DataTypes } = require("sequelize");
 
-const Client = require("./Client");
-const City = require("./City");
+const User = require("./User");
 
-const ClientCity = (sequelize) =>
+const ServiceRating = (sequelize) =>
   sequelize.define(
-    "client_city",
+    "service_rating",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idClient: {
+      idSaloon: {
         type: DataTypes.INTEGER,
         references: {
-          model: Client(sequelize),
+          model: User(sequelize),
           key: "id",
         },
         allowNull: false,
       },
-      idCity: {
+      reviewsCount: {
         type: DataTypes.INTEGER,
-        references: {
-          model: City(sequelize),
-          key: "id",
-        },
+        allowNull: false,
+      },
+      reviewsAverage: {
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
     },
     {
-      tableName: "client_city",
+      tableName: "service_rating",
     }
   );
 
-module.exports = ClientCity;
+module.exports = ServiceRating;

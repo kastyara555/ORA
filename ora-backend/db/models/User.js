@@ -1,37 +1,35 @@
 const { DataTypes } = require("sequelize");
 
-const MasterStatus = require("./MasterStatus");
+const UserStatus = require("./UserStatus");
+const UserType = require("./UserType");
+const Sex = require("./Sex");
 
-const Master = (sequelize) =>
+const User = (sequelize) =>
   sequelize.define(
-    "master",
+    "user",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idMasterStatus: {
+      idUserStatus: {
         type: DataTypes.INTEGER,
         references: {
-          model: MasterStatus(sequelize),
+          model: UserStatus(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
+      idUserType: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: UserType(sequelize),
           key: "id",
         },
         allowNull: false,
       },
       name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      surname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      description: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -47,10 +45,26 @@ const Master = (sequelize) =>
         type: DataTypes.STRING,
         allowNull: false,
       },
+      idSex: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: Sex(sequelize),
+          key: "id",
+        },
+      },
+      lastName: {
+        type: DataTypes.STRING,
+      },
+      surname: {
+        type: DataTypes.STRING,
+      },
+      description: {
+        type: DataTypes.STRING,
+      },
     },
     {
-      tableName: "master",
+      tableName: "user",
     }
   );
 
-module.exports = Master;
+module.exports = User;

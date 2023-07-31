@@ -1,12 +1,11 @@
 const { DataTypes } = require("sequelize");
 
+const Sex = require("./Sex");
 const Service = require("./Service");
-const User = require("./User");
-const ServiceInstanceStatus = require("./ServiceInstanceStatus");
 
-const ServiceInstance = (sequelize) =>
+const ServiceSexPriceMap = (sequelize) =>
   sequelize.define(
-    "service_instance",
+    "service_sex_price_map",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -21,33 +20,25 @@ const ServiceInstance = (sequelize) =>
         },
         allowNull: false,
       },
-      idClient: {
+      idSex: {
         type: DataTypes.INTEGER,
         references: {
-          model: User(sequelize),
+          model: Sex(sequelize),
           key: "id",
         },
         allowNull: false,
       },
-      idServiceInstanceStatus: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: ServiceInstanceStatus(sequelize),
-          key: "id",
-        },
+      price: {
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
-      time: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      comment: {
+      description: {
         type: DataTypes.STRING,
       },
     },
     {
-      tableName: "service_instance",
+      tableName: "service_sex_price_map",
     }
   );
 
-module.exports = ServiceInstance;
+module.exports = ServiceSexPriceMap;
