@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 
-const ClientStatus = (sequelize) =>
+const Sex = (sequelize) =>
   sequelize.define(
-    "client_status",
+    "sex",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -13,14 +13,10 @@ const ClientStatus = (sequelize) =>
         type: DataTypes.STRING,
         allowNull: false,
       },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
     },
     {
-      tableName: "client_status",
+      tableName: "sex",
     }
   );
 
-module.exports = ClientStatus;
+  module.exports = Sex;

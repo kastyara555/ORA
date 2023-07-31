@@ -1,5 +1,4 @@
 const { DataTypes } = require("sequelize");
-const ProcedureGroup = require("./ProcedureGroup");
 
 const Procedure = (sequelize) =>
   sequelize.define(
@@ -9,14 +8,6 @@ const Procedure = (sequelize) =>
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-      },
-      idProcedureGroup: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: ProcedureGroup(sequelize),
-          key: "id",
-        },
-        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,

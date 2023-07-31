@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 
-const SaloonStatus = (sequelize) =>
+const UserStatus = (sequelize) =>
   sequelize.define(
-    "saloon_status",
+    "user_status",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,8 +19,8 @@ const SaloonStatus = (sequelize) =>
       },
     },
     {
-      tableName: "saloon_status",
+      tableName: "user_status",
     }
   );
 
-module.exports = SaloonStatus;
+module.exports = UserStatus;

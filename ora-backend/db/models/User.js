@@ -1,33 +1,34 @@
 const { DataTypes } = require("sequelize");
 
-const ClientStatus = require("./ClientStatus");
+const UserStatus = require("./UserStatus");
+const UserType = require("./UserType");
 
-const Client = (sequelize) =>
+const User = (sequelize) =>
   sequelize.define(
-    "client",
+    "user",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idClientStatus: {
+      idUserStatus: {
         type: DataTypes.INTEGER,
         references: {
-          model: ClientStatus(sequelize),
+          model: UserStatus(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
+      idUserType: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: UserType(sequelize),
           key: "id",
         },
         allowNull: false,
       },
       name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      surname: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -43,10 +44,19 @@ const Client = (sequelize) =>
         type: DataTypes.STRING,
         allowNull: false,
       },
+      lastName: {
+        type: DataTypes.STRING,
+      },
+      surname: {
+        type: DataTypes.STRING,
+      },
+      description: {
+        type: DataTypes.STRING,
+      },
     },
     {
-      tableName: "client",
+      tableName: "user",
     }
   );
 
-module.exports = Client;
+module.exports = User;
