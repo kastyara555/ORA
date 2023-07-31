@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 
 const UserStatus = require("./UserStatus");
 const UserType = require("./UserType");
+const Sex = require("./Sex");
 
 const User = (sequelize) =>
   sequelize.define(
@@ -43,6 +44,13 @@ const User = (sequelize) =>
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      idSex: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: Sex(sequelize),
+          key: "id",
+        },
       },
       lastName: {
         type: DataTypes.STRING,
