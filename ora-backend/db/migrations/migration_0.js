@@ -15,7 +15,7 @@ const ServiceSexPriceMap = require("../models/ServiceSexPriceMap");
 const GroupProcedureMap = require("../models/GroupProcedureMap");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
-const ServiceRating = require("../models/ServiceRating");
+const UserRating = require("../models/UserRating");
 
 const migration = async () => {
   try {
@@ -34,7 +34,7 @@ const migration = async () => {
     await Procedure(connection).sync();
     await Service(connection).sync();
 
-    await ServiceRating(connection).sync();
+    await UserRating(connection).sync();
     await UserCityMap(connection).sync();
     await ServiceSexPriceMap(connection).sync();
     await GroupProcedureMap(connection).sync();

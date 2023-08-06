@@ -21,7 +21,7 @@ const migration = async () => {
     await Sex(connection).bulkCreate(sexes);
     await UserType(connection).bulkCreate(roles);
     await UserStatus(connection).bulkCreate(userStatuses);
-    await ProcedureGroup(connection).bulkCreate(categories);
+    await ProcedureGroup(connection).bulkCreate(Object.values(categories));
 
     await sequelize.close();
   } catch (error) {

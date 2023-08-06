@@ -1,0 +1,11 @@
+@mixin available-width {
+    width: fill-available;
+    width: -webkit-fill-available;
+    width: -moz-available;
+}
+
+@mixin disable-select-text {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
