@@ -2,16 +2,16 @@ const { DataTypes } = require("sequelize");
 
 const User = require("./User");
 
-const ServiceRating = (sequelize) =>
+const UserRating = (sequelize) =>
   sequelize.define(
-    "service_rating",
+    "user_rating",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idSaloon: {
+      idUser: {
         type: DataTypes.INTEGER,
         references: {
           model: User(sequelize),
@@ -29,8 +29,8 @@ const ServiceRating = (sequelize) =>
       },
     },
     {
-      tableName: "service_rating",
+      tableName: "user_rating",
     }
   );
 
-module.exports = ServiceRating;
+module.exports = UserRating;
