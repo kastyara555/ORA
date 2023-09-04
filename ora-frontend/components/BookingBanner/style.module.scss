@@ -8,7 +8,11 @@
     .form {
         display: flex;
         flex-direction: column;
-        width: 480px;
+        width: 420px;
+
+        & > * {
+            margin-top: 8px;
+        }
     }
 }
 
