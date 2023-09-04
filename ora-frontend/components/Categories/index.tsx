@@ -1,29 +1,27 @@
-import { getProcedureCategoriesUrl } from "@/api/categories";
-
-import Link from "next/link";
+import { getProceduresTreeUrl } from "@/api/categories";
 
 import { configureUrl } from "@/utils";
 
-import styles from "./style.module.scss";
+import CategoriesMenu from "@/components/Categories/CategoriesMenu";
 
 const Categories = async () => {
-  const res = await fetch(getProcedureCategoriesUrl);
-  const categories = (await res.json()).map((category: any) => ({
+  const res = await fetch(getProceduresTreeUrl, { cache: "no-cache" });
+  const tmp = await res.json();
+
+  const categoriesTree = tmp.map((category: any) => ({
     ...category,
-    url: configureUrl("/book", [
-      { name: "categoryId", value: category.id.toString() },
-    ]),
+    procedures: [
+      ...category.procedures.map((procedure: any) => ({
+        ...procedure,
+        url: configureUrl("/book", [
+          { name: "categoryId", value: category.id.toString() },
+          { name: "procedureId", value: procedure.id.toString() },
+        ]),
+      })),
+    ],
   }));
 
-  return (
-    <div className={styles.wrapper}>
-      {categories.map(({ id, name, url }: any) => (
-        <Link key={id} className={styles.link} href={url}>
-          {name}
-        </Link>
-      ))}
-    </div>
-  );
+  return (<CategoriesMenu categoriesTree={categoriesTree} />);
 };
 
 export default Categories;

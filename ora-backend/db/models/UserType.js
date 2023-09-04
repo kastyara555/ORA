@@ -24,10 +24,6 @@ const UserType = (sequelize) =>
         type: DataTypes.BOOLEAN,
         allowNull: false,
       },
-      permissionCreate: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-      },
       permissionRemoveClient: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
