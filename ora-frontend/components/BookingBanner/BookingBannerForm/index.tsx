@@ -11,6 +11,7 @@ import { searchProceduresUrl } from "@/api/categories";
 import { axiosInstance } from "@/api";
 import { Button } from "primereact/button";
 import { configureUrl } from "@/utils";
+import RU_LOCALE from "@/consts/locale";
 
 interface BookingBannerFormModel {
   cities: SelectItemOptionsType[];
@@ -58,85 +59,7 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
     );
   }, [selectedProcedure, selectedCity, selectedDate]);
 
-  addLocale("ru", {
-    startsWith: "Начинается с",
-    contains: "Содержит",
-    notContains: "Не содержит",
-    endsWith: "Заканчивается",
-    equals: "Равно",
-    notEquals: "Не равно",
-    noFilter: "Нет фильтра",
-    filter: "Фильтр",
-    lt: "Меньше чем",
-    lte: "Меньше чем или равно",
-    gt: "Более чем",
-    gte: "Более чем или равно",
-    dateIs: "Дата равна",
-    dateIsNot: "Дата не равна",
-    dateBefore: "Дата до",
-    dateAfter: "Дата после",
-    custom: "Пользовательский",
-    clear: "Очистить",
-    apply: "Принять",
-    matchAll: "Сопоставить все",
-    matchAny: "Совпадение с любым",
-    addRule: "Добавить правило",
-    removeRule: "Удалить правило",
-    accept: "Да",
-    reject: "Нет",
-    choose: "Выбрать",
-    upload: "Загрузить",
-    cancel: "Отмена",
-    dayNames: [
-      "Воскресенье",
-      "Понедельник",
-      "Вторник",
-      "Среда",
-      "Четверг",
-      "Пятница",
-      "Суббота",
-    ],
-    dayNamesShort: ["Вск", "Пнд", "Втр", "Срд", "Чтв", "Птн", "Сбт"],
-    dayNamesMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
-    monthNames: [
-      "Январь",
-      "Февраль",
-      "Март",
-      "Апрель",
-      "Май",
-      "Июнь",
-      "Июль",
-      "Август",
-      "Сентябрь",
-      "Октябрь",
-      "Ноябрь",
-      "Декабрь",
-    ],
-    monthNamesShort: [
-      "Янв",
-      "Фев",
-      "Мар",
-      "Апр",
-      "Май",
-      "Июн",
-      "Июл",
-      "Авг",
-      "Сен",
-      "Окт",
-      "Ноя",
-      "Дек",
-    ],
-    today: "Сегодня",
-    weekHeader: "Нед.",
-    firstDayOfWeek: 1,
-    dateFormat: "dd.mm.yy",
-    weak: "Простой",
-    medium: "Нормальный",
-    strong: "Хороший",
-    passwordPrompt: "Введите пароль",
-    emptyFilterMessage: "Результатов не найдено",
-    emptyMessage: "Нет доступных вариантов",
-  });
+  addLocale("ru", RU_LOCALE);
 
   return (
     <>

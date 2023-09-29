@@ -1,0 +1,16 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.service {
+    &:hover {
+        background-color: $gray-400 !important;
+    }
+
+    .actionButton {
+        cursor: pointer;
+
+        &:hover {
+            background-color: $gray-100 !important;
+        }
+    }
+}

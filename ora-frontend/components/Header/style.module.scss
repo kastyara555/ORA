@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -5,4 +7,19 @@
     height: 88px;
     border-bottom: 1px solid black;
     padding: 0 72px;
+}
+
+.linkToLogin {
+    background-color: $gray-500;
+    width: 48px;
+    height: 32px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.saloonRegistrationLink {
+    font-weight: 700;
+    color: $gray-500;
 }
