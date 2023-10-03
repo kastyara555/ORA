@@ -1,167 +1,40 @@
 "use client";
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
-import {
-  FileUpload,
-  FileUploadHeaderTemplateOptions,
-  FileUploadSelectEvent,
-  FileUploadUploadEvent,
-  ItemTemplateOptions,
-} from "primereact/fileupload";
-import { Tooltip } from "primereact/tooltip";
-import { Tag } from "primereact/tag";
-import { ProgressBar } from "primereact/progressbar";
+import { useDispatch, useSelector } from "react-redux";
+import ImageUploading from "react-images-uploading";
+
+import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
+import { RegistrationSaloonPicturesFormModel } from "@/models/SaloonRegistration";
+import { registrationSaloonSetPicturesForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
+import { Message } from "primereact/message";
 
 interface SaloonRegistrationPicturesFormModel {
   onCountinueClick(): void;
 }
-
 const SaloonRegistrationPicturesForm: FC<
   SaloonRegistrationPicturesFormModel
 > = ({ onCountinueClick }) => {
-  const toast = useRef(null);
-  const fileUploadRef = useRef(null);
-  const [totalSize, setTotalSize] = useState(0);
+  const { picturesForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
+  );
+  const [state, setState] =
+    useState<RegistrationSaloonPicturesFormModel>(picturesForm);
 
-  const onTemplateSelect = (e: FileUploadSelectEvent) => {
-    let _totalSize = totalSize;
-    let files = e.files;
+  const dispatch = useDispatch();
 
-    Object.values(files).forEach(({ size }) => {
-      _totalSize += size;
-    });
-
-    setTotalSize(_totalSize);
+  const onChange = (pictures: any[], addUpdateIndex: number[] | undefined) => {
+    // data for submit
+    console.log(pictures, addUpdateIndex);
+    setState((oldState) => ({ ...oldState, pictures }));
   };
 
-  const onTemplateUpload = (e: FileUploadUploadEvent) => {
-    let _totalSize = 0;
-
-    e.files.forEach((file) => {
-      _totalSize += file.size || 0;
-    });
-
-    setTotalSize(_totalSize);
-    (toast.current as any)?.show({
-      severity: "info",
-      summary: "Success",
-      detail: "File Uploaded",
-    });
-  };
-
-  const onTemplateRemove = (file: any, callback: any) => {
-    setTotalSize(totalSize - file.size);
-    callback();
-  };
-
-  const onTemplateClear = () => {
-    setTotalSize(0);
-  };
-
-  const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-    const { className, chooseButton, uploadButton, cancelButton } = options;
-    const value = totalSize / 10000;
-    const formatedValue =
-      fileUploadRef && fileUploadRef.current
-        ? (fileUploadRef.current as any)?.formatSize(totalSize)
-        : "0 B";
-
-    return (
-      <div
-        className={className}
-        style={{
-          backgroundColor: "transparent",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        {chooseButton}
-        {uploadButton}
-        {cancelButton}
-        <div className="flex align-items-center gap-3 ml-auto">
-          <span>{formatedValue} / 5 MB</span>
-          <ProgressBar
-            value={value}
-            showValue={false}
-            style={{ width: "10rem", height: "12px" }}
-          ></ProgressBar>
-        </div>
-      </div>
-    );
-  };
-
-  const itemTemplate = (file: any, props: ItemTemplateOptions) => {
-    return (
-      <div className="flex align-items-center flex-wrap">
-        <div className="flex align-items-center" style={{ width: "40%" }}>
-          <img
-            alt={file.name}
-            role="presentation"
-            src={file.objectURL}
-            width={100}
-          />
-          <span className="flex flex-column text-left ml-3">
-            {file.name}
-            <small>{new Date().toLocaleDateString()}</small>
-          </span>
-        </div>
-        <Tag
-          value={props.formatSize}
-          severity="warning"
-          className="px-3 py-2"
-        />
-        <Button
-          type="button"
-          icon="pi pi-times"
-          className="p-button-outlined p-button-rounded p-button-danger ml-auto"
-          onClick={() => onTemplateRemove(file, props.onRemove)}
-        />
-      </div>
-    );
-  };
-
-  const emptyTemplate = () => {
-    return (
-      <div className="flex align-items-center flex-column">
-        <i
-          className="pi pi-image mt-3 p-5"
-          style={{
-            fontSize: "5em",
-            borderRadius: "50%",
-            backgroundColor: "var(--surface-b)",
-            color: "var(--surface-d)",
-          }}
-        ></i>
-        <span
-          style={{ fontSize: "1.2em", color: "var(--text-color-secondary)" }}
-          className="my-5"
-        >
-          Перетащите изображения в этот блок
-        </span>
-      </div>
-    );
-  };
-
-  const chooseOptions = {
-    icon: "pi pi-fw pi-images",
-    iconOnly: true,
-    className: "custom-choose-btn p-button-rounded p-button-outlined",
-  };
-  const uploadOptions = {
-    icon: "pi pi-fw pi-cloud-upload",
-    iconOnly: true,
-    className:
-      "custom-upload-btn p-button-success p-button-rounded p-button-outlined",
-  };
-  const cancelOptions = {
-    icon: "pi pi-fw pi-times",
-    iconOnly: true,
-    className:
-      "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
+  const onApply = () => {
+    dispatch(registrationSaloonSetPicturesForm(state));
+    onCountinueClick();
   };
 
   return (
@@ -176,7 +49,7 @@ const SaloonRegistrationPicturesForm: FC<
         "pt-6"
       )}
     >
-      <h2 className={styles.lightText}>
+      <h2 className={styles.lightText} style={{ textAlign: "center" }}>
         Покажите клиентам Ваш
         <br />
         профессионализм
@@ -184,43 +57,116 @@ const SaloonRegistrationPicturesForm: FC<
       <p className={classNames(styles.lightText, styles.subtitle)}>
         Фотографии отображаются в вашем профиле и клиентском поиске на ORA
       </p>
-      <div className="w-full">
-        <Toast ref={toast}></Toast>
-
-        <Tooltip
-          target=".custom-choose-btn"
-          content="Выбрать"
-          position="bottom"
-        />
-        <Tooltip
-          target=".custom-upload-btn"
-          content="Загрузить"
-          position="bottom"
-        />
-        <Tooltip
-          target=".custom-cancel-btn"
-          content="Очистить"
-          position="bottom"
-        />
-
-        <FileUpload
-          ref={fileUploadRef}
-          name="demo[]"
-          url="/api/upload"
+      <div className={classNames("grid", "w-full", "row-gap-3")}>
+        <ImageUploading
           multiple
-          accept="image/*"
-          maxFileSize={5000000}
-          onUpload={onTemplateUpload}
-          onSelect={onTemplateSelect}
-          onError={onTemplateClear}
-          onClear={onTemplateClear}
-          headerTemplate={headerTemplate}
-          itemTemplate={itemTemplate}
-          emptyTemplate={emptyTemplate}
-          chooseOptions={chooseOptions}
-          uploadOptions={uploadOptions}
-          cancelOptions={cancelOptions}
-        />
+          value={state.pictures}
+          onChange={onChange}
+          maxNumber={3}
+          maxFileSize={3000000}
+          dataURLKey="data_url"
+        >
+          {({
+            imageList,
+            onImageUpload,
+            onImageRemoveAll,
+            onImageRemove,
+            isDragging,
+            dragProps,
+            errors,
+          }) => (
+            <>
+              {errors && (
+                <div className={classNames("col-12", "flex", "flex-column", "p-0")}>
+                  {errors.maxNumber && (
+                    <Message
+                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      severity="error"
+                      text="Можно добавлять не более трёх изображений"
+                    />
+                  )}
+                  {errors.acceptType && (
+                    <Message
+                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      severity="error"
+                      text="Можно добавлять только изображения"
+                    />
+                  )}
+                  {errors.maxFileSize && (
+                    <Message
+                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      severity="error"
+                      text="Превышен максимальный размер файла"
+                    />
+                  )}
+                </div>
+              )}
+              <Button
+                style={{ height: 256 }}
+                className={classNames(
+                  "flex",
+                  "align-items-center",
+                  "justify-content-center",
+                  "col-12",
+                  {
+                    [styles.button]: isDragging,
+                    [styles.uploadingButton]: !isDragging,
+                  }
+                )}
+                onClick={onImageUpload}
+                {...dragProps}
+              >
+                Для загрузки кликните или наведите файл
+              </Button>
+              {!!imageList.length && (
+                <>
+                  <Button
+                    className={classNames(
+                      "flex",
+                      "align-items-center",
+                      "justify-content-center",
+                      "col-12"
+                    )}
+                    severity="secondary"
+                    onClick={onImageRemoveAll}
+                  >
+                    Очистить изображения
+                  </Button>
+                  <div className={classNames("col-12", "flex")}>
+                    {imageList.map((image, index) => (
+                      <div
+                        key={index}
+                        className={classNames(
+                          styles.selectedImage,
+                          "flex",
+                          "flex-column",
+                          "align-items-center",
+                          "mr-1"
+                        )}
+                      >
+                        <img
+                          className={classNames("py-1")}
+                          src={image["data_url"]}
+                          alt=""
+                          height={108}
+                        />
+                        <div className="pt-1">
+                          <Button
+                            severity="secondary"
+                            size="small"
+                            onClick={() => onImageRemove(index)}
+                          >
+                            Удалить
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </ImageUploading>
       </div>
       <Button
         className={classNames(
@@ -230,7 +176,7 @@ const SaloonRegistrationPicturesForm: FC<
           "justify-content-center",
           "col-12"
         )}
-        onClick={onCountinueClick}
+        onClick={onApply}
       >
         Продолжить
       </Button>

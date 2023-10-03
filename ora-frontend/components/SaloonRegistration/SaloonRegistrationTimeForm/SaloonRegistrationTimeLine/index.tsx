@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { InputSwitch, InputSwitchChangeEvent } from "primereact/inputswitch";
 import { Button } from "primereact/button";
@@ -116,6 +116,21 @@ const SaloonRegistrationTimeLine: FC<SaloonRegistrationTimeLineModel> = ({
     setEditingMode(false);
   };
 
+  const applyButtonDisabled = useMemo(() => {
+    const startHour = parseInt(editingConfig?.startHour.code ?? "0");
+    const startMinute = parseInt(editingConfig?.startMinute.code ?? "0");
+    const finishHour = parseInt(editingConfig?.finishHour.code ?? "0");
+    const finishMinute = parseInt(editingConfig?.finishMinute.code ?? "0");
+
+    const finishHourEarlierOrSameThenStart =
+      startHour > finishHour ||
+      (startHour === finishHour && startMinute >= finishMinute);
+
+    if (finishHourEarlierOrSameThenStart) return true;
+
+    return false;
+  }, [editingConfig]);
+
   return (
     <div
       className={classNames(
@@ -226,6 +241,7 @@ const SaloonRegistrationTimeLine: FC<SaloonRegistrationTimeLineModel> = ({
                 className={classNames(styles.button, "w-full")}
                 size="small"
                 onClick={applyEditing}
+                disabled={applyButtonDisabled}
               >
                 Применить
               </Button>

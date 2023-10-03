@@ -1,6 +1,7 @@
 "use client";
 import classNames from "classnames";
 import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 
 import SaloonRegistrationProgress from "@/components/SaloonRegistration/SaloonRegistrationProgress";
 import SaloonRegistrationEmailForm from "@/components/SaloonRegistration/SaloonRegistrationEmailForm";
@@ -13,12 +14,17 @@ import SaloonRegistrationStuffCountForm from "@/components/SaloonRegistration/Sa
 import SaloonRegistrationVisitPaymentForm from "@/components/SaloonRegistration/SaloonRegistrationVisitPaymentForm";
 import SaloonRegistrationTimeForm from "@/components/SaloonRegistration/SaloonRegistrationTimeForm";
 import SaloonRegistrationServicesForm from "@/components/SaloonRegistration/SaloonRegistrationServicesForm";
+import SaloonRegistrationPicturesForm from "@/components/SaloonRegistration/SaloonRegistrationPicturesForm";
+import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 
 import styles from "./style.module.scss";
-import SaloonRegistrationPicturesForm from "./SaloonRegistrationPicturesForm";
 
 const SaloonRegistration = () => {
   const [registrationStep, setRegistrationStep] = useState(0);
+
+  const { stuffCountForm, adressTypeForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
+  );
 
   const formByStep = useMemo(() => {
     switch (registrationStep) {
@@ -61,6 +67,7 @@ const SaloonRegistration = () => {
       case 6:
         return (
           <SaloonRegistrationStuffCountForm
+            // onCountinueClick={() => setRegistrationStep(adressTypeForm.hasAdress ? 8 : 7)}
             onCountinueClick={() => setRegistrationStep(7)}
           />
         );

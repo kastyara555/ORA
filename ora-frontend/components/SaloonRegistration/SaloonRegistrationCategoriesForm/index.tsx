@@ -1,19 +1,24 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
-import { ListBox } from "primereact/listbox";
+import { ListBox, ListBoxChangeEvent } from "primereact/listbox";
+import { Skeleton } from "primereact/skeleton";
 
 import {
   registrationSaloonCategoriesSelector,
   registrationSaloonLoadingSelector,
+  registrationSaloonSelectedValuesSelector,
 } from "@/store/registrationSaloon/selectors";
-import { registrationSaloonFetchCategories } from "@/store/registrationSaloon/actions";
+import {
+  registrationSaloonFetchCategories,
+  registrationSaloonSetCategoriesForm,
+} from "@/store/registrationSaloon/actions";
+import { RegistrationSaloonCategoriesFormModel } from "@/models/SaloonRegistration";
 
 import styles from "./style.module.scss";
-import { Skeleton } from "primereact/skeleton";
 
 interface SaloonRegistrationCategoriesFormModel {
   onCountinueClick(): void;
@@ -22,19 +27,42 @@ interface SaloonRegistrationCategoriesFormModel {
 const SaloonRegistrationCategoriesForm: FC<
   SaloonRegistrationCategoriesFormModel
 > = ({ onCountinueClick }) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
-  const dispatch = useDispatch();
-
+  const { categoriesForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
+  );
   const categoriesList = useSelector(registrationSaloonCategoriesSelector);
   const loading = useSelector(registrationSaloonLoadingSelector);
 
+  const [state, setState] =
+    useState<RegistrationSaloonCategoriesFormModel>(categoriesForm);
+
+  const dispatch = useDispatch();
+
+  const onApply = () => {
+    dispatch(registrationSaloonSetCategoriesForm(state));
+    onCountinueClick();
+  };
+
+  const setCategories = (e: ListBoxChangeEvent) => {
+    setState((oldState) => ({
+      ...oldState,
+      categories: e.value,
+    }));
+  };
+
+  const disabledButton = useMemo<boolean>(() => {
+    if (!state.categories.length) return true;
+
+    return false;
+  }, [state]);
+
   useEffect(() => {
-    if (!categoriesList.length) dispatch(registrationSaloonFetchCategories() as any);
+    if (!categoriesList.length)
+      dispatch(registrationSaloonFetchCategories() as any);
   }, []);
 
-  const countryTemplate = (option: any) => {
-    const selected = selectedCategories.includes(option);
+  const categoryTemplate = (option: any) => {
+    const selected = state.categories.includes(option);
     return (
       <div
         className={classNames("flex", "justify-content-between", "w-full", {
@@ -61,11 +89,11 @@ const SaloonRegistrationCategoriesForm: FC<
     >
       <h2 className={styles.lightText}>Выберите категорию Вашего бизнеса</h2>
       <ListBox
-        value={selectedCategories}
-        onChange={(e) => setSelectedCategories(e.value)}
+        value={state.categories}
+        onChange={setCategories}
         options={categoriesList}
         optionLabel="name"
-        itemTemplate={countryTemplate}
+        itemTemplate={categoryTemplate}
         className="w-full"
         listStyle={{ maxHeight: 320 }}
         multiple
@@ -78,7 +106,8 @@ const SaloonRegistrationCategoriesForm: FC<
           "justify-content-center",
           "col-12"
         )}
-        onClick={onCountinueClick}
+        onClick={onApply}
+        disabled={disabledButton}
       >
         Продолжить
       </Button>

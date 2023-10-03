@@ -1,13 +1,19 @@
 "use client";
 import { FC, useState } from "react";
 import classNames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
 import { AiOutlinePlus } from "react-icons/ai";
 import { Button } from "primereact/button";
 
 import SaloonRegistrationServiceRedactor from "@/components/SaloonRegistration/SaloonRegistrationServicesForm/SaloonRegistrationServiceRedactor";
 import SaloonRegistrationServicesList from "@/components/SaloonRegistration/SaloonRegistrationServicesForm/SaloonRegistrationServicesList";
 import { DEFAULT_SERVICE_TO_BE_ADDED } from "@/consts/registration";
-import { SaloonRegistrationServiceModel } from "@/models/SaloonRegistration";
+import {
+  RegistrationSaloonServicesFormModel,
+  SaloonRegistrationServiceModel,
+} from "@/models/SaloonRegistration";
+import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
+import { registrationSaloonSetServicesForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
 
@@ -18,23 +24,35 @@ interface SaloonRegistrationServicesFormModel {
 const SaloonRegistrationServicesForm: FC<
   SaloonRegistrationServicesFormModel
 > = ({ onCountinueClick }) => {
-  const [services, setServices] = useState<SaloonRegistrationServiceModel[]>(
-    []
+  const { servicesForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
   );
+  const [state, setState] =
+    useState<RegistrationSaloonServicesFormModel>(servicesForm);
   const [addingMode, setAddingMode] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
+  const onApply = () => {
+    dispatch(registrationSaloonSetServicesForm(state));
+    onCountinueClick();
+  };
+
   const appendService = (newService: SaloonRegistrationServiceModel) => {
-    setServices((oldServices) => [...oldServices, newService]);
+    setState((oldState) => ({
+      ...oldState,
+      services: [...oldState.services, newService],
+    }));
     setAddingMode(false);
   };
 
   const deleteService = (index: number) => {
-    setServices((oldServices) => {
-      const tmpServices = [...oldServices];
-
+    setState((oldState) => {
+      const tmpServices = [...oldState.services];
       tmpServices.splice(index, 1);
+      const newServices = tmpServices;
 
-      return tmpServices;
+      return { ...oldState, services: newServices };
     });
   };
 
@@ -55,8 +73,11 @@ const SaloonRegistrationServicesForm: FC<
         Вы можете указать свои услуги прямо сейчас
       </p>
 
-      {services.length ? (
-        <SaloonRegistrationServicesList services={services} deleteService={deleteService} />
+      {state.services.length ? (
+        <SaloonRegistrationServicesList
+          services={state.services}
+          deleteService={deleteService}
+        />
       ) : (
         <h3 className={styles.lightText}>
           Вы пока не добавили услуги, этот шаг можно пропустить.
@@ -98,7 +119,7 @@ const SaloonRegistrationServicesForm: FC<
           "justify-content-center",
           "col-12"
         )}
-        onClick={onCountinueClick}
+        onClick={onApply}
       >
         Продолжить
       </Button>

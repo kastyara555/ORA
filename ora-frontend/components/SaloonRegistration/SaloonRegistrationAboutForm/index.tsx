@@ -53,7 +53,13 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
   };
 
   const disabledButton = useMemo<boolean>(() => {
-    if (state.name.length < 3 || !state.saloonName.length || state.phone.length < 17) return true;
+    if (
+      state.name.length < 3 ||
+      !state.saloonName.length ||
+      state.phone.replace(/[^0-9]/g, "").length < 12 ||
+      !["25", "29", "33", "44"].includes(state.phone.slice(5, 7))
+    )
+      return true;
 
     return false;
   }, [state]);

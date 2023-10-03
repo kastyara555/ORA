@@ -1,8 +1,13 @@
 "use client";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
 import { Button } from "primereact/button";
-import { RadioButton } from "primereact/radiobutton";
+import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
+
+import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
+import { RegistrationSaloonAdressTypeFormModel } from "@/models/SaloonRegistration";
+import { registrationSaloonSetAdressTypeForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
 
@@ -10,9 +15,29 @@ interface SaloonRegistrationAdressTypeFormModel {
   onCountinueClick(): void;
 }
 
-const SaloonRegistrationAdressTypeForm: FC<SaloonRegistrationAdressTypeFormModel> = ({
-  onCountinueClick,
-}) => {
+const SaloonRegistrationAdressTypeForm: FC<
+  SaloonRegistrationAdressTypeFormModel
+> = ({ onCountinueClick }) => {
+  const { adressTypeForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
+  );
+  const [state, setState] =
+    useState<RegistrationSaloonAdressTypeFormModel>(adressTypeForm);
+
+  const dispatch = useDispatch();
+
+  const onApply = () => {
+    dispatch(registrationSaloonSetAdressTypeForm(state));
+    onCountinueClick();
+  };
+
+  const setAdressType = (e: RadioButtonChangeEvent) => {
+    setState((oldState) => ({
+      ...oldState,
+      hasAdress: e.value,
+    }));
+  };
+
   return (
     <div
       className={classNames(
@@ -33,7 +58,12 @@ const SaloonRegistrationAdressTypeForm: FC<SaloonRegistrationAdressTypeFormModel
       </p>
 
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="haveAdress" />
+        <RadioButton
+          inputId="haveAdress"
+          checked={state.hasAdress}
+          value={true}
+          onChange={setAdressType}
+        />
         <label
           htmlFor="haveAdress"
           className={classNames(styles.lightText, "ml-2")}
@@ -44,7 +74,12 @@ const SaloonRegistrationAdressTypeForm: FC<SaloonRegistrationAdressTypeFormModel
         </label>
       </div>
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="haveNotAdress" />
+        <RadioButton
+          inputId="haveNotAdress"
+          checked={!state.hasAdress}
+          value={false}
+          onChange={setAdressType}
+        />
         <label
           htmlFor="haveNotAdress"
           className={classNames(styles.lightText, "ml-2")}
@@ -61,7 +96,7 @@ const SaloonRegistrationAdressTypeForm: FC<SaloonRegistrationAdressTypeFormModel
           "justify-content-center",
           "col-12"
         )}
-        onClick={onCountinueClick}
+        onClick={onApply}
       >
         Продолжить
       </Button>

@@ -1,8 +1,13 @@
 "use client";
-import { FC } from "react";
+import { FC, useState } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";
-import { RadioButton } from "primereact/radiobutton";
+import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
+import { useDispatch, useSelector } from "react-redux";
+
+import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
+import { RegistrationSaloonStuffCountFormModel } from "@/models/SaloonRegistration";
+import { registrationSaloonSetStuffCountForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
 
@@ -10,9 +15,29 @@ interface SaloonRegistrationStuffCountFormModel {
   onCountinueClick(): void;
 }
 
-const SaloonRegistrationStuffCountForm: FC<SaloonRegistrationStuffCountFormModel> = ({
-  onCountinueClick,
-}) => {
+const SaloonRegistrationStuffCountForm: FC<
+  SaloonRegistrationStuffCountFormModel
+> = ({ onCountinueClick }) => {
+  const { stuffCountForm } = useSelector(
+    registrationSaloonSelectedValuesSelector
+  );
+  const [state, setState] =
+    useState<RegistrationSaloonStuffCountFormModel>(stuffCountForm);
+
+  const dispatch = useDispatch();
+
+  const onApply = () => {
+    dispatch(registrationSaloonSetStuffCountForm(state));
+    onCountinueClick();
+  };
+
+  const setStuffCount = (e: RadioButtonChangeEvent) => {
+    setState((oldState) => ({
+      ...oldState,
+      count: e.value,
+    }));
+  };
+
   return (
     <div
       className={classNames(
@@ -30,7 +55,12 @@ const SaloonRegistrationStuffCountForm: FC<SaloonRegistrationStuffCountFormModel
       </h2>
 
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="onlyMe" />
+        <RadioButton
+          inputId="onlyMe"
+          checked={state.count === 1}
+          value={1}
+          onChange={setStuffCount}
+        />
         <label
           htmlFor="onlyMe"
           className={classNames(styles.lightText, "ml-2")}
@@ -39,30 +69,42 @@ const SaloonRegistrationStuffCountForm: FC<SaloonRegistrationStuffCountFormModel
         </label>
       </div>
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="few" />
-        <label
-          htmlFor="few"
-          className={classNames(styles.lightText, "ml-2")}
-        >
-          <h3 className={classNames(styles.lightText, "mb-1")}>2 — 3 мастера</h3>
+        <RadioButton
+          inputId="few"
+          checked={state.count === 2}
+          value={2}
+          onChange={setStuffCount}
+        />
+        <label htmlFor="few" className={classNames(styles.lightText, "ml-2")}>
+          <h3 className={classNames(styles.lightText, "mb-1")}>
+            2 — 3 мастера
+          </h3>
         </label>
       </div>
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="aFew" />
-        <label
-          htmlFor="aFew"
-          className={classNames(styles.lightText, "ml-2")}
-        >
-          <h3 className={classNames(styles.lightText, "mb-1")}>4 — 6 мастеров</h3>
+        <RadioButton
+          inputId="aFew"
+          checked={state.count === 4}
+          value={4}
+          onChange={setStuffCount}
+        />
+        <label htmlFor="aFew" className={classNames(styles.lightText, "ml-2")}>
+          <h3 className={classNames(styles.lightText, "mb-1")}>
+            4 — 6 мастеров
+          </h3>
         </label>
       </div>
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
-        <RadioButton inputId="many" />
-        <label
-          htmlFor="many"
-          className={classNames(styles.lightText, "ml-2")}
-        >
-          <h3 className={classNames(styles.lightText, "mb-1")}>Больше, чем 6 мастеров</h3>
+        <RadioButton
+          inputId="many"
+          checked={state.count === 7}
+          value={7}
+          onChange={setStuffCount}
+        />
+        <label htmlFor="many" className={classNames(styles.lightText, "ml-2")}>
+          <h3 className={classNames(styles.lightText, "mb-1")}>
+            Больше, чем 6 мастеров
+          </h3>
         </label>
       </div>
       <Button
@@ -73,7 +115,7 @@ const SaloonRegistrationStuffCountForm: FC<SaloonRegistrationStuffCountFormModel
           "justify-content-center",
           "col-12"
         )}
-        onClick={onCountinueClick}
+        onClick={onApply}
       >
         Продолжить
       </Button>

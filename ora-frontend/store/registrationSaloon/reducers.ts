@@ -6,8 +6,16 @@ import {
   registrationSaloonFetchCategories,
   registrationSaloonFetchCities,
   registrationSaloonSetAboutForm,
+  registrationSaloonSetAdressForm,
+  registrationSaloonSetAdressTypeForm,
+  registrationSaloonSetCategoriesForm,
   registrationSaloonSetEmailForm,
   registrationSaloonSetPasswordForm,
+  registrationSaloonSetPicturesForm,
+  registrationSaloonSetServicesForm,
+  registrationSaloonSetStuffCountForm,
+  registrationSaloonSetTimeForm,
+  registrationSaloonSetVisitPaymentForm,
 } from "@/store/registrationSaloon/actions";
 
 export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
@@ -21,6 +29,30 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
       })
       .addCase(registrationSaloonSetPasswordForm, (state, { payload }) => {
         state.selectedValues.passwordForm = payload;
+      })
+      .addCase(registrationSaloonSetCategoriesForm, (state, { payload }) => {
+        state.selectedValues.categoriesForm = payload;
+      })
+      .addCase(registrationSaloonSetAdressTypeForm, (state, { payload }) => {
+        state.selectedValues.adressTypeForm = payload;
+      })
+      .addCase(registrationSaloonSetAdressForm, (state, { payload }) => {
+        state.selectedValues.adressForm = payload;
+      })
+      .addCase(registrationSaloonSetStuffCountForm, (state, { payload }) => {
+        state.selectedValues.stuffCountForm = payload;
+      })
+      .addCase(registrationSaloonSetVisitPaymentForm, (state, { payload }) => {
+        state.selectedValues.visitPaymentForm = payload;
+      })
+      .addCase(registrationSaloonSetTimeForm, (state, { payload }) => {
+        state.selectedValues.timeForm = payload;
+      })
+      .addCase(registrationSaloonSetServicesForm, (state, { payload }) => {
+        state.selectedValues.servicesForm = payload;
+      })
+      .addCase(registrationSaloonSetPicturesForm, (state, { payload }) => {
+        state.selectedValues.picturesForm = payload;
       })
       .addCase(registrationSaloonFetchCategories.pending, (state) => {
         state.ui.isLoading = true;

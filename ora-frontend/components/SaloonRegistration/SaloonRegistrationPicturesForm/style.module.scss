@@ -19,19 +19,29 @@
     }
 }
 
-.input {
-    &:hover {
-        border-color: $pink-500 !important;
-    }
+.uploadingButton {
+    background-color: white !important;
+    border-color: $gray-200 !important;
+    color: $pink-500;
 
-    &:enabled:focus {
-        border-color: $pink-500;
-        box-shadow: 0 0 0 0.2rem $pink-100;
+    &:hover {
+        background-color: white !important;
+        border-color: $gray-200 !important;
+        color: $pink-500 !important;
     }
+}
+
+.selectedImage {
+    background-color: $gray-100;
+    border-radius: 4px;
 }
 
 .subtitle {
     @include text-14-18;
 
     text-align: center;
+}
+
+.errorMessage {
+    justify-content: start;
 }

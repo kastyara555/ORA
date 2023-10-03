@@ -156,7 +156,7 @@ export const ADRESS_TYPE_FORM_INITIAL_STATE: RegistrationSaloonAdressTypeFormMod
   };
 
 export const ADRESS_FORM_INITIAL_STATE: RegistrationSaloonAdressFormModel = {
-  city: "",
+  city: null,
   street: "",
   building: "",
   stage: "",
@@ -174,7 +174,7 @@ export const VISIT_PAYMENT_FORM_INITIAL_STATE: RegistrationSaloonVisitPaymentFor
   };
 
 export const TIME_FORM_INITIAL_STATE: RegistrationSaloonTimeFormModel = {
-  timeLine: "",
+  timeLine: JSON.stringify(INITIAL_TIME_TABLE),
 };
 
 export const SERVICES_FORM_INITIAL_STATE: RegistrationSaloonServicesFormModel =

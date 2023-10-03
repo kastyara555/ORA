@@ -26,9 +26,18 @@ export const dayTimeByHours = (hours: number): string => {
 export const prepareTime = (hours: number, minutes: number): string => {
   let result = "";
 
-  result = result.concat(hours.toString().length > 1 ? hours.toString() : `0${hours}`);
+  result = result.concat(
+    hours.toString().length > 1 ? hours.toString() : `0${hours}`
+  );
   result = result.concat(":");
-  result = result.concat(minutes.toString().length > 1 ? minutes.toString() : `0${minutes}`);
+  result = result.concat(
+    minutes.toString().length > 1 ? minutes.toString() : `0${minutes}`
+  );
 
   return result;
-}
+};
+
+export const isNumeric = (str: string) => {
+  if (typeof str != "string") return false; // we only process strings!
+  return !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
+};
