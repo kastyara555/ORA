@@ -113,7 +113,8 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
           "align-items-center",
           "justify-content-center",
           "col-12",
-          "mt-4"
+          "mt-4",
+          "mb-3"
         )}
         onClick={onApply}
         disabled={disabledButton}

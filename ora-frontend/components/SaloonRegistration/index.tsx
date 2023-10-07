@@ -67,8 +67,9 @@ const SaloonRegistration = () => {
       case 6:
         return (
           <SaloonRegistrationStuffCountForm
-            // onCountinueClick={() => setRegistrationStep(adressTypeForm.hasAdress ? 8 : 7)}
-            onCountinueClick={() => setRegistrationStep(7)}
+            onCountinueClick={() =>
+              setRegistrationStep(!adressTypeForm.hasAdress ? 7 : 8)
+            }
           />
         );
       case 7:
@@ -80,7 +81,9 @@ const SaloonRegistration = () => {
       case 8:
         return (
           <SaloonRegistrationTimeForm
-            onCountinueClick={() => setRegistrationStep(9)}
+            onCountinueClick={() =>
+              setRegistrationStep(stuffCountForm.count === 1 ? 9 : 10)
+            }
           />
         );
       case 9:
@@ -104,8 +107,14 @@ const SaloonRegistration = () => {
     <>
       <SaloonRegistrationProgress
         step={registrationStep}
-        setStep={(newStep: number) => {
-          setRegistrationStep(newStep);
+        setPreviosStep={() => {
+          if (registrationStep === 8 && adressTypeForm.hasAdress) {
+            setRegistrationStep(6);
+          } else if (registrationStep === 10 && stuffCountForm.count > 1) {
+            setRegistrationStep(8);
+          } else {
+            setRegistrationStep(registrationStep - 1);
+          }
         }}
       />
       <div

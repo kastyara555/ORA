@@ -9,12 +9,12 @@ import { STEP_MAPPING } from "@/consts/registration";
 
 interface SaloonRegistrationProgressModel {
   step: number;
-  setStep: (newStep: number) => void;
+  setPreviosStep(): void;
 }
 
 const SaloonRegistrationProgress: FC<SaloonRegistrationProgressModel> = ({
   step,
-  setStep,
+  setPreviosStep,
 }) => {
   return !!step ? (
     <div
@@ -32,7 +32,7 @@ const SaloonRegistrationProgress: FC<SaloonRegistrationProgressModel> = ({
       {step > 0 && (
         <div
           className={classNames(styles.backButton)}
-          onClick={() => setStep(step - 1)}
+          onClick={setPreviosStep}
         >
           <AiOutlineArrowLeft size={22} />
         </div>

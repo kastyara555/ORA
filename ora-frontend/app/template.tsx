@@ -17,7 +17,9 @@ const Template = ({ children }: { children: React.ReactNode }) => {
     <Provider store={store}>
       <Header
         withoutAuthorization={
-          pathname.includes("/registration") || pathname.includes("/login")
+          pathname.includes("/registration") ||
+          pathname.includes("/login") ||
+          pathname.includes("/restore")
         }
       />
       <main>{children}</main>

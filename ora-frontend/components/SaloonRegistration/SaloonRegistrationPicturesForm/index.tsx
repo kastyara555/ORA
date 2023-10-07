@@ -1,12 +1,11 @@
 "use client";
-import { FC, useState } from "react";
+import { FC } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
 import ImageUploading from "react-images-uploading";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
-import { RegistrationSaloonPicturesFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSetPicturesForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
@@ -21,19 +20,18 @@ const SaloonRegistrationPicturesForm: FC<
   const { picturesForm } = useSelector(
     registrationSaloonSelectedValuesSelector
   );
-  const [state, setState] =
-    useState<RegistrationSaloonPicturesFormModel>(picturesForm);
 
   const dispatch = useDispatch();
 
   const onChange = (pictures: any[], addUpdateIndex: number[] | undefined) => {
     // data for submit
     console.log(pictures, addUpdateIndex);
-    setState((oldState) => ({ ...oldState, pictures }));
+    const newPicturesForm = { ...picturesForm, pictures };
+
+    dispatch(registrationSaloonSetPicturesForm(newPicturesForm));
   };
 
   const onApply = () => {
-    dispatch(registrationSaloonSetPicturesForm(state));
     onCountinueClick();
   };
 
@@ -60,7 +58,7 @@ const SaloonRegistrationPicturesForm: FC<
       <div className={classNames("grid", "w-full", "row-gap-3")}>
         <ImageUploading
           multiple
-          value={state.pictures}
+          value={picturesForm.pictures}
           onChange={onChange}
           maxNumber={3}
           maxFileSize={3000000}
@@ -77,24 +75,38 @@ const SaloonRegistrationPicturesForm: FC<
           }) => (
             <>
               {errors && (
-                <div className={classNames("col-12", "flex", "flex-column", "p-0")}>
+                <div
+                  className={classNames("col-12", "flex", "flex-column", "p-0")}
+                >
                   {errors.maxNumber && (
                     <Message
-                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      className={classNames(
+                        styles.errorMessage,
+                        "w-full",
+                        "mb-1"
+                      )}
                       severity="error"
                       text="Можно добавлять не более трёх изображений"
                     />
                   )}
                   {errors.acceptType && (
                     <Message
-                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      className={classNames(
+                        styles.errorMessage,
+                        "w-full",
+                        "mb-1"
+                      )}
                       severity="error"
                       text="Можно добавлять только изображения"
                     />
                   )}
                   {errors.maxFileSize && (
                     <Message
-                      className={classNames(styles.errorMessage, "w-full", "mb-1")}
+                      className={classNames(
+                        styles.errorMessage,
+                        "w-full",
+                        "mb-1"
+                      )}
                       severity="error"
                       text="Превышен максимальный размер файла"
                     />
@@ -174,7 +186,8 @@ const SaloonRegistrationPicturesForm: FC<
           "flex",
           "align-items-center",
           "justify-content-center",
-          "col-12"
+          "col-12",
+          "mb-3"
         )}
         onClick={onApply}
       >

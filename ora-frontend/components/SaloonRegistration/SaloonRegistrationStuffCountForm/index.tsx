@@ -113,7 +113,8 @@ const SaloonRegistrationStuffCountForm: FC<
           "flex",
           "align-items-center",
           "justify-content-center",
-          "col-12"
+          "col-12",
+          "mb-3"
         )}
         onClick={onApply}
       >
