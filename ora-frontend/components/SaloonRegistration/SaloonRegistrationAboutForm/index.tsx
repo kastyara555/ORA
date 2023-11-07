@@ -6,6 +6,7 @@ import BY from "country-flag-icons/react/3x2/BY";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
+import { InputTextarea } from "primereact/inputtextarea";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonAboutFormModel } from "@/models/SaloonRegistration";
@@ -38,6 +39,13 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
     }));
   };
 
+  const setDescription = (e: ChangeEvent) => {
+    setState((oldState) => ({
+      ...oldState,
+      description: (e.target as HTMLInputElement).value,
+    }));
+  };
+
   const setName = (e: ChangeEvent) => {
     setState((oldState) => ({
       ...oldState,
@@ -54,8 +62,8 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
 
   const disabledButton = useMemo<boolean>(() => {
     if (
-      state.name.length < 3 ||
-      !state.saloonName.length ||
+      state.name.trim().length < 2 ||
+      !state.saloonName.trim().length ||
       state.phone.replace(/[^0-9]/g, "").length < 12 ||
       !["25", "29", "33", "44"].includes(state.phone.slice(5, 7))
     )
@@ -86,6 +94,14 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
         value={state.saloonName}
         onChange={setSaloonName}
         maxLength={32}
+      />
+      <InputTextarea
+        className={classNames(styles.input, "w-full")}
+        placeholder="Описание (опционально)"
+        value={state.description}
+        onChange={setDescription}
+        maxLength={256}
+        rows={3}
       />
       <InputText
         className={classNames(styles.input, "w-full")}

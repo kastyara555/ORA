@@ -2,6 +2,7 @@ import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { axiosInstance } from "@/api";
 import { getCitiesUrl, getProcedureCategoriesUrl } from "@/api/categories";
+import { postSaloonRegistrationUrl } from "@/api/registration";
 import {
   RegistrationSaloonAboutFormModel,
   RegistrationSaloonAdressFormModel,
@@ -15,6 +16,10 @@ import {
   RegistrationSaloonTimeFormModel,
   RegistrationSaloonVisitPaymentFormModel,
 } from "@/models/SaloonRegistration";
+import { RootState } from "@/store";
+import { prepareSaloonRegistrationForm } from "@/store/registrationSaloon/vendors";
+import { commonSetUiToast } from "@/store/common/actions";
+import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 
 export const registrationSaloonFetchCategories = createAsyncThunk(
   "registrationSaloon/registrationSaloonFetchCategories",
@@ -31,6 +36,32 @@ export const registrationSaloonFetchCities = createAsyncThunk(
     const { data } = await axiosInstance(getCitiesUrl);
 
     return data ?? [];
+  }
+);
+
+export const registrationSaloonPostForm = createAsyncThunk(
+  "registrationSaloon/registrationSaloonPostForm",
+  async (_, { getState, dispatch }) => {
+    const { registrationSaloon } = getState() as RootState;
+
+    await axiosInstance
+      .post(
+        postSaloonRegistrationUrl,
+        prepareSaloonRegistrationForm(registrationSaloon.selectedValues)
+      )
+      .then(() => {
+        window.location.pathname = "/login";
+      })
+      .catch(({ response }) => {
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.ERROR,
+          summary: "Регистрация",
+          detail: response.data,
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      });
   }
 );
 

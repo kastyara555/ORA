@@ -18,9 +18,9 @@ const migration = async () => {
     console.log("Connection has been established successfully.");
 
     await City(connection).bulkCreate(cities);
-    await Sex(connection).bulkCreate(sexes);
-    await UserType(connection).bulkCreate(roles);
-    await UserStatus(connection).bulkCreate(userStatuses);
+    await Sex(connection).bulkCreate(Object.values(sexes));
+    await UserType(connection).bulkCreate(Object.values(roles));
+    await UserStatus(connection).bulkCreate(Object.values(userStatuses));
     await ProcedureGroup(connection).bulkCreate(Object.values(categories));
 
     await sequelize.close();

@@ -5,6 +5,7 @@ import { RegistrationSaloonStoreModel } from "@/store/registrationSaloon/model";
 import {
   registrationSaloonFetchCategories,
   registrationSaloonFetchCities,
+  registrationSaloonPostForm,
   registrationSaloonSetAboutForm,
   registrationSaloonSetAdressForm,
   registrationSaloonSetAdressTypeForm,
@@ -92,6 +93,15 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
         }
       )
       .addCase(registrationSaloonFetchCities.rejected, (state) => {
+        state.ui.isLoading = false;
+      })
+      .addCase(registrationSaloonPostForm.pending, (state) => {
+        state.ui.isLoading = true;
+      })
+      .addCase(registrationSaloonPostForm.rejected, (state) => {
+        state.ui.isLoading = false;
+      })
+      .addCase(registrationSaloonPostForm.fulfilled, (state) => {
         state.ui.isLoading = false;
       })
   );

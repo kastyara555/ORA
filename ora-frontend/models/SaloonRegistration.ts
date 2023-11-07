@@ -4,6 +4,7 @@ export interface RegistrationSaloonEmailFormModel {
 
 export interface RegistrationSaloonAboutFormModel {
   saloonName: string;
+  description: string;
   name: string;
   phone: string;
 }

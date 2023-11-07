@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
-const User = require("./User");
 const Procedure = require("./Procedure");
+const SaloonMasterMap = require("./SaloonMasterMap");
 
 const Service = (sequelize) =>
   sequelize.define(
@@ -12,18 +12,10 @@ const Service = (sequelize) =>
         autoIncrement: true,
         primaryKey: true,
       },
-      idMaster: {
+      idSaloonMasterMap: {
         type: DataTypes.INTEGER,
         references: {
-          model: User(sequelize),
-          key: "id",
-        },
-        allowNull: false,
-      },
-      idSaloon: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: User(sequelize),
+          model: SaloonMasterMap(sequelize),
           key: "id",
         },
         allowNull: false,
@@ -38,7 +30,9 @@ const Service = (sequelize) =>
       },
       description: {
         type: DataTypes.STRING,
-        allowNull: false,
+      },
+      time: {
+        type: DataTypes.STRING,
       },
     },
     {

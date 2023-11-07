@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { Provider } from "react-redux";
 
 import Header from "@/components/Header";
+import ToastManager from "@/components/ToastManager";
 import { store } from "@/store";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -23,6 +24,7 @@ const Template = ({ children }: { children: React.ReactNode }) => {
         }
       />
       <main>{children}</main>
+      <ToastManager />
     </Provider>
   );
 };

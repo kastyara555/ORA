@@ -85,10 +85,10 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
 
     if (
       hasAdress &&
-      (!state.street.length ||
-        !isNumeric(state.building) ||
-        !isNumeric(state.stage) ||
-        !isNumeric(state.office))
+      (!state.street.trim().length ||
+        !isNumeric(state.building.trim()) ||
+        !isNumeric(state.stage.trim()) ||
+        !isNumeric(state.office.trim()))
     ) {
       return true;
     }
@@ -140,7 +140,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
           <InputText
             className={classNames(styles.input, "col-12", "lg:col", "xl:col")}
             placeholder="Дом"
-            maxLength={32}
+            maxLength={3}
             value={state.building}
             onChange={setBuilding}
             style={{ height: 45 }}
@@ -148,7 +148,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
           <InputText
             className={classNames(styles.input, "col-12", "lg:col", "xl:col")}
             placeholder="Этаж"
-            maxLength={32}
+            maxLength={3}
             value={state.stage}
             onChange={setStage}
             style={{ height: 45 }}
@@ -156,7 +156,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
           <InputText
             className={classNames(styles.input, "col-12", "lg:col", "xl:col")}
             placeholder="Офис"
-            maxLength={32}
+            maxLength={3}
             value={state.office}
             onChange={setOffice}
             style={{ height: 45 }}

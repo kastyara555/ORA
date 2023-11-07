@@ -7,6 +7,10 @@ const {
   getProceduresByName,
 } = require("../../controllers/proceduresController");
 const { getCities } = require("../../controllers/locationController");
+const {
+  registrationSaloon,
+  registrationUser,
+} = require("../../controllers/registrationController");
 
 var router = express.Router();
 
@@ -28,6 +32,14 @@ router.get("/searchProcedures/:search", function (req, res, next) {
 
 router.get("/cities", function (req, res, next) {
   getCities(res);
+});
+
+router.post("/registration/saloon", function (req, res, next) {
+  registrationSaloon(req, res);
+});
+
+router.post("/registration/user", function (req, res, next) {
+  registrationUser(req, res);
 });
 
 module.exports = router;

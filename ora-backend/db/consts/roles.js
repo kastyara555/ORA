@@ -1,5 +1,5 @@
-const roles = [
-  {
+const roles = {
+  saloon: {
     name: "Салон",
     permissionCreateSaloon: false,
     permissionCreateModerator: false,
@@ -18,7 +18,7 @@ const roles = [
     permissionEditService: true,
     permissionEditServiceInstance: false,
   },
-  {
+  master: {
     name: "Мастер",
     permissionCreateSaloon: false,
     permissionCreateModerator: false,
@@ -37,7 +37,7 @@ const roles = [
     permissionEditService: false,
     permissionEditServiceInstance: true,
   },
-  {
+  client: {
     name: "Клиент",
     permissionCreateSaloon: false,
     permissionCreateModerator: false,
@@ -56,7 +56,7 @@ const roles = [
     permissionEditService: false,
     permissionEditServiceInstance: false,
   },
-  {
+  moderator: {
     name: "Модератор",
     permissionCreateSaloon: true,
     permissionCreateModerator: false,
@@ -75,7 +75,7 @@ const roles = [
     permissionEditService: true,
     permissionEditServiceInstance: true,
   },
-  {
+  administrator: {
     name: "Администратор",
     permissionCreateSaloon: true,
     permissionCreateModerator: true,
@@ -94,7 +94,7 @@ const roles = [
     permissionEditService: true,
     permissionEditServiceInstance: true,
   },
-];
+};
 
 module.exports = {
   roles,

@@ -112,7 +112,6 @@ export const DEFAULT_SERVICE_TO_BE_ADDED = {
     minutes: { code: "0", name: "0" },
   },
   price: 0,
-  category: null,
   procedure: null,
 };
 
@@ -138,6 +137,7 @@ export const ABOUT_FORM_INITIAL_STATE: RegistrationSaloonAboutFormModel = {
   phone: "",
   name: "",
   saloonName: "",
+  description: "",
 };
 
 export const PASSWORD_FORM_INITIAL_STATE: RegistrationSaloonPasswordFormModel =
@@ -186,4 +186,3 @@ export const PICTURES_FORM_INITIAL_STATE: RegistrationSaloonPicturesFormModel =
   {
     pictures: [],
   };
-

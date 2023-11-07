@@ -32,9 +32,6 @@ const ServiceSexPriceMap = (sequelize) =>
         type: DataTypes.FLOAT,
         allowNull: false,
       },
-      description: {
-        type: DataTypes.STRING,
-      },
     },
     {
       tableName: "service_sex_price_map",

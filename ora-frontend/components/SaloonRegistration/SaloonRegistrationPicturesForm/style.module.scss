@@ -45,3 +45,18 @@
 .errorMessage {
     justify-content: start;
 }
+
+.loadingEnabled {
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.loadingBlock {
+    display: none;
+}

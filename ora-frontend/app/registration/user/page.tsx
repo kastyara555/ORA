@@ -1,6 +1,7 @@
 "use client";
 import classNames from "classnames";
 import { ChangeEvent, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { InputText } from "primereact/inputtext";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 import { Button } from "primereact/button";
@@ -9,9 +10,14 @@ import { Password } from "primereact/password";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Calendar, CalendarChangeEvent } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
+import { useRouter } from "next/navigation";
 
 import RU_LOCALE from "@/consts/locale";
 import { isEmailValid } from "@/utils/forms";
+import { axiosInstance } from "@/api";
+import { postUserRegistrationUrl } from "@/api/registration";
+import { commonSetUiToast } from "@/store/common/actions";
+import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 
 import styles from "./page.module.scss";
 
@@ -41,6 +47,10 @@ const Registration = () => {
   const [state, setState] = useState<RegistrationPageStateModel>(
     REGISTRATION_INITIAL_STATE
   );
+
+  const dispatch = useDispatch();
+
+  const router = useRouter();
 
   const setEmail = (e: ChangeEvent) => {
     setState((oldState) => ({
@@ -106,6 +116,36 @@ const Registration = () => {
 
     return false;
   }, [state]);
+
+  const onApply = async () => {
+    const preparedState = {
+      ...state,
+      phone: state.phone.replace(/\D/g, ""),
+      birthday:
+        state.birthday?.getDate() +
+        "-" +
+        (state.birthday?.getMonth() || 0 + 1) +
+        "-" +
+        state.birthday?.getFullYear(),
+      sex: +state.sex,
+    };
+
+    await axiosInstance
+      .post(postUserRegistrationUrl, preparedState)
+      .then(() => {
+        router.push("/login");
+      })
+      .catch(({ response }) => {
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.ERROR,
+          summary: "Регистрация",
+          detail: response.data,
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      });
+  };
 
   addLocale("ru", RU_LOCALE);
 
@@ -198,7 +238,7 @@ const Registration = () => {
               id="birthday"
               inputClassName={styles.input}
               className={classNames("w-full", "mt-2")}
-              placeholder="Дата записи"
+              placeholder="Дата рождения"
               locale="ru"
               value={state.birthday}
               onChange={setBirthday}
@@ -264,6 +304,7 @@ const Registration = () => {
               "col-12"
             )}
             disabled={disabledButton}
+            onClick={onApply}
           >
             Присоединиться к ORA
           </Button>
