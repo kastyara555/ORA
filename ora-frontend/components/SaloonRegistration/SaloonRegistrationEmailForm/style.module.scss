@@ -1,0 +1,37 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.wrapper {
+    max-width: 448px;
+}
+
+.lightText {
+    font-weight: 300;
+}
+
+.button {
+    background-color: $pink-500;
+    border-color: $pink-500;
+
+    &:hover {
+        background-color: $gray-300 !important;
+        border-color: $gray-300 !important;
+    }
+}
+
+.input {
+    &:hover {
+        border-color: $pink-500 !important;
+    }
+
+    &:enabled:focus {
+        border-color: $pink-500;
+        box-shadow: 0 0 0 0.2rem $pink-100;
+    }
+}
+
+.policy {
+    @include text-14-18;
+
+    text-align: center;
+}

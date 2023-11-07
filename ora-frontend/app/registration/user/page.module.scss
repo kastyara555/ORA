@@ -1,0 +1,56 @@
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+
+.main {
+  display: flex;
+  justify-content: center;
+  padding-top: 64px;
+}
+
+.registrationFormWrapper {
+  @include available-width;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 840px;
+
+  .lightText {
+    font-weight: 300;
+  }
+
+  .button {
+    background-color: $pink-500;
+    border-color: $pink-500;
+
+    &:hover {
+      background-color: $gray-300;
+      border-color: $gray-300;
+    }
+  }
+
+  .input {
+    height: 48px;
+
+    &:hover {
+      border-color: $pink-500;
+    }
+
+    &:enabled:focus {
+      border-color: $pink-500;
+      box-shadow: 0 0 0 0.2rem $pink-100;
+    }
+  }
+
+  .password {
+    @include available-width;
+  }
+
+  .link {
+    color: $pink-500;
+
+    &:hover {
+      color: $gray-300;
+    }
+  }
+}

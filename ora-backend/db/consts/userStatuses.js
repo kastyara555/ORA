@@ -1,10 +1,10 @@
-const userStatuses = [
-  { name: "Запрошен", description: "" },
-  { name: "Верифицирован", description: "" },
-  { name: "Активен", description: "" },
-  { name: "Заблокирован", description: "" },
-  { name: "Удалён", description: "" },
-];
+const userStatuses = {
+  requested: { name: "Запрошен", description: "" },
+  verificated: { name: "Верифицирован", description: "" },
+  active: { name: "Активен", description: "" },
+  blocked: { name: "Заблокирован", description: "" },
+  removed: { name: "Удалён", description: "" },
+};
 
 module.exports = {
   userStatuses,

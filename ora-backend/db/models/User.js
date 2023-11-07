@@ -1,9 +1,5 @@
 const { DataTypes } = require("sequelize");
 
-const UserStatus = require("./UserStatus");
-const UserType = require("./UserType");
-const Sex = require("./Sex");
-
 const User = (sequelize) =>
   sequelize.define(
     "user",
@@ -12,22 +8,6 @@ const User = (sequelize) =>
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-      },
-      idUserStatus: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: UserStatus(sequelize),
-          key: "id",
-        },
-        allowNull: false,
-      },
-      idUserType: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: UserType(sequelize),
-          key: "id",
-        },
-        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
@@ -44,22 +24,6 @@ const User = (sequelize) =>
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      idSex: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: Sex(sequelize),
-          key: "id",
-        },
-      },
-      lastName: {
-        type: DataTypes.STRING,
-      },
-      surname: {
-        type: DataTypes.STRING,
-      },
-      description: {
-        type: DataTypes.STRING,
       },
     },
     {

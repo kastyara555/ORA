@@ -1,15 +1,32 @@
-import Header from "@/components/Header";
+"use client";
+import { usePathname } from "next/navigation";
+import { Provider } from "react-redux";
 
-import "primereact/resources/themes/lara-light-indigo/theme.css";   
+import Header from "@/components/Header";
+import ToastManager from "@/components/ToastManager";
+import { store } from "@/store";
+
+import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
+import "primeflex/primeflex.min.css";
+import "primeicons/primeicons.css";
 
 const Template = ({ children }: { children: React.ReactNode }) => {
-    return <>
-        <Header />
-        <main>
-            {children}
-        </main>
-    </>;
+  const pathname = usePathname();
+
+  return (
+    <Provider store={store}>
+      <Header
+        withoutAuthorization={
+          pathname.includes("/registration") ||
+          pathname.includes("/login") ||
+          pathname.includes("/restore")
+        }
+      />
+      <main>{children}</main>
+      <ToastManager />
+    </Provider>
+  );
 };
 
 export default Template;

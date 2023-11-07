@@ -19,4 +19,4 @@ const Sex = (sequelize) =>
     }
   );
 
-  module.exports = Sex;
+module.exports = Sex;

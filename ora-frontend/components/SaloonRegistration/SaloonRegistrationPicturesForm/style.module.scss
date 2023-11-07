@@ -1,0 +1,62 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.wrapper {
+    max-width: 512px;
+}
+
+.lightText {
+    font-weight: 300;
+}
+
+.button {
+    background-color: $pink-500;
+    border-color: $pink-500;
+
+    &:hover {
+        background-color: $gray-300 !important;
+        border-color: $gray-300 !important;
+    }
+}
+
+.uploadingButton {
+    background-color: white !important;
+    border-color: $gray-200 !important;
+    color: $pink-500;
+
+    &:hover {
+        background-color: white !important;
+        border-color: $gray-200 !important;
+        color: $pink-500 !important;
+    }
+}
+
+.selectedImage {
+    background-color: $gray-100;
+    border-radius: 4px;
+}
+
+.subtitle {
+    @include text-14-18;
+
+    text-align: center;
+}
+
+.errorMessage {
+    justify-content: start;
+}
+
+.loadingEnabled {
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.loadingBlock {
+    display: none;
+}

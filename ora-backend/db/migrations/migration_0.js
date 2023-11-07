@@ -16,6 +16,13 @@ const GroupProcedureMap = require("../models/GroupProcedureMap");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
 const UserRating = require("../models/UserRating");
+const SaloonInfo = require("../models/SaloonInfo");
+const ClientInfo = require("../models/ClientInfo");
+const SaloonGroupProcedureMap = require("../models/SaloonGroupProcedureMap");
+const UserTypeMap = require("../models/UserTypeMap");
+const UserImage = require("../models/UserImage");
+const MasterInfo = require("../models/MasterInfo");
+const SaloonMasterMap = require("../models/SaloonMasterMap");
 
 const migration = async () => {
   try {
@@ -32,12 +39,21 @@ const migration = async () => {
 
     await User(connection).sync();
     await Procedure(connection).sync();
-    await Service(connection).sync();
 
+    await UserTypeMap(connection).sync();
+    await SaloonInfo(connection).sync();
+    await MasterInfo(connection).sync();
+    await ClientInfo(connection).sync();
+
+    await SaloonMasterMap(connection).sync();
+
+    await Service(connection).sync();
     await UserRating(connection).sync();
     await UserCityMap(connection).sync();
     await ServiceSexPriceMap(connection).sync();
     await GroupProcedureMap(connection).sync();
+    await SaloonGroupProcedureMap(connection).sync();
+    await UserImage(connection).sync();
 
     await ServiceInstance(connection).sync();
 
