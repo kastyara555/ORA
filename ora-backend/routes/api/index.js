@@ -11,6 +11,7 @@ const {
   registrationSaloon,
   registrationUser,
 } = require("../../controllers/registrationController");
+const { loginUser } = require("../../controllers/loginController");
 
 var router = express.Router();
 
@@ -40,6 +41,10 @@ router.post("/registration/saloon", function (req, res, next) {
 
 router.post("/registration/user", function (req, res, next) {
   registrationUser(req, res);
+});
+
+router.post("/login", function (req, res, next) {
+  loginUser(req, res);
 });
 
 module.exports = router;
