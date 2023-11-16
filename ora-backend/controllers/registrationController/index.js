@@ -100,8 +100,8 @@ const registrationSaloon = async (req, res) => {
   const isSelfEmployed = stuffCountForm.count === 1;
   const { hasAdress } = adressTypeForm;
 
-  const { dataValues: requestedUserStatus } = await UserStatusModel.findOne({
-    where: { name: userStatuses.requested.name },
+  const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+    where: { name: userStatuses.active.name },
   });
 
   const { dataValues: saloonType } = await UserTypeModel.findOne({
@@ -113,7 +113,7 @@ const registrationSaloon = async (req, res) => {
   const { dataValues: addedUserSaloonType } = await UserTypeMapModel.create({
     idUser: addedUser.id,
     idUserType: saloonType.id,
-    idUserStatus: requestedUserStatus.id,
+    idUserStatus: activeUserStatus.id,
     hash: generateHash(`${addedUser.id}-${saloonType.id}`),
     bonusCount: 0,
   });
@@ -147,7 +147,7 @@ const registrationSaloon = async (req, res) => {
     const { dataValues: addedUserMasterType } = await UserTypeMapModel.create({
       idUser: addedUser.id,
       idUserType: masterType.id,
-      idUserStatus: requestedUserStatus.id,
+      idUserStatus: activeUserStatus.id,
       hash: generateHash(`${addedUser.id}-${masterType.id}`),
       bonusCount: 0,
     });
