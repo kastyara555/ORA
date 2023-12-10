@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 import RU_LOCALE from "@/consts/locale";
 import { isEmailValid } from "@/utils/forms";
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { postUserRegistrationUrl } from "@/api/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";

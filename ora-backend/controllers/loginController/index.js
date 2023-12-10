@@ -72,7 +72,7 @@ const loginUser = async (req, res) => {
     }
 
     return res.send({
-      token: createToken(currentUserType.idUser, currentUserType.id),
+      token: createToken(currentUserType.id),
     });
   }
 
@@ -80,7 +80,7 @@ const loginUser = async (req, res) => {
     return res.status(400).send("Пользователь не найден.");
   }
 
-  return res.send({ token: createToken(userTypes[0].idUser, userTypes[0].id) });
+  return res.send({ token: createToken(userTypes[0].id) });
 };
 
 module.exports = {

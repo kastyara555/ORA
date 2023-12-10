@@ -9,11 +9,14 @@ import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { useRouter } from "next/navigation";
 
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { loginUrl } from "@/api/authorization";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { commonSetUiToast } from "@/store/common/actions";
+import { setCookie } from "@/utils/cookie";
+import { AUTH_COOKIE_NAME } from "@/consts";
 
 import styles from "./page.module.scss";
 
@@ -44,6 +47,7 @@ const Login = () => {
   }>>(null);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const setLogin = (e: ChangeEvent) => {
     setState((oldState) => ({
@@ -88,6 +92,9 @@ const Login = () => {
       if (!token) {
         setAvailableUserTypes(availableUserTypes ? availableUserTypes : null);
         setAvailableUserType({ value: null } as DropdownChangeEvent);
+      } else {
+        setCookie(AUTH_COOKIE_NAME, token);
+        router.push("/");
       }
     } catch (e) {
       const { response } = e as AxiosError;

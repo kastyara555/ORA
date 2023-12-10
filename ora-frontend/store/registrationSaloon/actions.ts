@@ -1,6 +1,6 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { getCitiesUrl, getProcedureCategoriesUrl } from "@/api/categories";
 import { postSaloonRegistrationUrl } from "@/api/registration";
 import {

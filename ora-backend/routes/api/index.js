@@ -12,6 +12,8 @@ const {
   registrationUser,
 } = require("../../controllers/registrationController");
 const { loginUser } = require("../../controllers/loginController");
+const { getUserData } = require("../../controllers/userController");
+const { checkAuthorization } = require("../../middlewares/auth");
 
 var router = express.Router();
 
@@ -45,6 +47,10 @@ router.post("/registration/user", function (req, res, next) {
 
 router.post("/login", function (req, res, next) {
   loginUser(req, res);
+});
+
+router.get("/profile", checkAuthorization, function (req, res, next) {
+  getUserData(req, res);
 });
 
 module.exports = router;

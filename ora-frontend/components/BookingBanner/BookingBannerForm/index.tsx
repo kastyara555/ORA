@@ -8,7 +8,7 @@ import { addLocale } from "primereact/api";
 
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { searchProceduresUrl } from "@/api/categories";
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { Button } from "primereact/button";
 import { configureUrl } from "@/utils";
 import RU_LOCALE from "@/consts/locale";
