@@ -3,12 +3,16 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { deleteCookie, getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
 
-const DEFAULT_BASE_URL = "http://localhost:3003/api";
+const DEFAULT_BASE_URL = "http://localhost:3003";
 
 export const BASE_URL = process.env.BASE_URL ?? DEFAULT_BASE_URL;
 
+export const BASE_API_URL = BASE_URL.concat("/api");
+
+export const BASE_ASSETS_URL = BASE_URL.concat("/assets");
+
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_API_URL,
   timeout: 2000,
 });
 

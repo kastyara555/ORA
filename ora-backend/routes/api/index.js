@@ -12,7 +12,7 @@ const {
   registrationUser,
 } = require("../../controllers/registrationController");
 const { loginUser } = require("../../controllers/loginController");
-const { getUserData } = require("../../controllers/userController");
+const { getUserData, updateProfile } = require("../../controllers/userController");
 const { checkAuthorization } = require("../../middlewares/auth");
 
 var router = express.Router();
@@ -51,6 +51,10 @@ router.post("/login", function (req, res, next) {
 
 router.get("/profile", checkAuthorization, function (req, res, next) {
   getUserData(req, res);
+});
+
+router.post("/profile/update/:userTypeMapId", checkAuthorization, function (req, res, next) {
+  updateProfile(req, res);
 });
 
 module.exports = router;

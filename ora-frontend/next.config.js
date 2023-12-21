@@ -5,7 +5,7 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   env: {
-    BASE_URL: 'http://localhost:3003/api',
+    BASE_URL: 'http://localhost:3003',
   },
 };
 

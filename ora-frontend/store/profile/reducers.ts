@@ -6,6 +6,8 @@ import { profileGetInfo, resetProfileUserData } from "@/store/profile/actions";
 import { initialProfileState } from "@/store/profile/state";
 import { getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
+import { BASE_URL } from "@/api";
+import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 
 export const profile: Reducer<ProfileStoreModel> = createReducer(
   initialProfileState,
@@ -22,6 +24,11 @@ export const profile: Reducer<ProfileStoreModel> = createReducer(
         state.userData = null;
       })
       .addCase(profileGetInfo.fulfilled, (state, { payload }) => {
-        state.userData = payload.data;
+        state.userData = {
+          ...payload.data,
+          mainImage: payload.data.mainImage
+            ? BASE_URL.concat(payload.data.mainImage)
+            : DEFAULT_PROFILE_IMAGE,
+        };
       })
 );

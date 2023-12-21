@@ -1,4 +1,5 @@
 export interface ProfileModel {
+  userTypeMapId: number | null;
   userHash: string | null;
   bonusCount: number | null;
   name: string | null;
