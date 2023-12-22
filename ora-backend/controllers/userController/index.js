@@ -63,8 +63,6 @@ const getUserData = async (req, res) => {
 
     if (images.length) {
       const mappedImages = images.map(({ dataValues }) => dataValues);
-      console.log("mappedImages");
-      console.log(mappedImages);
       const gallery = mappedImages
         .filter(({ isMain }) => !isMain)
         .map(({ url }) => url);
@@ -194,7 +192,7 @@ const updateProfile = async (req, res) => {
         }
 
         let buff = new Buffer.from(data.split(",")[1], "base64");
-        fs.createWriteStream(fullImageName).write(buff);
+        fs.writeFileSync(fullImageName, buff);
 
         if (clientMainImageInfo && clientMainImageInfo.dataValues) {
           await UserImageModel.update(
@@ -215,9 +213,9 @@ const updateProfile = async (req, res) => {
           });
         }
       }
-    }
 
-    res.send("BALDEZH");
+      return await getUserData(req, res);
+    }
   } catch (e) {
     res.status(500).send();
   }

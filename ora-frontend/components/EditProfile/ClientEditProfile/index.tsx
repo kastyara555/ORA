@@ -1,6 +1,6 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import ImageUploading, {
   ImageListType,
@@ -9,6 +9,7 @@ import ImageUploading, {
 import { InputMask } from "primereact/inputmask";
 import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
+import { Skeleton } from "primereact/skeleton";
 import { Message } from "primereact/message";
 import { addLocale } from "primereact/api";
 import { Button } from "primereact/button";
@@ -17,7 +18,10 @@ import { object, string } from "yup";
 
 import RU_LOCALE from "@/consts/locale";
 import { profileUpdate } from "@/store/profile/actions";
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import {
+  profileLoadingSelector,
+  profileUserDateSelector,
+} from "@/store/profile/selectors";
 
 import styles from "./style.module.scss";
 
@@ -35,6 +39,7 @@ const profileSchema = object().shape({
 
 const ClientEditProfile = () => {
   const profileInfo = useSelector(profileUserDateSelector);
+  const loading = useSelector(profileLoadingSelector);
   const [picturesForm, setPicturesForm] = useState<ImageListType>([]);
   const [profileForm, setProfileForm] = useState<profileEditForm>({
     lastName: profileInfo.lastName,
@@ -74,9 +79,14 @@ const ClientEditProfile = () => {
     );
   };
 
+  useEffect(() => {
+    setProfileForm({ lastName: profileInfo.lastName });
+    setPicturesForm([]);
+  }, [profileInfo]);
+
   addLocale("ru", RU_LOCALE);
 
-  return (
+  return !loading ? (
     <>
       <div
         className={classNames(
@@ -295,6 +305,8 @@ const ClientEditProfile = () => {
         </div>
       </div>
     </>
+  ) : (
+    <Skeleton className="mt-4" width="100%" height="512px" />
   );
 };
 

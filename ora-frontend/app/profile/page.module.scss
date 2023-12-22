@@ -11,3 +11,22 @@
         width: 100%;
     }
 }
+
+.outlinedButton {
+    color: $pink-500 !important;
+    border-color: $pink-500 !important;
+  
+    &:focus {
+        box-shadow: 0 0 0 0.2rem $pink-100 !important;
+    }
+
+    &:hover {
+        background-color: $gray-100 !important;
+    }
+
+    &:active {
+        background-color: $gray-300 !important;
+        border-color: $gray-300 !important;
+        color: white !important;
+    }
+}

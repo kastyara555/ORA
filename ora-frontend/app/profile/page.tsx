@@ -1,5 +1,6 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
+import storage from "redux-persist/lib/storage";
 import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
 import classNames from "classnames";
@@ -17,8 +18,9 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(resetProfileUserData());
+    await storage.removeItem("root");
     deleteCookie(AUTH_COOKIE_NAME);
     router.push("/");
   };
@@ -28,7 +30,7 @@ const ProfilePage = () => {
   return (
     <div className={classNames(styles.profileWrapper, "px-4")}>
       <Profile />
-      <Button className={classNames("mt-4")} onClick={handleLogout} outlined>
+      <Button className={classNames(styles.outlinedButton, "my-4")} onClick={handleLogout} outlined>
         Выйти
       </Button>
     </div>

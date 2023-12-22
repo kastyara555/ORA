@@ -205,7 +205,7 @@ const registrationSaloon = async (req, res) => {
     }
 
     let buff = new Buffer.from(data.split(",")[1], "base64");
-    fs.createWriteStream(fullImageName).write(buff);
+    fs.writeFileSync(fullImageName, buff);
 
     await UserImageModel.create({
       idUserTypeMap: addedUserSaloonType.id,

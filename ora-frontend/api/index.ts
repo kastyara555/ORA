@@ -31,6 +31,7 @@ axiosInstance.interceptors.response.use(
       window.history.pushState(window.history.state, "", "/login");
       window.location.reload();
     }
+    return Promise.reject(error);
   }
 );
 

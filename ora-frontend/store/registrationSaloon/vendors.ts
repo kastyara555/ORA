@@ -56,7 +56,7 @@ export const prepareSaloonRegistrationForm = (
   result.picturesForm = {
     ...result.picturesForm,
     pictures: result.picturesForm.pictures
-      .filter((el) => !!el && !!el.file && !!el.dataURL)
+      .filter((el) => !!el)
       .map(({ file, data_url }) => ({
         fileName: file?.name,
         fileSize: file?.size,

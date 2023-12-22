@@ -9,3 +9,8 @@ export const profileUserDateSelector = createSelector(
   profileSelector,
   ({ userData }) => userData,
 );
+
+export const profileLoadingSelector = createSelector(
+  profileSelector,
+  ({ loading }) => loading,
+);

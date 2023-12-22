@@ -5,6 +5,8 @@ import { getProfileInfoUrl, updateProfileInfoUrl } from "@/api/user";
 import { RootState } from "..";
 import { profileEditClientForm } from "@/components/EditProfile/ClientEditProfile";
 import { prepareProfileUpdateForm } from "@/store/profile/vendors";
+import { commonSetUiToast } from "@/store/common/actions";
+import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 
 export const resetProfileUserData = createAction(
   "profile/resetProfileUserData"
@@ -25,25 +27,27 @@ export const profileGetInfo = createAsyncThunk(
 
 export const profileUpdate = createAsyncThunk<any, profileEditClientForm>(
   "profile/profileUpdate",
-  async (formData, { getState, dispatch }) => {
-    const { profile } = getState() as RootState;
+  async (formData, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const { profile } = getState() as RootState;
 
-    const response = await axiosInstance.post(
-      updateProfileInfoUrl.concat(`/${profile.userData?.userTypeMapId}`),
-      prepareProfileUpdateForm(formData)
-    );
-    // .then(() => {
-    //   window.location.pathname = "/login";
-    // })
-    // .catch(({ response }) => {
-    //   const toastToBeShown = {
-    //     severity: TOAST_SEVERITIES.ERROR,
-    //     summary: "Регистрация",
-    //     detail: response.data,
-    //     life: TOAST_DEFAULT_LIFE,
-    //   };
+      const response = await axiosInstance.post(
+        updateProfileInfoUrl.concat(`/${profile.userData?.userTypeMapId}`),
+        prepareProfileUpdateForm(formData)
+      );
 
-    //   dispatch(commonSetUiToast(toastToBeShown));
-    // });
+      return response;
+    } catch ({ response }: any) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Обновление профиля",
+        detail: response.data,
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+
+      return rejectWithValue(response);
+    }
   }
 );
