@@ -1,17 +1,18 @@
 import { Reducer, createReducer } from "@reduxjs/toolkit";
 import { REHYDRATE } from "redux-persist";
 
-import { ProfileStoreModel } from "@/store/profile/model";
 import {
   profileGetInfo,
   profileUpdate,
   resetProfileUserData,
 } from "@/store/profile/actions";
-import { initialProfileState } from "@/store/profile/state";
+import { BASE_URL } from "@/api";
 import { getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
-import { BASE_URL } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
+import { ProfileStoreModel } from "@/store/profile/model";
+import { initialProfileState } from "@/store/profile/state";
+import { prepareProfileData } from "@/store/profile/vendors";
 
 export const profile: Reducer<ProfileStoreModel> = createReducer(
   initialProfileState,
@@ -28,12 +29,7 @@ export const profile: Reducer<ProfileStoreModel> = createReducer(
         state.userData = null;
       })
       .addCase(profileGetInfo.fulfilled, (state, { payload }) => {
-        state.userData = {
-          ...payload.data,
-          mainImage: payload.data.mainImage
-            ? BASE_URL.concat(payload.data.mainImage)
-            : DEFAULT_PROFILE_IMAGE,
-        };
+        state.userData = prepareProfileData(payload.data);
       })
       .addCase(profileUpdate.fulfilled, (state, { payload }) => {
         state.loading = false;

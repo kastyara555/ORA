@@ -1,6 +1,6 @@
-import { ProfileModel } from "@/models/profile";
+import { ClientProfileModel, SaloonProfileModel } from "@/models/profile";
 
 export interface ProfileStoreModel {
-  userData: null | ProfileModel;
+  userData: null | ClientProfileModel | SaloonProfileModel;
   loading: boolean;
 }

@@ -1,8 +1,10 @@
 const fs = require("fs");
 
+const { clientUpdatingSchema } = require("../../schemas/clientUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
 const { roles } = require("../../db/consts/roles");
+const { verifyToken } = require("../../utils/jwt");
 const ClientInfo = require("../../db/models/ClientInfo");
 const Sex = require("../../db/models/Sex");
 const User = require("../../db/models/User");
@@ -10,8 +12,8 @@ const UserImage = require("../../db/models/UserImage");
 const UserStatus = require("../../db/models/UserStatus");
 const UserType = require("../../db/models/UserType");
 const UserTypeMap = require("../../db/models/UserTypeMap");
-const { clientUpdatingSchema } = require("../../schemas/clientUpdatingSchema");
-const { verifyToken } = require("../../utils/jwt");
+const SaloonInfo = require("../../db/models/SaloonInfo");
+const City = require("../../db/models/City");
 
 const getUserData = async (req, res) => {
   try {
@@ -31,6 +33,8 @@ const getUserData = async (req, res) => {
     const UserImageModel = await UserImage(connection);
     const ClientInfoModel = await ClientInfo(connection);
     const SexModel = await Sex(connection);
+    const SaloonInfoModel = await SaloonInfo(connection);
+    const CityModel = await City(connection);
 
     const userMapInfo = await UserTypeMapModel.findOne({
       where: { id: userTypeMapId },
@@ -84,6 +88,7 @@ const getUserData = async (req, res) => {
       ...imagesInfo,
     };
 
+    // Данные клиента
     if (result.userType === roles.client.name) {
       const clientInfo = await ClientInfoModel.findOne({
         where: { idUserTypeMap: userTypeMapId },
@@ -96,6 +101,45 @@ const getUserData = async (req, res) => {
       result.lastName = clientInfo.dataValues.lastName;
       result.birthday = clientInfo.dataValues.birthday;
       result.sex = clientSex.dataValues.name;
+    }
+
+    // Данные салона
+    if (result.userType === roles.saloon.name) {
+      const saloonInfo = await SaloonInfoModel.findOne({
+        where: { idUserTypeMap: userTypeMapId },
+      });
+
+      const {
+        name,
+        description,
+        street,
+        building,
+        stage,
+        office,
+        visitPayment,
+        workingTime,
+        idCity,
+      } = saloonInfo;
+
+      result.saloonName = name;
+      result.saloonDescription = description;
+      result.address =
+        street && building && stage && office
+          ? {
+              street,
+              building,
+              stage,
+              office,
+            }
+          : null;
+      result.visitPayment = visitPayment;
+      result.workingTime = workingTime;
+
+      const cityInfo = CityModel.findOne({
+        where: { id: idCity },
+      });
+
+      result.city = { id: cityInfo.id, name: cityInfo.name };
     }
 
     return res.send(result);

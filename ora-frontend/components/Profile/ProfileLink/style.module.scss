@@ -1,0 +1,17 @@
+@import '../../../styles/variables';
+
+.linkBlock {
+    min-width: 40%;
+    min-height: 96px;
+    border-radius: 8px;
+    border: 1px solid $gray-200;
+
+
+    &:hover {
+        background-color: $gray-100;
+    }
+
+    & .linkTitle {
+        font-weight: 500;
+    }
+}

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 import { profileUserDateSelector } from "@/store/profile/selectors";
 import ClientProfile from "@/components/Profile/ClientProfile";
+import SaloonProfile from "@/components/Profile/SaloonProfile";
 import { USER_TYPES } from "@/consts/profile";
 
 const Profile = () => {
@@ -12,11 +13,13 @@ const Profile = () => {
   const node = useMemo(() => {
     switch (profileInfo.userType) {
       case USER_TYPES.client:
-        return <ClientProfile />
+        return <ClientProfile />;
+      case USER_TYPES.saloon:
+        return <SaloonProfile />;
       default:
-        return null
+        return null;
     }
-  }, [profileInfo])
+  }, [profileInfo]);
 
   return node;
 };
