@@ -2,7 +2,7 @@
 import { useSelector } from "react-redux";
 import classNames from "classnames";
 
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 import ProfileLink from "@/components/Profile/ProfileLink";
 import { PROFILE_SALOON_LINKS } from "@/consts/profile";
 import { Image } from "primereact/image";
@@ -10,7 +10,7 @@ import { Image } from "primereact/image";
 import styles from "./style.module.scss";
 
 const SaloonProfile = () => {
-  const profileInfo = useSelector(profileUserDateSelector);
+  const profileInfo = useSelector(profileUserDataSelector);
 
   return (
     <>

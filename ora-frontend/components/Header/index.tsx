@@ -5,7 +5,8 @@ import Link from "next/link";
 import classNames from "classnames";
 import { useSelector } from "react-redux";
 
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import { USER_TYPES } from "@/consts/profile";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 
 import styles from "./style.module.scss";
 
@@ -14,7 +15,9 @@ interface HeaderModel {
 }
 
 const Header: FC<HeaderModel> = ({ withoutAuthorization }) => {
-  const profileInfo = useSelector(profileUserDateSelector);
+  const profileInfo = useSelector(profileUserDataSelector);
+
+  const isSaloon = profileInfo?.userType === USER_TYPES.saloon;
 
   return (
     <header className={styles.header}>
@@ -24,12 +27,14 @@ const Header: FC<HeaderModel> = ({ withoutAuthorization }) => {
 
       {!withoutAuthorization && (
         <div className={classNames("flex", "align-items-center", "gap-3")}>
-          <Link
-            href="/registration/saloon"
-            className={styles.saloonRegistrationLink}
-          >
-            Размещайтесь на ORA
-          </Link>
+          {!isSaloon && (
+            <Link
+              href="/registration/saloon"
+              className={styles.saloonRegistrationLink}
+            >
+              Размещайтесь на ORA
+            </Link>
+          )}
           {!profileInfo ? (
             <Link href="/login" className={styles.linkToLogin}>
               <BiMenu color="white" />

@@ -20,7 +20,7 @@ import RU_LOCALE from "@/consts/locale";
 import { profileUpdate } from "@/store/profile/actions";
 import {
   profileLoadingSelector,
-  profileUserDateSelector,
+  profileUserDataSelector,
 } from "@/store/profile/selectors";
 
 import styles from "./style.module.scss";
@@ -38,7 +38,7 @@ const profileSchema = object().shape({
 });
 
 const ClientEditProfile = () => {
-  const profileInfo = useSelector(profileUserDateSelector);
+  const profileInfo = useSelector(profileUserDataSelector);
   const loading = useSelector(profileLoadingSelector);
   const [picturesForm, setPicturesForm] = useState<ImageListType>([]);
   const [profileForm, setProfileForm] = useState<profileEditForm>({

@@ -1,13 +1,10 @@
-import Link from 'next/link'
+import classNames from 'classnames';
 
 const NotFound = () => {
     return (
-        <div>
-            <h2>Not Found</h2>
-            <p>Could not find requested resource</p>
-            <p>
-                View <Link href="/blog">all posts</Link>
-            </p>
+        <div className={classNames("mt-4", "ml-4")}>
+            <h2>Страница не найдена.</h2>
+            <p>Возможно, Вы заблудились.</p>
         </div>
     )
 };

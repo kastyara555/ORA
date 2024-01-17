@@ -4,7 +4,10 @@ import { ProfileLinkModel } from "@/components/Profile/ProfileLink";
 export const USER_TYPES = {
   client: "Клиент",
   saloon: "Салон",
-};
+} as const;
+
+type userTypesKeys =  keyof typeof USER_TYPES;
+export type userTypesType = typeof USER_TYPES[userTypesKeys];
 
 export const DEFAULT_PROFILE_IMAGE = BASE_ASSETS_URL.concat(
   "/images/profile/defaultProfileImage.png"
@@ -23,7 +26,7 @@ export const PROFILE_CLIENT_LINKS: ProfileLinkModel[] = [
   },
   {
     href: "/profile/edit",
-    title: "Настройки учетной запис",
+    title: "Настройки учетной записи",
     description: "Редактируйте ваш профиль и контактную информаци",
   },
   {
@@ -59,5 +62,26 @@ export const PROFILE_SALOON_LINKS: ProfileLinkModel[] = [
     href: "/",
     title: "Отзывы",
     description: "Просматривайте актуальные отзывы вашего салона",
+  },
+];
+
+interface routeConfiguration {
+  url: string;
+  availableUserTypes?: userTypesType[];
+}
+
+export const PRIVATE_ROUTES: routeConfiguration[] = [
+  {
+    url: "/profile",
+  },
+  {
+    url: "/profile/edit",
+  },
+  {
+    url: "/profile/edit/add-master",
+    availableUserTypes: [USER_TYPES.saloon],
+  },
+  {
+    url: "/profile/history",
   },
 ];

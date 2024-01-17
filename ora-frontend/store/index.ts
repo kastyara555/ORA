@@ -19,7 +19,6 @@ const persistConfig = {
   version: 1,
   storage,
   whiteList: ["profile"],
-  blackList: ["common", "registrationSaloon"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

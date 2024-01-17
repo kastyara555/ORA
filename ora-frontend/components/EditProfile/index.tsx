@@ -2,12 +2,12 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 import ClientEditProfile from "@/components/EditProfile/ClientEditProfile";
 import { USER_TYPES } from "@/consts/profile";
 
 const EditProfile = () => {
-  const profileInfo = useSelector(profileUserDateSelector);
+  const profileInfo = useSelector(profileUserDataSelector);
 
   const node = useMemo(() => {
     switch (profileInfo.userType) {

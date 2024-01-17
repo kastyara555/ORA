@@ -4,14 +4,14 @@ import classNames from "classnames";
 import Link from "next/link";
 
 import { BONUS_PROFILE_IMAGE, PROFILE_CLIENT_LINKS } from "@/consts/profile";
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
 import ProfileLink from "../ProfileLink";
 
 const ClientProfile = () => {
-  const profileInfo = useSelector(profileUserDateSelector);
+  const profileInfo = useSelector(profileUserDataSelector);
 
   return (
     <>

@@ -5,7 +5,7 @@ export const profileSelector = createSelector(
   ({ profile }) => profile,
 );
 
-export const profileUserDateSelector = createSelector(
+export const profileUserDataSelector = createSelector(
   profileSelector,
   ({ userData }) => userData,
 );

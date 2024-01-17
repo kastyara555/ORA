@@ -1,20 +1,36 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
-import { profileUserDateSelector } from "@/store/profile/selectors";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 import { profileGetInfo, resetProfileUserData } from "@/store/profile/actions";
 import { getCookie } from "@/utils/cookie";
-import { AUTH_COOKIE_NAME, PRIVATE_ROUTES } from "@/consts";
-import { usePathname, useRouter } from "next/navigation";
+import { AUTH_COOKIE_NAME } from "@/consts";
+import { PRIVATE_ROUTES } from "@/consts/profile";
+import NotFound from "@/app/not-found";
 
 const MainWrapper = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
-  const userInfo = useSelector(profileUserDateSelector);
+  const userInfo = useSelector(profileUserDataSelector);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
+  const privateRouteInfo = useMemo(
+    () => PRIVATE_ROUTES.find(({ url }) => url === pathname),
+    [pathname]
+  );
+
+  const showNotFound = useMemo(
+    () =>
+      privateRouteInfo &&
+      (!userInfo ||
+        (privateRouteInfo.availableUserTypes &&
+          !privateRouteInfo.availableUserTypes?.includes(userInfo.userType))),
+    [userInfo, privateRouteInfo]
+  );
+
+  useLayoutEffect(() => {
     const authCookie = getCookie(AUTH_COOKIE_NAME);
 
     if (!userInfo && authCookie && authCookie?.length) {
@@ -26,13 +42,13 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
         dispatch(resetProfileUserData());
       }
 
-      if (PRIVATE_ROUTES.includes(pathname)) {
+      if (privateRouteInfo) {
         router.push("/login");
       }
     }
   }, []);
 
-  return <main>{children}</main>;
+  return <main>{showNotFound ? <NotFound /> : children}</main>;
 };
 
 export default MainWrapper;

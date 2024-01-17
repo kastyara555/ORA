@@ -2,10 +2,10 @@ import classNames from "classnames";
 
 import styles from "./page.module.scss";
 
-const ProfileHistoryPage = () => (
+const AddMasterPage = () => (
   <div className={classNames(styles.profileWrapper, "px-4")}>
-    История бронирования
+    Добавление мастера
   </div>
 );
 
-export default ProfileHistoryPage;
+export default AddMasterPage;

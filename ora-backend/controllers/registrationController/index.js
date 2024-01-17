@@ -25,6 +25,7 @@ const {
 const { generateHash } = require("../../utils/hash");
 const UserImage = require("../../db/models/UserImage");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
+const { transporter } = require("../../email");
 
 const registrationSaloon = async (req, res) => {
   try {
@@ -295,6 +296,25 @@ const registrationUser = async (req, res) => {
       lastName,
       agree,
     });
+
+    transporter.sendMail(
+      {
+        from: "ORA-Email Service",
+        to: email,
+        subject: "Регистрация ora-beauty.by",
+        text: `Рады приветствовать Вас от лица всей команды ORA. ${name}, спасибо, что Вы с нами!`,
+      },
+      (err, info) => {
+        if (err) {
+          console.log("Email sending error:");
+          console.log(error);
+        } else {
+          console.log("Email sending info:");
+          console.log(info.envelope);
+          console.log(info.messageId);
+        }
+      }
+    );
 
     res.send(addedUser);
   } catch (e) {
