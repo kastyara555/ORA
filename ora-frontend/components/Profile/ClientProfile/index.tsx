@@ -1,14 +1,13 @@
 "use client";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
-import Link from "next/link";
+import { Image } from "primereact/image";
 
 import { BONUS_PROFILE_IMAGE, PROFILE_CLIENT_LINKS } from "@/consts/profile";
 import { profileUserDataSelector } from "@/store/profile/selectors";
-import { Image } from "primereact/image";
+import ProfileLink from "@/components/Profile/ProfileLink";
 
 import styles from "./style.module.scss";
-import ProfileLink from "../ProfileLink";
 
 const ClientProfile = () => {
   const profileInfo = useSelector(profileUserDataSelector);
@@ -48,12 +47,13 @@ const ClientProfile = () => {
         </div>
       </div>
       <div className={classNames("grid", "gap-2", "mt-4")}>
-        {PROFILE_CLIENT_LINKS.map(({ href, title, description }, index) => (
+        {PROFILE_CLIENT_LINKS.map(({ href, title, description, disabled = false }, index) => (
           <ProfileLink
             key={index}
             href={href}
             title={title}
             description={description}
+            disabled={disabled}
           />
         ))}
       </div>

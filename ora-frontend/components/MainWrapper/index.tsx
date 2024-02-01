@@ -1,6 +1,6 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { memo, useLayoutEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { profileUserDataSelector } from "@/store/profile/selectors";
@@ -51,4 +51,4 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
   return <main>{showNotFound ? <NotFound /> : children}</main>;
 };
 
-export default MainWrapper;
+export default memo(MainWrapper);

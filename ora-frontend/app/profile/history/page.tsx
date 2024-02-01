@@ -1,11 +1,9 @@
-import classNames from "classnames";
-
-import styles from "./page.module.scss";
+import ProfileWrapper from "@/components/Profile/ProfileWrapper";
 
 const ProfileHistoryPage = () => (
-  <div className={classNames(styles.profileWrapper, "px-4")}>
+  <ProfileWrapper>
     История бронирования
-  </div>
+  </ProfileWrapper>
 );
 
 export default ProfileHistoryPage;

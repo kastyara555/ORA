@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { useRouter } from "next/navigation";
 import classNames from "classnames";
 
+import ProfileWrapper from "@/components/Profile/ProfileWrapper";
 import { resetProfileUserData } from "@/store/profile/actions";
 import { deleteCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
@@ -24,12 +25,16 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className={classNames(styles.profileWrapper, "px-4")}>
+    <ProfileWrapper>
       <Profile />
-      <Button className={classNames(styles.outlinedButton, "my-4")} onClick={handleLogout} outlined>
+      <Button
+        className={classNames(styles.outlinedButton, "my-4")}
+        onClick={handleLogout}
+        outlined
+      >
         Выйти
       </Button>
-    </div>
+    </ProfileWrapper>
   );
 };
 

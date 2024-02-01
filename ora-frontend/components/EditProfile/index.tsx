@@ -12,11 +12,13 @@ const EditProfile = () => {
   const node = useMemo(() => {
     switch (profileInfo.userType) {
       case USER_TYPES.client:
-        return <ClientEditProfile />
+        return <ClientEditProfile />;
+      case USER_TYPES.saloon:
+        return null;
       default:
-        return null
+        return null;
     }
-  }, [profileInfo])
+  }, [profileInfo]);
 
   return node;
 };

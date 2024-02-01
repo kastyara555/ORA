@@ -1,17 +1,6 @@
 @import '../../styles/mixins';
 @import '../../styles/variables';
 
-.profileWrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    &>* {
-        max-width: 960px;
-        width: 100%;
-    }
-}
-
 .outlinedButton {
     color: $pink-500 !important;
     border-color: $pink-500 !important;

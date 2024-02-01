@@ -1,13 +1,10 @@
-import classNames from "classnames";
-
 import EditProfile from "@/components/EditProfile";
-
-import styles from "./page.module.scss";
+import ProfileWrapper from "@/components/Profile/ProfileWrapper";
 
 const ProfileEditPage = () => (
-  <div className={classNames(styles.profileWrapper, "px-4")}>
+  <ProfileWrapper>
     <EditProfile />
-  </div>
+  </ProfileWrapper>
 );
 
 export default ProfileEditPage;

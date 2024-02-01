@@ -6,7 +6,6 @@
     border-radius: 8px;
     border: 1px solid $gray-200;
 
-
     &:hover {
         background-color: $gray-100;
     }
@@ -14,4 +13,10 @@
     & .linkTitle {
         font-weight: 500;
     }
+}
+
+.disabled {
+    filter: opacity(0.25);
+    cursor: not-allowed;
+    background-color: $gray-100;
 }

@@ -1,29 +1,32 @@
 const { Sequelize } = require("sequelize");
 const fs = require("fs");
 
-const { connection } = require("../../db/connection");
 const {
   saloonRegistrationSchema,
 } = require("../../schemas/saloonRegistrationSchema");
-const User = require("../../db/models/User");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const UserType = require("../../db/models/UserType");
-const UserStatus = require("../../db/models/UserStatus");
-const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const Service = require("../../db/models/Service");
-const ServiceSexPriceMap = require("../../db/models/ServiceSexPriceMap");
-const Sex = require("../../db/models/Sex");
-const ClientInfo = require("../../db/models/ClientInfo");
-const MasterInfo = require("../../db/models/MasterInfo");
-const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
-const { roles } = require("../../db/consts/roles");
-const { userStatuses } = require("../../db/consts/userStatuses");
+const {
+  masterRegistrationSchema,
+} = require("../../schemas/masterRegistrationSchema");
 const {
   userRegistrationSchema,
 } = require("../../schemas/userRegistrationSchema");
-const { generateHash } = require("../../utils/hash");
+const { connection } = require("../../db/connection");
+const { userStatuses } = require("../../db/consts/userStatuses");
+const { roles } = require("../../db/consts/roles");
+const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
+const ServiceSexPriceMap = require("../../db/models/ServiceSexPriceMap");
+const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
+const UserTypeMap = require("../../db/models/UserTypeMap");
+const ClientInfo = require("../../db/models/ClientInfo");
+const MasterInfo = require("../../db/models/MasterInfo");
+const UserStatus = require("../../db/models/UserStatus");
+const SaloonInfo = require("../../db/models/SaloonInfo");
 const UserImage = require("../../db/models/UserImage");
+const UserType = require("../../db/models/UserType");
+const Service = require("../../db/models/Service");
+const User = require("../../db/models/User");
+const Sex = require("../../db/models/Sex");
+const { generateHash } = require("../../utils/hash");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { transporter } = require("../../email");
 
@@ -322,7 +325,126 @@ const registrationUser = async (req, res) => {
   }
 };
 
+const registrationMaster = async (req, res) => {
+  try {
+    const { value, error } = masterRegistrationSchema.validate(req.body);
+
+    if (error)
+      return res.status(400).send("Проверьте правильность введённых данных");
+
+    const { name, email, phone, password, description, relatedSaloonMapId } =
+      value;
+
+    const UserModel = await User(connection);
+    const MasterInfoModel = await MasterInfo(connection);
+    const UserTypeModel = await UserType(connection);
+    const UserStatusModel = await UserStatus(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const SaloonMasterMapModel = await SaloonMasterMap(connection);
+
+    const existsUsers = await UserModel.findAll({
+      where: {
+        [Sequelize.Op.or]: [
+          {
+            email,
+          },
+          {
+            phone,
+          },
+        ],
+      },
+    });
+
+    if (!!existsUsers.length)
+      return res
+        .status(400)
+        .send(
+          "Пользователь с данной почтой или телефоном уже зарегистрирован."
+        );
+
+    const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
+      where: {
+        name: roles.saloon.name,
+      },
+    });
+
+    const saloonToBeRelated = await UserTypeMapModel.findOne({
+      where: {
+        id: relatedSaloonMapId,
+        idUserType: saloonUserTypeData.id,
+      },
+    });
+
+    if (!saloonToBeRelated)
+      return res
+        .status(400)
+        .send(
+          "Салон, на который Вы ссылаетесь отсутствует."
+        );
+
+    const addedUser = await UserModel.create({
+      name,
+      email,
+      phone,
+      password: generateHash(password),
+    });
+
+    const { dataValues: userTypesToBeCreated } = await UserTypeModel.findOne({
+      where: {
+        name: roles.master.name,
+      },
+    });
+
+    const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+      where: { name: userStatuses.active.name },
+    });
+
+    const { dataValues: addedUserMasterType } = await UserTypeMapModel.create({
+      idUser: addedUser.id,
+      idUserType: userTypesToBeCreated.id,
+      idUserStatus: activeUserStatus.id,
+      hash: generateHash(`${addedUser.id}-${userTypesToBeCreated.id}`),
+      bonusCount: 0,
+    });
+
+    const addedMasterInfo = await MasterInfoModel.create({
+      idUserTypeMap: addedMasterClientType.id,
+      description,
+    });
+
+    const { dataValues: addedSaloonMasterMap } =
+      await SaloonMasterMapModel.create({
+        idMaster: addedUserMasterType.id,
+        idSaloon: relatedSaloonMapId,
+      });
+
+    transporter.sendMail(
+      {
+        from: "ORA-Email Service",
+        to: email,
+        subject: "Регистрация ora-beauty.by",
+        text: `Рады приветствовать Вас от лица всей команды ORA. ${name}, спасибо, что Вы с нами!`,
+      },
+      (err, info) => {
+        if (err) {
+          console.log("Email sending error:");
+          console.log(error);
+        } else {
+          console.log("Email sending info:");
+          console.log(info.envelope);
+          console.log(info.messageId);
+        }
+      }
+    );
+
+    res.send(addedUser);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
 module.exports = {
   registrationSaloon,
   registrationUser,
+  registrationMaster,
 };

@@ -20,10 +20,6 @@ const getUserData = async (req, res) => {
     const token = req.headers.authorization;
     const verifiedToken = verifyToken(token);
 
-    if (!verifiedToken) {
-      return res.status(401).send("Пользователь не найден.");
-    }
-
     const { userTypeMapId } = verifiedToken;
 
     const UserTypeMapModel = await UserTypeMap(connection);
@@ -41,7 +37,7 @@ const getUserData = async (req, res) => {
     });
 
     if (!userMapInfo) {
-      return res.status(401).send("Пользователь не найден.");
+      return res.status(400).send("Пользователь не найден.");
     }
 
     const userBaseInfo = await connection.query(
@@ -152,10 +148,6 @@ const updateProfile = async (req, res) => {
   try {
     const token = req.headers.authorization;
     const verifiedToken = verifyToken(token);
-
-    if (!verifiedToken) {
-      return res.status(401).send("Пользователь не найден.");
-    }
 
     const { userTypeMapId } = verifiedToken;
 
