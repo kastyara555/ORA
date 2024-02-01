@@ -12,12 +12,13 @@ const getProcedureGroups = async (res) => {
 };
 
 const getProceduresTree = async (res) => {
-  const ProcedureGroupModel = ProcedureGroup(connection);
-  const GroupProcedureMapModel = GroupProcedureMap(connection);
-  const ProcedureModel = Procedure(connection);
+  try {
+    const ProcedureGroupModel = ProcedureGroup(connection);
+    const GroupProcedureMapModel = GroupProcedureMap(connection);
+    const ProcedureModel = Procedure(connection);
 
-  const tmp = await connection.query(
-    `SELECT pg.id as groupId, pg.name as groupName, p.id as procedureId, p.name as procedureName
+    const tmp = await connection.query(
+      `SELECT pg.id as groupId, pg.name as groupName, p.id as procedureId, p.name as procedureName
       FROM \`${ProcedureGroupModel.tableName}\` pg
       JOIN \`${GroupProcedureMapModel.tableName}\` gpm
       ON gpm.idProcedureGroup = pg.id
@@ -32,53 +33,61 @@ const getProceduresTree = async (res) => {
         )
         tmp)
         ORDER BY groupId`
-  );
+    );
 
-  const result = {};
+    const result = {};
 
-  tmp[0].forEach(({ groupId, groupName, procedureId, procedureName }) => {
-    if (!result.hasOwnProperty(groupId)) {
-      result[groupId] = {
-        id: groupId,
-        name: groupName,
-        procedures: [
-          {
-            id: procedureId,
-            name: procedureName,
-          },
-        ],
-      };
-    } else {
-      result[groupId].procedures.push({
-        id: procedureId,
-        name: procedureName,
-      });
-    }
-  });
+    tmp[0].forEach(({ groupId, groupName, procedureId, procedureName }) => {
+      if (!result.hasOwnProperty(groupId)) {
+        result[groupId] = {
+          id: groupId,
+          name: groupName,
+          procedures: [
+            {
+              id: procedureId,
+              name: procedureName,
+            },
+          ],
+        };
+      } else {
+        result[groupId].procedures.push({
+          id: procedureId,
+          name: procedureName,
+        });
+      }
+    });
 
-  res.send(Object.values(result));
+    res.send(Object.values(result));
+  } catch (e) {
+    res.status(500).send();
+  }
 };
 
 const getProceduresByGroupId = async (req, res) => {
-  const GroupProcedureMapModel = GroupProcedureMap(connection);
-  const ProcedureModel = Procedure(connection);
+  try {
+    const GroupProcedureMapModel = GroupProcedureMap(connection);
+    const ProcedureModel = Procedure(connection);
 
-  const procedures = await connection.query(
-    `SELECT *
+    const procedures = await connection.query(
+      `SELECT *
     FROM \`${GroupProcedureMapModel.tableName}\` map JOIN \`${ProcedureModel.tableName}\` p
     ON map.idProcedure = p.id
     WHERE map.idProcedureGroup = ${req.params.categoryId}`
-  );
+    );
 
-  res.send(procedures);
+    res.send(procedures);
+  } catch (e) {
+    res.status(500).send();
+  }
 };
 
 const getProceduresByName = async (req, res) => {
-  const GroupProcedureMapModel = GroupProcedureMap(connection);
-  const ProcedureModel = Procedure(connection);
+  try {
+    const GroupProcedureMapModel = GroupProcedureMap(connection);
+    const ProcedureModel = Procedure(connection);
 
-  const procedures = await connection.query(
-    `SELECT gpm.idProcedureGroup as procedureGroupId, p.id as procedureId, p.name as procedureName
+    const procedures = await connection.query(
+      `SELECT gpm.idProcedureGroup as procedureGroupId, p.id as procedureId, p.name as procedureName
     FROM  \`${GroupProcedureMapModel.tableName}\` gpm
     JOIN \`${ProcedureModel.tableName}\` p
     ON gpm.idProcedure = p.id
@@ -92,9 +101,12 @@ const getProceduresByName = async (req, res) => {
         )
       tmp)
 	ORDER BY procedureName`
-  );
+    );
 
-  res.send(procedures[0]);
+    res.send(procedures[0]);
+  } catch (e) {
+    res.status(500).send();
+  }
 };
 
 module.exports = {

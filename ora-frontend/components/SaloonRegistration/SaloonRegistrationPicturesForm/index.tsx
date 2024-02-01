@@ -3,7 +3,7 @@ import { FC } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";
 import { useDispatch, useSelector } from "react-redux";
-import ImageUploading from "react-images-uploading";
+import ImageUploading, { ImageListType } from "react-images-uploading";
 import { ProgressSpinner } from "primereact/progressspinner";
 
 import {
@@ -28,7 +28,7 @@ const SaloonRegistrationPicturesForm: FC<
 
   const dispatch = useDispatch();
 
-  const onChange = (pictures: any[]) => {
+  const onChange = (pictures: ImageListType) => {
     // data for submit
     const newPicturesForm = { ...picturesForm, pictures };
 

@@ -1,11 +1,11 @@
-import { BASE_URL } from "@/api/index";
+import { BASE_API_URL } from "@/api/index";
 
-export const getProcedureCategoriesUrl = BASE_URL.concat("/categories");
+export const getProcedureCategoriesUrl = BASE_API_URL.concat("/categories");
 
-export const getProceduresTreeUrl = BASE_URL.concat("/proceduresTree");
+export const getProceduresTreeUrl = BASE_API_URL.concat("/proceduresTree");
 
-export const getCitiesUrl = BASE_URL.concat("/cities");
+export const getCitiesUrl = BASE_API_URL.concat("/cities");
 
-export const getProceduresUrl = BASE_URL.concat("/procedures");
+export const getProceduresUrl = BASE_API_URL.concat("/procedures");
 
-export const searchProceduresUrl = BASE_URL.concat("/searchProcedures");
+export const searchProceduresUrl = BASE_API_URL.concat("/searchProcedures");

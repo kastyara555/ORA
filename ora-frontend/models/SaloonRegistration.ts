@@ -1,3 +1,5 @@
+import { ImageListType } from "react-images-uploading";
+
 export interface RegistrationSaloonEmailFormModel {
   email: string;
 }
@@ -46,7 +48,7 @@ export interface RegistrationSaloonServicesFormModel {
 }
 
 export interface RegistrationSaloonPicturesFormModel {
-  pictures: any[];
+  pictures: ImageListType;
 }
 
 export interface SaloonRegistrationServiceModel {

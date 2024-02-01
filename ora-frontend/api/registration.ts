@@ -1,5 +1,5 @@
-import { BASE_URL } from "@/api/index";
+import { BASE_API_URL } from "@/api/index";
 
-export const postSaloonRegistrationUrl = BASE_URL.concat("/registration/saloon");
+export const postSaloonRegistrationUrl = BASE_API_URL.concat("/registration/saloon");
 
-export const postUserRegistrationUrl = BASE_URL.concat("/registration/user");
+export const postUserRegistrationUrl = BASE_API_URL.concat("/registration/user");

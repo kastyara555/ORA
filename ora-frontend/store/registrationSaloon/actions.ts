@@ -1,6 +1,6 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { getCitiesUrl, getProcedureCategoriesUrl } from "@/api/categories";
 import { postSaloonRegistrationUrl } from "@/api/registration";
 import {
@@ -50,6 +50,8 @@ export const registrationSaloonPostForm = createAsyncThunk(
         prepareSaloonRegistrationForm(registrationSaloon.selectedValues)
       )
       .then(() => {
+        dispatch(registrationSaloonResetForm());
+
         window.location.pathname = "/login";
       })
       .catch(({ response }) => {
@@ -119,3 +121,7 @@ export const registrationSaloonSetPicturesForm =
   createAction<RegistrationSaloonPicturesFormModel>(
     "registrationSaloon/registrationSaloonSetPicturesForm"
   );
+
+export const registrationSaloonResetForm = createAction(
+  "registrationSaloon/registrationSaloonResetForm"
+);

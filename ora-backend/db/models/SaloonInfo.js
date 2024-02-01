@@ -49,6 +49,9 @@ const SaloonInfo = (sequelize) =>
       description: {
         type: DataTypes.JSON,
       },
+      name:{
+        type: DataTypes.STRING,
+      },
     },
     {
       tableName: "saloon_info",

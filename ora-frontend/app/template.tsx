@@ -4,7 +4,9 @@ import { Provider } from "react-redux";
 
 import Header from "@/components/Header";
 import ToastManager from "@/components/ToastManager";
-import { store } from "@/store";
+import { store, persistor } from "@/store";
+import MainWrapper from "@/components/MainWrapper";
+import { PersistGate } from "redux-persist/integration/react";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -16,15 +18,17 @@ const Template = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Provider store={store}>
-      <Header
-        withoutAuthorization={
-          pathname.includes("/registration") ||
-          pathname.includes("/login") ||
-          pathname.includes("/restore")
-        }
-      />
-      <main>{children}</main>
-      <ToastManager />
+      <PersistGate loading={null} persistor={persistor}>
+        <Header
+          withoutAuthorization={
+            pathname.includes("/registration") ||
+            pathname.includes("/login") ||
+            pathname.includes("/restore")
+          }
+        />
+        <MainWrapper>{children}</MainWrapper>
+        <ToastManager />
+      </PersistGate>
     </Provider>
   );
 };

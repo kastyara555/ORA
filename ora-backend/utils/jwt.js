@@ -2,9 +2,10 @@ const jwt = require("jsonwebtoken");
 
 const config = require("../config");
 
-const createToken = (userId, userTypeMapId) =>
-  jwt.sign({ userId, userTypeMapId }, config.jwt.secret, {
-    expiresIn: "8h",
+const createToken = (userTypeMapId) =>
+  jwt.sign({ userTypeMapId }, config.jwt.secret, {
+    // TODO: Скорректировать время жизни токена
+    expiresIn: "72h",
   });
 
 const verifyToken = (token) => {

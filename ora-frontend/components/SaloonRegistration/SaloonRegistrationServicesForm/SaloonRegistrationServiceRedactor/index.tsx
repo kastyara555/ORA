@@ -11,7 +11,7 @@ import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import isEqual from "lodash/isEqual";
 
 import { searchProceduresUrl } from "@/api/categories";
-import { axiosInstance } from "@/api";
+import axiosInstance from "@/api";
 import { HOURS_PROCEDURE, MINUTES_PROCEDURE } from "@/consts/registration";
 import { SaloonRegistrationServiceModel } from "@/models/SaloonRegistration";
 

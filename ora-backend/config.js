@@ -8,7 +8,11 @@ const config = {
   },
   hash: {
     salt: process.env.HASH_SALT,
-  }
+  },
+  email: {
+    name: process.env.EMAIL_NAME,
+    password: process.env.EMAIL_PASSWORD,
+  },
 };
 
 module.exports = config;

@@ -6,6 +6,7 @@ import {
   registrationSaloonFetchCategories,
   registrationSaloonFetchCities,
   registrationSaloonPostForm,
+  registrationSaloonResetForm,
   registrationSaloonSetAboutForm,
   registrationSaloonSetAdressForm,
   registrationSaloonSetAdressTypeForm,
@@ -18,6 +19,19 @@ import {
   registrationSaloonSetTimeForm,
   registrationSaloonSetVisitPaymentForm,
 } from "@/store/registrationSaloon/actions";
+import {
+  ABOUT_FORM_INITIAL_STATE,
+  ADRESS_FORM_INITIAL_STATE,
+  ADRESS_TYPE_FORM_INITIAL_STATE,
+  CATEGORIES_FORM_INITIAL_STATE,
+  EMAIL_FORM_INITIAL_STATE,
+  PASSWORD_FORM_INITIAL_STATE,
+  PICTURES_FORM_INITIAL_STATE,
+  SERVICES_FORM_INITIAL_STATE,
+  STUFF_COUNT_FORM_INITIAL_STATE,
+  TIME_FORM_INITIAL_STATE,
+  VISIT_PAYMENT_FORM_INITIAL_STATE,
+} from "@/consts/registration";
 
 export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
   createReducer(initialRegistrationSaloonState, (builder) =>
@@ -54,6 +68,20 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
       })
       .addCase(registrationSaloonSetPicturesForm, (state, { payload }) => {
         state.selectedValues.picturesForm = payload;
+      })
+      .addCase(registrationSaloonResetForm, (state) => {
+        state.selectedValues.emailForm = EMAIL_FORM_INITIAL_STATE;
+        state.selectedValues.aboutForm = ABOUT_FORM_INITIAL_STATE;
+        state.selectedValues.passwordForm = PASSWORD_FORM_INITIAL_STATE;
+        state.selectedValues.categoriesForm = CATEGORIES_FORM_INITIAL_STATE;
+        state.selectedValues.adressTypeForm = ADRESS_TYPE_FORM_INITIAL_STATE;
+        state.selectedValues.adressForm = ADRESS_FORM_INITIAL_STATE;
+        state.selectedValues.stuffCountForm = STUFF_COUNT_FORM_INITIAL_STATE;
+        state.selectedValues.visitPaymentForm =
+          VISIT_PAYMENT_FORM_INITIAL_STATE;
+        state.selectedValues.timeForm = TIME_FORM_INITIAL_STATE;
+        state.selectedValues.servicesForm = SERVICES_FORM_INITIAL_STATE;
+        state.selectedValues.picturesForm = PICTURES_FORM_INITIAL_STATE;
       })
       .addCase(registrationSaloonFetchCategories.pending, (state) => {
         state.ui.isLoading = true;
