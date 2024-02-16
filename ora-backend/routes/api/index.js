@@ -7,18 +7,20 @@ const {
   getProceduresByName,
 } = require("../../controllers/proceduresController");
 const { getCities } = require("../../controllers/locationController");
-const {
-  registrationSaloon,
-  registrationUser,
-} = require("../../controllers/registrationController");
 const { loginUser } = require("../../controllers/loginController");
-const { getUserData, updateProfile } = require("../../controllers/userController");
+const { getUserData } = require("../../controllers/userController");
 const { checkAuthorization } = require("../../middlewares/auth");
+const clientRouter = require("./client");
 const saloonRouter = require("./saloon");
+const masterRouter = require("./master");
+const registrationRouter = require("./registration");
 
 var router = express.Router();
 
+router.use("/client", clientRouter);
 router.use("/saloon", saloonRouter);
+router.use("/master", masterRouter);
+router.use("/registration", registrationRouter);
 
 router.get("/categories", function (req, res) {
   getProcedureGroups(res);
@@ -40,24 +42,12 @@ router.get("/cities", function (req, res) {
   getCities(res);
 });
 
-router.post("/registration/saloon", function (req, res) {
-  registrationSaloon(req, res);
-});
-
-router.post("/registration/user", function (req, res) {
-  registrationUser(req, res);
-});
-
 router.post("/login", function (req, res) {
   loginUser(req, res);
 });
 
 router.get("/profile", checkAuthorization, function (req, res) {
   getUserData(req, res);
-});
-
-router.post("/profile/update/:userTypeMapId", checkAuthorization, function (req, res) {
-  updateProfile(req, res);
 });
 
 module.exports = router;

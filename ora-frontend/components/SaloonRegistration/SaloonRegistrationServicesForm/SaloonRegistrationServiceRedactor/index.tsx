@@ -31,11 +31,11 @@ const SaloonRegistrationServiceRedactor: FC<
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
   const searchProcedure = useCallback(async (event: any) => {
-    const tmp = await axiosInstance(
+    const response = await axiosInstance(
       searchProceduresUrl.concat(`/${event.query}`)
     );
 
-    setFilteredProcedures(tmp.data);
+    setFilteredProcedures(response.data);
   }, []);
 
   const isApplyButtonDisabled = useMemo<boolean>(() => {
@@ -44,6 +44,7 @@ const SaloonRegistrationServiceRedactor: FC<
     if (
       service.price === 0 ||
       service.procedure === null ||
+      typeof service.procedure === 'string'  ||
       (+service.time.hours.code === 0 && +service.time.minutes.code === 0)
     )
       return true;

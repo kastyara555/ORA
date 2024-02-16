@@ -14,7 +14,7 @@ const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
 const { roles } = require("../../db/consts/roles");
 const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
-const ServiceSexPriceMap = require("../../db/models/ServiceSexPriceMap");
+const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const UserTypeMap = require("../../db/models/UserTypeMap");
 const ClientInfo = require("../../db/models/ClientInfo");
@@ -25,7 +25,6 @@ const UserImage = require("../../db/models/UserImage");
 const UserType = require("../../db/models/UserType");
 const Service = require("../../db/models/Service");
 const User = require("../../db/models/User");
-const Sex = require("../../db/models/Sex");
 const { generateHash } = require("../../utils/hash");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { transporter } = require("../../email");
@@ -61,8 +60,7 @@ const registrationSaloon = async (req, res) => {
       connection
     );
     const ServiceModel = await Service(connection);
-    const ServiceSexPriceMapModel = await ServiceSexPriceMap(connection);
-    const SexModel = await Sex(connection);
+    const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
     const UserImageModel = await UserImage(connection);
 
@@ -74,8 +72,9 @@ const registrationSaloon = async (req, res) => {
         !IMAGE_EXTENSIONS.includes(fileName.split(".")[1])
     );
 
-    if (suspectPicture)
+    if (suspectPicture) {
       return res.status(400).send("Неверный формат/размер изображения.");
+    }
 
     const existsUsers = await UserModel.findAll({
       where: {
@@ -90,12 +89,13 @@ const registrationSaloon = async (req, res) => {
       },
     });
 
-    if (!!existsUsers.length)
+    if (!!existsUsers.length) {
       return res
         .status(400)
         .send(
           "Пользователь с данной почтой или телефоном уже зарегистрирован."
         );
+    }
 
     const addedUser = await UserModel.create({
       name: aboutForm.name,
@@ -164,14 +164,7 @@ const registrationSaloon = async (req, res) => {
       );
 
       const addedMasterInfo = await MasterInfoModel.create({
-        idCity: adressForm.city,
         idUserTypeMap: addedUserMasterType.id,
-        street: hasAdress ? adressForm.street : "",
-        building: hasAdress ? adressForm.building : "",
-        stage: hasAdress ? adressForm.stage : "",
-        office: hasAdress ? adressForm.office : "",
-        visitPayment: visitPaymentForm.payment,
-        workingTime: timeForm.timeLine,
         description: "",
       });
 
@@ -181,27 +174,27 @@ const registrationSaloon = async (req, res) => {
           idSaloon: addedUserSaloonType.id,
         });
 
-      const addedServices = await ServiceModel.bulkCreate(
-        servicesForm.services.map(({ procedureId, time }) => ({
-          idSaloonMasterMap: addedSaloonMasterMap.id,
-          idProcedure: procedureId,
-          description: "",
-          time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${
-            time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
-          }`,
-        }))
-      );
-
-      const sexes = await SexModel.findAll({ attributes: ["id"] });
-
-      for (const [index, { dataValues: service }] of addedServices.entries()) {
-        await ServiceSexPriceMapModel.bulkCreate(
-          sexes.map(({ dataValues: sex }) => ({
-            idService: service.id,
-            idSex: sex.id,
-            price: servicesForm.services[index].price,
-          }))
+      if (servicesForm.services.length) {
+        const addedServices = await ServiceModel.bulkCreate(
+          servicesForm.services.map(({ procedureId, time }) => ({
+            idSaloon: addedUserSaloonType.id,
+            idProcedure: procedureId,
+            description: "",
+            time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${
+              time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
+            }`,
+          })),
+          { returning: true }
         );
+
+        const addedMasterServiceMapItems =
+          await ServiceMasterMapModel.bulkCreate(
+            addedServices.map(({ dataValues }, index) => ({
+              idService: dataValues.id,
+              idMaster: addedUserMasterType.id,
+              price: servicesForm.services[index].price,
+            }))
+          );
       }
     }
 
@@ -329,8 +322,9 @@ const registrationMaster = async (req, res) => {
   try {
     const { value, error } = masterRegistrationSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const { name, email, phone, password, description, relatedSaloonMapId } =
       value;
@@ -355,32 +349,34 @@ const registrationMaster = async (req, res) => {
       },
     });
 
-    if (!!existsUsers.length)
+    if (!!existsUsers.length) {
       return res
         .status(400)
         .send(
           "Пользователь с данной почтой или телефоном уже зарегистрирован."
         );
+    }
 
-    const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
+    if (relatedSaloonMapId) {
+      const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
+        where: {
+          name: roles.saloon.name,
+        },
+      });
 
-    const saloonToBeRelated = await UserTypeMapModel.findOne({
-      where: {
-        id: relatedSaloonMapId,
-        idUserType: saloonUserTypeData.id,
-      },
-    });
+      const saloonToBeRelated = await UserTypeMapModel.findOne({
+        where: {
+          id: relatedSaloonMapId,
+          idUserType: saloonUserTypeData.id,
+        },
+      });
 
-    if (!saloonToBeRelated)
-      return res
-        .status(400)
-        .send(
-          "Салон, на который Вы ссылаетесь отсутствует."
-        );
+      if (!saloonToBeRelated) {
+        return res
+          .status(400)
+          .send("Салон, на который ссылается форма не существует.");
+      }
+    }
 
     const addedUser = await UserModel.create({
       name,
@@ -399,7 +395,7 @@ const registrationMaster = async (req, res) => {
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: addedUserMasterType } = await UserTypeMapModel.create({
+    const { dataValues: addedMasterType } = await UserTypeMapModel.create({
       idUser: addedUser.id,
       idUserType: userTypesToBeCreated.id,
       idUserStatus: activeUserStatus.id,
@@ -408,15 +404,17 @@ const registrationMaster = async (req, res) => {
     });
 
     const addedMasterInfo = await MasterInfoModel.create({
-      idUserTypeMap: addedMasterClientType.id,
+      idUserTypeMap: addedMasterType.id,
       description,
     });
 
-    const { dataValues: addedSaloonMasterMap } =
-      await SaloonMasterMapModel.create({
-        idMaster: addedUserMasterType.id,
-        idSaloon: relatedSaloonMapId,
-      });
+    if (relatedSaloonMapId) {
+      const { dataValues: addedSaloonMasterMap } =
+        await SaloonMasterMapModel.create({
+          idMaster: addedMasterType.id,
+          idSaloon: relatedSaloonMapId,
+        });
+    }
 
     transporter.sendMail(
       {

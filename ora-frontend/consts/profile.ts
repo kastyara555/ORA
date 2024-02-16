@@ -42,6 +42,13 @@ export const PROFILE_CLIENT_LINKS: ProfileLinkModel[] = [
 
 export const PROFILE_MASTER_LINKS: ProfileLinkModel[] = [
   {
+    href: "/profile",
+    title: "Расписание",
+    description:
+      "Создавайте и корректируйте доступное время для оказания услуг",
+    disabled: true,
+  },
+  {
     href: "/profile/history",
     title: "История бронирования",
     description:
@@ -62,10 +69,9 @@ export const PROFILE_SALOON_LINKS: ProfileLinkModel[] = [
     description: "Просматривайте и управляйте своей командой ",
   },
   {
-    href: "/",
+    href: "/profile/edit/services",
     title: "Редактирование услуг",
     description: "Добавление, редактирование, удаление типов услуг",
-    disabled: true,
   },
   {
     href: "/profile/history",
@@ -77,7 +83,6 @@ export const PROFILE_SALOON_LINKS: ProfileLinkModel[] = [
     href: "/profile/edit",
     title: "Настройки учетной записи салона",
     description: "Редактируйте профиль салона и контактную информацию",
-    disabled: true,
   },
   {
     href: "/",
@@ -90,6 +95,7 @@ export const PROFILE_SALOON_LINKS: ProfileLinkModel[] = [
 interface routeConfiguration {
   url: string;
   availableUserTypes?: userTypesType[];
+  noStrict?: boolean;
 }
 
 export const PRIVATE_ROUTES: routeConfiguration[] = [
@@ -106,6 +112,11 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
   {
     url: "/profile/edit/team/add-master",
     availableUserTypes: [USER_TYPES.saloon],
+  },
+  {
+    url: "/profile/edit/services",
+    availableUserTypes: [USER_TYPES.saloon],
+    noStrict: true,
   },
   {
     url: "/profile/history",

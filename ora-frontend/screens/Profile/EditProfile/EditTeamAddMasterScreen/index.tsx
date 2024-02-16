@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { AxiosError } from "axios";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
+import { Message } from "primereact/message";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 
 import axiosInstance from "@/api";
@@ -60,6 +61,14 @@ const EditTeamAddMasterScreen = () => {
     }
   }, [code]);
 
+  const handleCopy = useCallback(
+    () =>
+      navigator.clipboard.writeText(
+        `${window.location.host}/registration/master?saloonReference=${userTypeMapId}`
+      ),
+    [code]
+  );
+
   return (
     <div className={classNames(styles.container, "py-4")}>
       <Panel header="Добавить существующего мастера">
@@ -81,7 +90,16 @@ const EditTeamAddMasterScreen = () => {
             Добавить
           </Button>
         </div>
-        <p className="mt-2">(Код находится в личном кабинете мастера)</p>
+        <Message
+          className={classNames(
+            "mt-3",
+            "w-full",
+            "flex",
+            "justify-content-start"
+          )}
+          severity="info"
+          text="Код находится в личном кабинете мастера."
+        />
       </Panel>
       <Panel
         className="mt-4"
@@ -94,16 +112,22 @@ const EditTeamAddMasterScreen = () => {
             hideDelay: 500,
             showEvent: "click",
           }}
-          onClick={() => navigator.clipboard.writeText("я енотик полоскун")}
+          onClick={handleCopy}
           outlined
         >
           Нажмите, чтобы скопировать
         </Button>
-        <p className="mt-2">
-          (После нажатия на кнопку нужно отправить мастеру ссылку для того,
-          чтобы сотрудник зарегистрировался в системе и автоматически был
-          добавлен в салон)
-        </p>
+        <br />
+        <Message
+          className={classNames(
+            "mt-3",
+            "w-full",
+            "flex",
+            "justify-content-start"
+          )}
+          severity="info"
+          text="Мастер будет автоматически добавлен в салон после того, как пройдёт регистрацию нового пользователя."
+        />
       </Panel>
     </div>
   );
