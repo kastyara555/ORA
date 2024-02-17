@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, memo, useCallback, useEffect, useState } from "react";
+import { FC, memo, useCallback, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Skeleton } from "primereact/skeleton";
 import classNames from "classnames";
@@ -8,8 +8,9 @@ import classNames from "classnames";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { commonSetUiToast } from "@/store/common/actions";
-import { isNumeric } from "@/utils";
+import { getSaloonServiceDetailsUrl } from "@/api/saloon";
 import axiosInstance from "@/api";
+import { isNumeric } from "@/utils";
 
 import styles from "./style.module.scss";
 
@@ -17,15 +18,23 @@ interface EditServiceScreenProps {
   serviceId: string;
 }
 
-interface ServiceMasterInfo {
+interface MasterInfoModel {
   id: number;
   name: string;
+  email: string;
+  mainImage: string | null;
+}
+
+interface ActiveMasterInfoModel extends MasterInfoModel {
   price: number;
 }
 
 interface ServiceInfoModel {
-  name: string;
-  mastersInfo: ServiceMasterInfo[];
+  id: number;
+  description: string;
+  procedureName: string;
+  activeMasters: ActiveMasterInfoModel[];
+  availableMasters: MasterInfoModel[];
 }
 
 const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
@@ -34,18 +43,21 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    loadServiceInfo();
+  useLayoutEffect(() => {
+    if (isNumeric(serviceId)) {
+      loadServiceInfo();
+    }
   }, []);
 
   const loadServiceInfo = useCallback(async () => {
     try {
       setLoading(true);
-      // const { data } = await axiosInstance.post(
-      //   "",
-      //   {}
-      // );
-      // setServiceInfo(data);
+      const { data } = await axiosInstance.post(
+        getSaloonServiceDetailsUrl(userTypeMapId, +serviceId),
+        {}
+      );
+
+      setServiceInfo(data);
     } catch (e) {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,

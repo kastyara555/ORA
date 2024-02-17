@@ -8,8 +8,9 @@ const {
   getSaloonServices,
   deleteSaloonServices,
   addSaloonServices,
+  updateSaloon,
+  getSaloonServiceInfo,
 } = require("../../../controllers/saloonController");
-const { updateSaloon } = require("../../../controllers/saloonController/information");
 
 var saloonRouter = express.Router();
 
@@ -66,6 +67,14 @@ saloonRouter.post(
   checkAuthorization,
   function (req, res) {
     addSaloonServices(req, res);
+  }
+);
+
+saloonRouter.post(
+  "/:userTypeMapId/services/:serviceId",
+  checkAuthorization,
+  function (req, res) {
+    getSaloonServiceInfo(req, res);
   }
 );
 

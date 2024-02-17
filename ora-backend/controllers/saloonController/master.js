@@ -70,9 +70,10 @@ const getSaloonMasters = async (req, res) => {
 
     const mappedImages = mainImages
       .map(({ dataValues }) => dataValues)
-      .reduce((accum, { idUserTypeMap, url }) => {
-        return { ...accum, [idUserTypeMap]: url };
-      }, {});
+      .reduce(
+        (accum, { idUserTypeMap, url }) => ({ ...accum, [idUserTypeMap]: url }),
+        {}
+      );
 
     const result = mastersData.map((master) => ({
       ...master,

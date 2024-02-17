@@ -39,7 +39,8 @@ const getSaloonServices = async (req, res) => {
       `SELECT s.id as id, p.name as name
       FROM \`${ServiceModel.tableName}\` s
       JOIN \`${ProcedureModel.tableName}\` p
-      ON s.idProcedure = p.id`
+      ON s.idProcedure = p.id
+      WHERE s.idSaloon = ${req.params.userTypeMapId}`
     );
 
     return res.send(procedureData);
