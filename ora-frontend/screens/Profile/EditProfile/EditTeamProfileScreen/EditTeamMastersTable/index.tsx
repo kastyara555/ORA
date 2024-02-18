@@ -125,7 +125,8 @@ const EditTeamMastersTable = () => {
       onSelectionChange={(e) => setSelectedMasters(e.value)}
       dataKey="code"
       emptyMessage="Мастера не найдены"
-      height={10}
+      scrollable
+      scrollHeight="640px"
       loading={loading}
     >
       <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
