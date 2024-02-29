@@ -9,7 +9,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { AutoComplete } from "primereact/autocomplete";
 import { Dropdown } from "primereact/dropdown";
 import { Skeleton } from "primereact/skeleton";
-import { Button } from "primereact/button";
 
 import { HOURS_PROCEDURE, MINUTES_PROCEDURE } from "@/consts/registration";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
@@ -18,6 +17,7 @@ import { commonSetUiToast } from "@/store/common/actions";
 import { searchProceduresUrl } from "@/api/categories";
 import { addSaloonServicesUrl } from "@/api/saloon";
 import axiosInstance from "@/api";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -44,12 +44,12 @@ const INITIAL_STATE: AddServiceFormModel = {
   description: "",
 };
 
-let timeSchema = object({
+const timeSchema = object({
   code: string(),
   name: string(),
 });
 
-let serviceSchema = object({
+const serviceSchema = object({
   procedure: object({
     procedureGroupId: number(),
     procedureId: number(),
@@ -121,8 +121,9 @@ const AddServiceForm: FC<AddServiceFormProps> = ({ setServices }) => {
   });
 
   const searchProcedure = useCallback(async (event: any) => {
-    const response = await axiosInstance(
-      searchProceduresUrl.concat(`/${event.query}`)
+    const response = await axiosInstance.post(
+      searchProceduresUrl.concat(`/${event.query}`),
+      {}
     );
 
     setFilteredProcedures(response.data);
@@ -225,7 +226,7 @@ const AddServiceForm: FC<AddServiceFormProps> = ({ setServices }) => {
         type="submit"
         disabled={!formik.isValid}
         size="small"
-        className={classNames(styles.button, "col-12", "mt-2")}
+        className={classNames("col-12", "mt-2")}
       >
         Добавить
       </Button>

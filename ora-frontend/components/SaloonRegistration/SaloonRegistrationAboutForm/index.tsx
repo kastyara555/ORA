@@ -4,13 +4,13 @@ import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import BY from "country-flag-icons/react/3x2/BY";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 import { InputTextarea } from "primereact/inputtextarea";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonAboutFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSetAboutForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -124,7 +124,6 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
       </div>
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

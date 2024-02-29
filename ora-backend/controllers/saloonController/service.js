@@ -1,11 +1,8 @@
 const { Op } = require("sequelize");
 
 const { connection } = require("../../db/connection");
-const { roles } = require("../../db/consts/roles");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
-const UserType = require("../../db/models/UserType");
-const UserTypeMap = require("../../db/models/UserTypeMap");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const {
   saloonDeleteServicesSchema,
@@ -16,24 +13,8 @@ const {
 
 const getSaloonServices = async (req, res) => {
   try {
-    const UserTypeMapModel = await UserTypeMap(connection);
     const ProcedureModel = await Procedure(connection);
-    const UserTypeModel = await UserType(connection);
     const ServiceModel = await Service(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const [procedureData] = await connection.query(
       `SELECT s.id as id, p.name as name
@@ -52,24 +33,8 @@ const getSaloonServices = async (req, res) => {
 const deleteSaloonServices = async (req, res) => {
   // TODO: пересмотреть удаление после завершения первой итерации разработки
   try {
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
     const ServiceModel = await Service(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const { value, error } = saloonDeleteServicesSchema.validate(req.body);
 
@@ -103,24 +68,8 @@ const deleteSaloonServices = async (req, res) => {
 
 const addSaloonServices = async (req, res) => {
   try {
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
     const ServiceModel = await Service(connection);
     const ProcedureModel = await Procedure(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const { value, error } = saloonAddServicesSchema.validate(req.body);
 

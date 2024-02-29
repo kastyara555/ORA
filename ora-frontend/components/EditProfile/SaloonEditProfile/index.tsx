@@ -7,7 +7,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { InputMask } from "primereact/inputmask";
 import { InputText } from "primereact/inputtext";
 import { Skeleton } from "primereact/skeleton";
-import { Button } from "primereact/button";
 import { object, string } from "yup";
 
 import { profileUpdate } from "@/store/profile/actions";
@@ -18,6 +17,7 @@ import {
 import EditProfileAvatar from "@/components/EditProfile/EditProfileAvatar";
 import SaloonEditTime from "@/components/EditProfile/SaloonEditProfile/SaloonEditTime";
 import WorkTableModel from "@/models/WorkTableModel";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -240,7 +240,7 @@ const SaloonEditProfile = () => {
         <div className={classNames("col-12", "mt-4")}>
           <Button
             disabled={submitDisabled}
-            className={classNames(styles.button, "w-full")}
+            className="w-full"
             onClick={handleApply}
           >
             Сохранить

@@ -1,19 +1,5 @@
 @import '../../../styles/variables';
 
-.button {
-  background-color: $pink-500;
-  border-color: $pink-500;
-
-  &:hover {
-    background-color: $gray-300 !important;
-    border-color: $gray-300 !important;
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 0.2rem $pink-100 !important;
-  }
-}
-
 .input {
   border-color: $pink-100;
 

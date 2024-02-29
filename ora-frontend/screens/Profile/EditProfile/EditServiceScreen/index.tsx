@@ -6,7 +6,6 @@ import { Dropdown, DropdownProps } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import { DataTable } from "primereact/datatable";
 import { Skeleton } from "primereact/skeleton";
-import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import classNames from "classnames";
 
@@ -17,6 +16,7 @@ import { getSaloonServiceDetailsUrl } from "@/api/saloon";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import axiosInstance, { BASE_URL } from "@/api";
 import { isNumeric } from "@/utils";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -200,7 +200,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
           <Column field="price" header="Цена (BYN)" />
         </DataTable>
       </div>
-      <Button className={classNames(styles.button, "w-full", "mt-4")}>
+      <Button className={classNames("w-full", "mt-4")}>
         Сохранить
       </Button>
     </div>

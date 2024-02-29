@@ -4,7 +4,7 @@ export interface WorkDayModel {
     startMinute: number | null;
     finishHour: number | null;
     finishMinute: number | null;
-};
+}
 
 interface WorkTableModel {
     monday: WorkDayModel;
@@ -14,7 +14,7 @@ interface WorkTableModel {
     friday: WorkDayModel;
     saturday: WorkDayModel;
     sunday: WorkDayModel;
-};
+}
 
 export type WorkTableDays = keyof WorkTableModel;
 

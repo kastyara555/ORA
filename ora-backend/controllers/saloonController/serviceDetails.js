@@ -1,10 +1,8 @@
 const { Op } = require("sequelize");
 
 const { connection } = require("../../db/connection");
-const { roles } = require("../../db/consts/roles");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
-const UserType = require("../../db/models/UserType");
 const UserTypeMap = require("../../db/models/UserTypeMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
@@ -20,23 +18,8 @@ const getSaloonServiceInfo = async (req, res) => {
     const MasterInfoModel = await MasterInfo(connection);
     const ProcedureModel = await Procedure(connection);
     const UserImageModel = await UserImage(connection);
-    const UserTypeModel = await UserType(connection);
     const ServiceModel = await Service(connection);
     const UserModel = await User(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const serviceBaseInfo = await ServiceModel.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },

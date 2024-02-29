@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { memo } from "react";
 import classNames from "classnames";
-import { Button } from "primereact/button";
 
 import EditTeamMastersTable from "@/screens/Profile/EditProfile/EditTeamProfileScreen/EditTeamMastersTable";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 

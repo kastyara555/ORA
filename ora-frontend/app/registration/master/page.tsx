@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import { InputText } from "primereact/inputtext";
 import { InputMask } from "primereact/inputmask";
-import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { InputTextarea } from "primereact/inputtextarea";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,9 +13,10 @@ import axiosInstance from "@/api";
 import { postMasterRegistrationUrl } from "@/api/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
+import { isNumeric } from "@/utils";
+import Button from "@/components/Button";
 
 import styles from "./page.module.scss";
-import { isNumeric } from "@/utils";
 
 interface MasterRegistrationStateModel {
   email: string;
@@ -34,7 +34,7 @@ const REGISTRATION_INITIAL_STATE: MasterRegistrationStateModel = {
   description: "",
 };
 
-let masterSchema = object({
+const masterSchema = object({
   email: string().email().trim().required(),
   phone: string().trim().min(17).max(17).required(),
   name: string().trim().min(2).max(32).required(),
@@ -202,7 +202,6 @@ const Registration = () => {
           <Button
             type="submit"
             className={classNames(
-              styles.button,
               "flex",
               "align-items-center",
               "justify-content-center",

@@ -19,25 +19,10 @@ const {
 const getSaloonMasters = async (req, res) => {
   try {
     const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
     const UserModel = await User(connection);
     const UserImageModel = await UserImage(connection);
     const MasterInfoModel = await MasterInfo(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const masters = await SaloonMasterMapModel.findAll({
       where: { idSaloon: req.params.userTypeMapId },
@@ -51,12 +36,12 @@ const getSaloonMasters = async (req, res) => {
 
     const [mastersData] = await connection.query(
       `SELECT utm.id code, u.name name, u.email as email, u.phone as phone
-    FROM \`${MasterInfoModel.tableName}\` m
-    JOIN \`${UserTypeMapModel.tableName}\` utm
-    ON utm.id = m.idUserTypeMap
-    JOIN \`${UserModel.tableName}\` u
-    ON u.id = utm.idUser
-    WHERE m.idUserTypeMap IN (${mastersIds.join(", ")})`
+      FROM \`${MasterInfoModel.tableName}\` m
+      JOIN \`${UserTypeMapModel.tableName}\` utm
+      ON utm.id = m.idUserTypeMap
+      JOIN \`${UserModel.tableName}\` u
+      ON u.id = utm.idUser
+      WHERE m.idUserTypeMap IN (${mastersIds.join(", ")})`
     );
 
     const mainImages = await UserImageModel.findAll({
@@ -89,25 +74,9 @@ const getSaloonMasters = async (req, res) => {
 const deleteSaloonMasters = async (req, res) => {
   // TODO: пересмотреть удаление после завершения первой итерации разработки
   try {
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
     const ServiceModel = await Service(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const { value, error } = saloonDeleteMastersSchema.validate(req.body);
 
@@ -168,20 +137,6 @@ const addSaloonMaster = async (req, res) => {
     const UserTypeMapModel = await UserTypeMap(connection);
     const UserTypeModel = await UserType(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
-
-    const { dataValues: saloonUserType } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const saloonMapInfo = await UserTypeMapModel.findOne({
-      where: { id: req.params.userTypeMapId, idUserType: saloonUserType.id },
-    });
-
-    if (!saloonMapInfo) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const { value, error } = saloonAddMasterSchema.validate(req.body);
 

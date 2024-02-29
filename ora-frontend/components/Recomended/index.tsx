@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 
-import Button from '@/components/Button';
+import ButtonLegacy from '@/components/ButtonLegacy';
 
 import styles from './style.module.scss';
 
@@ -87,12 +87,12 @@ const Recomended = () => {
         <div className={styles.wrapper}>
             <h3>Рекомендуем</h3>
             <div className={styles.recomendedList} ref={elementRef}>
-                <Button
+                <ButtonLegacy
                     className={styles.directionButton}
                     onClick={() => handleHorizantalScroll(elementRef.current, -1)}
                 >
                     <BsArrowLeftShort className={styles.icon} />
-                </Button>
+                </ButtonLegacy>
                 {recomendedPlaces.map(({ id, name, description, image }) => (
                     <div className={styles.recomendedItem} key={id}>
                         <Image src={image} alt={image} height={144} width={256} loading='lazy' />
@@ -100,12 +100,12 @@ const Recomended = () => {
                         <p>{description}</p>
                     </div>
                 ))}
-                <Button
+                <ButtonLegacy
                     className={classNames(styles.directionButton, styles.rightButton)}
                     onClick={() => handleHorizantalScroll(elementRef.current)}
                 >
                     <BsArrowRightShort className={styles.icon} />
-                </Button>
+                </ButtonLegacy>
             </div>
         </div>
     );

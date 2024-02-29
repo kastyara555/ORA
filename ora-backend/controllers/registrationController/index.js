@@ -89,7 +89,7 @@ const registrationSaloon = async (req, res) => {
       },
     });
 
-    if (!!existsUsers.length) {
+    if (existsUsers.length) {
       return res
         .status(400)
         .send(
@@ -253,7 +253,7 @@ const registrationUser = async (req, res) => {
       },
     });
 
-    if (!!existsUsers.length)
+    if (existsUsers.length)
       return res
         .status(400)
         .send(
@@ -349,7 +349,7 @@ const registrationMaster = async (req, res) => {
       },
     });
 
-    if (!!existsUsers.length) {
+    if (existsUsers.length) {
       return res
         .status(400)
         .send(

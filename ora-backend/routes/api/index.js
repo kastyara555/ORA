@@ -14,6 +14,7 @@ const clientRouter = require("./client");
 const saloonRouter = require("./saloon");
 const masterRouter = require("./master");
 const registrationRouter = require("./registration");
+const { cache } = require("../../middlewares/cache");
 
 var router = express.Router();
 
@@ -23,23 +24,23 @@ router.use("/master", masterRouter);
 router.use("/registration", registrationRouter);
 
 router.get("/categories", function (req, res) {
-  getProcedureGroups(res);
+  getProcedureGroups(req, res);
 });
 
 router.get("/proceduresTree", function (req, res) {
-  getProceduresTree(res);
+  getProceduresTree(req, res);
 });
 
 router.get("/procedures/:categoryId", function (req, res) {
   getProceduresByGroupId(req, res);
 });
 
-router.get("/searchProcedures/:search", function (req, res) {
+router.post("/searchProcedures/:search", function (req, res) {
   getProceduresByName(req, res);
 });
 
-router.get("/cities", function (req, res) {
-  getCities(res);
+router.get("/cities", cache(600), function (req, res) {
+  getCities(req, res);
 });
 
 router.post("/login", function (req, res) {

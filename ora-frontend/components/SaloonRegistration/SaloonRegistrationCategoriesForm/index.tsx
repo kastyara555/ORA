@@ -2,7 +2,6 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { ListBox, ListBoxChangeEvent } from "primereact/listbox";
 import { Skeleton } from "primereact/skeleton";
@@ -17,6 +16,7 @@ import {
   registrationSaloonSetCategoriesForm,
 } from "@/store/registrationSaloon/actions";
 import { RegistrationSaloonCategoriesFormModel } from "@/models/SaloonRegistration";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -100,7 +100,6 @@ const SaloonRegistrationCategoriesForm: FC<
       />
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

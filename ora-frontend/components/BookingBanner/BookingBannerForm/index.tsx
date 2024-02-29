@@ -9,9 +9,9 @@ import { addLocale } from "primereact/api";
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
-import { Button } from "primereact/button";
 import { configureUrl } from "@/utils";
 import RU_LOCALE from "@/consts/locale";
+import Button from "@/components/Button";
 
 interface BookingBannerFormModel {
   cities: SelectItemOptionsType[];
@@ -35,11 +35,12 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
   );
 
   const searchProcedure = useCallback(async (event: any) => {
-    const tmp = await axiosInstance(
-      searchProceduresUrl.concat(`/${event.query}`)
+    const { data } = await axiosInstance.post(
+      searchProceduresUrl.concat(`/${event.query}`),
+      {}
     );
 
-    setFilteredProcedures(tmp.data);
+    setFilteredProcedures(data);
   }, []);
 
   const searchButtonClick = useCallback(() => {

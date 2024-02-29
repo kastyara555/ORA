@@ -2,13 +2,13 @@
 import { ChangeEvent, FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { InputText } from "primereact/inputtext";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonVisitPaymentFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSetVisitPaymentForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -138,7 +138,6 @@ const SaloonRegistrationVisitPaymentForm: FC<
       </div>
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

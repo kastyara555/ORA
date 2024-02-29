@@ -3,10 +3,10 @@ import { Dispatch, FC, SetStateAction } from "react";
 import classNames from "classnames";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { Message } from "primereact/message";
-import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
+import Button from "@/components/Button";
 
 interface EditProfileAvatarProps {
   defaultImage: string;
@@ -78,7 +78,6 @@ const EditProfileAvatar: FC<EditProfileAvatarProps> = ({
                 "align-items-center",
                 "justify-content-center",
                 "ml-3",
-                styles.outlinedButton
               )}
               onClick={onImageUpload}
               outlined
@@ -93,9 +92,9 @@ const EditProfileAvatar: FC<EditProfileAvatarProps> = ({
                   "align-items-center",
                   "justify-content-center",
                   "ml-3",
-                  styles.outlinedButton
                 )}
                 onClick={() => setPicturesForm([])}
+                severity="secondary"
                 outlined
               >
                 Отменить выбор

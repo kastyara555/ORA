@@ -3,7 +3,6 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable, DataTableSelection } from "primereact/datatable";
 
@@ -13,6 +12,7 @@ import { profileUserDataSelector } from "@/store/profile/selectors";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { commonSetUiToast } from "@/store/common/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -112,6 +112,7 @@ const EditTeamMastersTable = () => {
       value={masters}
       header={
         <Button
+          severity="secondary"
           outlined
           disabled={!(selectedMasters as MasterModel[]).length}
           onClick={deleteMasters}

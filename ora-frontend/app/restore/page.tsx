@@ -2,7 +2,8 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import classNames from "classnames";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
+
+import Button from "@/components/Button";
 
 import styles from "./page.module.scss";
 
@@ -47,7 +48,6 @@ const Restore = () => {
         />
         <Button
           className={classNames(
-            styles.button,
             "mb-5",
             "w-full",
             "flex",

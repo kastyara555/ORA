@@ -3,7 +3,6 @@ import { FC, useState, useEffect, useMemo, ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { Skeleton } from "primereact/skeleton";
 
@@ -18,6 +17,7 @@ import {
 } from "@/store/registrationSaloon/actions";
 import { RegistrationSaloonAdressFormModel } from "@/models/SaloonRegistration";
 import { isNumeric } from "@/utils";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -165,7 +165,6 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
       )}
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

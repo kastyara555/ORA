@@ -1,7 +1,6 @@
 "use client";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { Button } from "primereact/button";
 import { AutoComplete, AutoCompleteChangeEvent } from "primereact/AutoComplete";
 import {
   InputNumber,
@@ -14,8 +13,7 @@ import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
 import { HOURS_PROCEDURE, MINUTES_PROCEDURE } from "@/consts/registration";
 import { SaloonRegistrationServiceModel } from "@/models/SaloonRegistration";
-
-import styles from "./style.module.scss";
+import Button from "@/components/Button";
 
 interface SaloonRegistrationServiceRedactorModel {
   initialValue: SaloonRegistrationServiceModel;
@@ -31,8 +29,9 @@ const SaloonRegistrationServiceRedactor: FC<
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
   const searchProcedure = useCallback(async (event: any) => {
-    const response = await axiosInstance(
-      searchProceduresUrl.concat(`/${event.query}`)
+    const response = await axiosInstance.post(
+      searchProceduresUrl.concat(`/${event.query}`),
+      {}
     );
 
     setFilteredProcedures(response.data);
@@ -44,7 +43,7 @@ const SaloonRegistrationServiceRedactor: FC<
     if (
       service.price === 0 ||
       service.procedure === null ||
-      typeof service.procedure === 'string'  ||
+      typeof service.procedure === "string" ||
       (+service.time.hours.code === 0 && +service.time.minutes.code === 0)
     )
       return true;
@@ -99,7 +98,7 @@ const SaloonRegistrationServiceRedactor: FC<
             onChange={setHours}
             optionLabel="name"
           />
-          &nbsp;<h3 className={styles.lightText}>ч.,</h3>
+          &nbsp;<h3>ч.,</h3>
         </div>
         <div
           className={classNames("flex", "align-items-center", "pl-1", "p-0")}
@@ -110,7 +109,7 @@ const SaloonRegistrationServiceRedactor: FC<
             onChange={setMinutes}
             optionLabel="name"
           />
-          &nbsp;<h3 className={styles.lightText}>мин.</h3>
+          &nbsp;<h3>мин.</h3>
         </div>
       </div>
       <div
@@ -133,7 +132,7 @@ const SaloonRegistrationServiceRedactor: FC<
 
       <div className={classNames("col-12", "flex", "gap-2", "px-0")}>
         <Button
-          className={classNames("w-full")}
+          className="w-full"
           size="small"
           severity="secondary"
           onClick={onCancel}
@@ -142,7 +141,7 @@ const SaloonRegistrationServiceRedactor: FC<
           Отменить
         </Button>
         <Button
-          className={classNames(styles.button, "w-full")}
+          className="w-full"
           size="small"
           onClick={() => onApply(service)}
           disabled={isApplyButtonDisabled}

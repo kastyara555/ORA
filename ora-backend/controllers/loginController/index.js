@@ -14,8 +14,9 @@ const loginUser = async (req, res) => {
   try {
     const { value, error } = userLoginSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const { email, password, userType } = value;
 

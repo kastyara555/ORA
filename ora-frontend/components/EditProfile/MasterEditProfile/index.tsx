@@ -7,7 +7,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { InputMask } from "primereact/inputmask";
 import { InputText } from "primereact/inputtext";
 import { Skeleton } from "primereact/skeleton";
-import { Button } from "primereact/button";
 import { object, string } from "yup";
 
 import { profileUpdate } from "@/store/profile/actions";
@@ -16,6 +15,7 @@ import {
   profileUserDataSelector,
 } from "@/store/profile/selectors";
 import EditProfileAvatar from "@/components/EditProfile/EditProfileAvatar";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -149,7 +149,7 @@ const MasterEditProfile = () => {
         <div className={classNames("col-12", "mt-2")}>
           <Button
             disabled={submitDisabled}
-            className={classNames(styles.button, "w-full")}
+            className="w-full"
             onClick={handleApply}
           >
             Сохранить

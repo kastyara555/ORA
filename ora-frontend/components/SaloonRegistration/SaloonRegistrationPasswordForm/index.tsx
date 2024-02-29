@@ -2,12 +2,12 @@
 import { ChangeEvent, FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 
 import { RegistrationSaloonPasswordFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetPasswordForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -75,7 +75,6 @@ const SaloonRegistrationPasswordForm: FC<
       />
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

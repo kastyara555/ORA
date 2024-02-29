@@ -1,13 +1,13 @@
 "use client";
 import { FC, useState } from "react";
 import classNames from "classnames";
-import { Button } from "primereact/button";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { useDispatch, useSelector } from "react-redux";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonStuffCountFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSetStuffCountForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -109,7 +109,6 @@ const SaloonRegistrationStuffCountForm: FC<
       </div>
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

@@ -3,36 +3,14 @@ const fs = require("fs");
 const { saloonUpdatingSchema } = require("../../schemas/saloonUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
-const { roles } = require("../../db/consts/roles");
 const UserImage = require("../../db/models/UserImage");
-const UserType = require("../../db/models/UserType");
-const UserTypeMap = require("../../db/models/UserTypeMap");
 const SaloonInfo = require("../../db/models/SaloonInfo");
 const { getUserData } = require("../userController");
 
 const updateSaloon = async (req, res) => {
   try {
     const SaloonInfoModel = await SaloonInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
     const UserImageModel = await UserImage(connection);
-
-    const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
-      where: {
-        name: roles.saloon.name,
-      },
-    });
-
-    const userTypeMap = await UserTypeMapModel.findOne({
-      where: {
-        id: req.params.userTypeMapId,
-        idUserType: saloonUserTypeData.id,
-      },
-    });
-
-    if (!userTypeMap) {
-      return res.status(400).send("Пользователь не найден.");
-    }
 
     const { value, error } = saloonUpdatingSchema.validate(req.body);
 

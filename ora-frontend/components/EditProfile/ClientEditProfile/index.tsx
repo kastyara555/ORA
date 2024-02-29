@@ -8,7 +8,6 @@ import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
 import { Skeleton } from "primereact/skeleton";
 import { addLocale } from "primereact/api";
-import { Button } from "primereact/button";
 import { object, string } from "yup";
 
 import RU_LOCALE from "@/consts/locale";
@@ -18,6 +17,7 @@ import {
   profileUserDataSelector,
 } from "@/store/profile/selectors";
 import EditProfileAvatar from "@/components/EditProfile/EditProfileAvatar";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -184,7 +184,7 @@ const ClientEditProfile = () => {
         <div className={classNames("col-12", "mt-2")}>
           <Button
             disabled={submitDisabled}
-            className={classNames(styles.button, "w-full")}
+            className="w-full"
             onClick={handleApply}
           >
             Сохранить
