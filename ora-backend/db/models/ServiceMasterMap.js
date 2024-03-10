@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
 
-const Sex = require("./Sex");
+const UserTypeMap = require("./UserTypeMap");
 const Service = require("./Service");
 
-const ServiceSexPriceMap = (sequelize) =>
+const ServiceMasterMap = (sequelize) =>
   sequelize.define(
-    "service_sex_price_map",
+    "saloon_master_map",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -20,22 +20,21 @@ const ServiceSexPriceMap = (sequelize) =>
         },
         allowNull: false,
       },
-      idSex: {
+      idMaster: {
         type: DataTypes.INTEGER,
         references: {
-          model: Sex(sequelize),
+          model: UserTypeMap(sequelize),
           key: "id",
         },
         allowNull: false,
       },
       price: {
         type: DataTypes.FLOAT,
-        allowNull: false,
-      },
+      }
     },
     {
-      tableName: "service_sex_price_map",
+      tableName: "service_master_map",
     }
   );
 
-module.exports = ServiceSexPriceMap;
+module.exports = ServiceMasterMap;

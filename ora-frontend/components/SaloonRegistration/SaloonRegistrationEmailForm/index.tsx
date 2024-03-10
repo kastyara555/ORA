@@ -3,12 +3,12 @@ import { ChangeEvent, FC, useState, useMemo } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 
 import { RegistrationSaloonEmailFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetEmailForm } from "@/store/registrationSaloon/actions";
 import { isEmailValid } from "@/utils/forms";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -70,7 +70,6 @@ const SaloonRegistrationEmailForm: FC<SaloonRegistrationEmailFormModel> = ({
       />
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

@@ -33,12 +33,14 @@ export const profile: Reducer<ProfileStoreModel> = createReducer(
       })
       .addCase(profileUpdate.fulfilled, (state, { payload }) => {
         state.loading = false;
-        state.userData = {
-          ...payload.data,
-          mainImage: payload.data.mainImage
-            ? BASE_URL.concat(payload.data.mainImage)
-            : DEFAULT_PROFILE_IMAGE,
-        };
+        if (payload) {
+          state.userData = {
+            ...payload.data,
+            mainImage: payload.data.mainImage
+              ? BASE_URL.concat(payload.data.mainImage)
+              : DEFAULT_PROFILE_IMAGE,
+          };
+        }
       })
       .addCase(profileUpdate.rejected, (state) => {
         state.loading = false;

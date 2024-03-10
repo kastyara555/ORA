@@ -2,6 +2,7 @@
 import { FC } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";
+import { Message } from "primereact/message";
 import { useDispatch, useSelector } from "react-redux";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -13,7 +14,6 @@ import {
 import { registrationSaloonSetPicturesForm } from "@/store/registrationSaloon/actions";
 
 import styles from "./style.module.scss";
-import { Message } from "primereact/message";
 
 interface SaloonRegistrationPicturesFormModel {
   onCountinueClick(): void;

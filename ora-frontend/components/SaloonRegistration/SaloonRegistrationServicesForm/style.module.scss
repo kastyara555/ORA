@@ -9,16 +9,6 @@
     font-weight: 300;
 }
 
-.button {
-    background-color: $pink-500;
-    border-color: $pink-500;
-
-    &:hover {
-        background-color: $gray-300 !important;
-        border-color: $gray-300 !important;
-    }
-}
-
 .subtitle {
     @include text-14-18;
 

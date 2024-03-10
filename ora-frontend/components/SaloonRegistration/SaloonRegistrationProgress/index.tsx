@@ -15,8 +15,8 @@ interface SaloonRegistrationProgressModel {
 const SaloonRegistrationProgress: FC<SaloonRegistrationProgressModel> = ({
   step,
   setPreviosStep,
-}) => {
-  return !!step ? (
+}) =>
+  step ? (
     <div
       className={classNames(
         styles.wrapper,
@@ -30,10 +30,7 @@ const SaloonRegistrationProgress: FC<SaloonRegistrationProgressModel> = ({
       )}
     >
       {step > 0 && (
-        <div
-          className={classNames(styles.backButton)}
-          onClick={setPreviosStep}
-        >
+        <div className={classNames(styles.backButton)} onClick={setPreviosStep}>
           <AiOutlineArrowLeft size={22} />
         </div>
       )}
@@ -49,6 +46,5 @@ const SaloonRegistrationProgress: FC<SaloonRegistrationProgressModel> = ({
   ) : (
     <div className={classNames(styles.wrapper, "mb-4", "px-2")} />
   );
-};
 
 export default SaloonRegistrationProgress;

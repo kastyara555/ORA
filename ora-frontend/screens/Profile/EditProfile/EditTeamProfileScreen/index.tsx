@@ -1,23 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import { memo } from "react";
 import classNames from "classnames";
-import { Button } from "primereact/button";
+import { TabPanel, TabView } from "primereact/tabview";
 
 import EditTeamMastersTable from "@/screens/Profile/EditProfile/EditTeamProfileScreen/EditTeamMastersTable";
-
-import styles from "./style.module.scss";
+import EditTeamAddMasterForm from "@/screens/Profile/EditProfile/EditTeamProfileScreen/EditTeamAddMasterForm";
 
 const EditTeamProfileScreen = () => (
-  <div className={classNames(styles.container, "py-4")}>
-    <h3 className="pb-4">Список мастеров</h3>
-    <EditTeamMastersTable />
-    <br />
-    <Link className={classNames(styles.addMasterLink, "my-4")} href="/profile/edit/team/add-master">
-      <Button className={classNames("flex", "justify-content-center")} size="small">Добавить мастера</Button>
-    </Link>
-  </div>
+  <TabView className={classNames("w-full", "mt-4")}>
+    <TabPanel header="Добавление мастеров">
+      <EditTeamAddMasterForm />
+    </TabPanel>
+    <TabPanel header="Список мастеров">
+      <EditTeamMastersTable />
+    </TabPanel>
+  </TabView>
 );
 
 export default memo(EditTeamProfileScreen);

@@ -1,7 +1,7 @@
 const { connection } = require("../../db/connection");
 const City = require("../../db/models/City");
 
-const getCities = async (res) => {
+const getCities = async (req, res) => {
   try {
     const cities = await City(connection).findAll({
       order: [

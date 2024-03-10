@@ -7,45 +7,40 @@ const {
   getProceduresByName,
 } = require("../../controllers/proceduresController");
 const { getCities } = require("../../controllers/locationController");
-const {
-  registrationSaloon,
-  registrationUser,
-} = require("../../controllers/registrationController");
 const { loginUser } = require("../../controllers/loginController");
-const { getUserData, updateProfile } = require("../../controllers/userController");
+const { getUserData } = require("../../controllers/userController");
 const { checkAuthorization } = require("../../middlewares/auth");
+const clientRouter = require("./client");
 const saloonRouter = require("./saloon");
+const masterRouter = require("./master");
+const registrationRouter = require("./registration");
+const { cache } = require("../../middlewares/cache");
 
 var router = express.Router();
 
+router.use("/client", clientRouter);
 router.use("/saloon", saloonRouter);
+router.use("/master", masterRouter);
+router.use("/registration", registrationRouter);
 
 router.get("/categories", function (req, res) {
-  getProcedureGroups(res);
+  getProcedureGroups(req, res);
 });
 
 router.get("/proceduresTree", function (req, res) {
-  getProceduresTree(res);
+  getProceduresTree(req, res);
 });
 
 router.get("/procedures/:categoryId", function (req, res) {
   getProceduresByGroupId(req, res);
 });
 
-router.get("/searchProcedures/:search", function (req, res) {
+router.post("/searchProcedures/:search", function (req, res) {
   getProceduresByName(req, res);
 });
 
-router.get("/cities", function (req, res) {
-  getCities(res);
-});
-
-router.post("/registration/saloon", function (req, res) {
-  registrationSaloon(req, res);
-});
-
-router.post("/registration/user", function (req, res) {
-  registrationUser(req, res);
+router.get("/cities", cache(600), function (req, res) {
+  getCities(req, res);
 });
 
 router.post("/login", function (req, res) {
@@ -54,10 +49,6 @@ router.post("/login", function (req, res) {
 
 router.get("/profile", checkAuthorization, function (req, res) {
   getUserData(req, res);
-});
-
-router.post("/profile/update/:userTypeMapId", checkAuthorization, function (req, res) {
-  updateProfile(req, res);
 });
 
 module.exports = router;

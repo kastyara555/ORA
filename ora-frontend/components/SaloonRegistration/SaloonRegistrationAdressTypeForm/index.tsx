@@ -2,12 +2,12 @@
 import { FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
-import { Button } from "primereact/button";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonAdressTypeFormModel } from "@/models/SaloonRegistration";
 import { registrationSaloonSetAdressTypeForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -90,7 +90,6 @@ const SaloonRegistrationAdressTypeForm: FC<
       </div>
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

@@ -14,7 +14,7 @@ const masterRegistrationSchema = Joi.object({
   name: Joi.string().trim().min(2).max(32).required(),
   password: Joi.string().min(5).max(32).required(),
   description: Joi.string().trim().allow("").max(256).required(),
-  relatedSaloonMapId: Joi.number().required(),
+  relatedSaloonMapId: Joi.number(),
 });
 
 module.exports = {

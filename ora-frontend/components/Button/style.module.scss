@@ -1,6 +1,16 @@
-.button {
-    border: 1px solid black;
-    border-radius: 4px;
-    background-color: white;
-    padding: 4px;
+@import "../../styles/variables";
+
+.primaryButton {
+    background-color: $pink-500 !important;
+    border-color: $pink-500 !important;
+    color: $white-500 !important;
+
+    &:hover {
+        background-color: $gray-300 !important;
+        border-color: $gray-300 !important;
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.2rem $pink-100 !important;
+    }
 }

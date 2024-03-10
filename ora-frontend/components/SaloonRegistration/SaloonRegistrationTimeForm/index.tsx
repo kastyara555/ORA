@@ -2,7 +2,6 @@
 import { FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "primereact/button";
 
 import WorkTableModel, {
   WorkTableDays,
@@ -11,6 +10,7 @@ import WorkTableModel, {
 import SaloonRegistrationTimeLine from "@/components/SaloonRegistration/SaloonRegistrationTimeForm/SaloonRegistrationTimeLine";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetTimeForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -89,7 +89,6 @@ const SaloonRegistrationTimeForm: FC<SaloonRegistrationTimeFormModel> = ({
       ))}
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

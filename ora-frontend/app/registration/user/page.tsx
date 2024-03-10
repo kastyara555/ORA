@@ -4,7 +4,6 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { InputText } from "primereact/inputtext";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
-import { Button } from "primereact/button";
 import { addLocale } from "primereact/api";
 import { Password } from "primereact/password";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
@@ -18,6 +17,7 @@ import axiosInstance from "@/api";
 import { postUserRegistrationUrl } from "@/api/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
+import Button from "@/components/Button";
 
 import styles from "./page.module.scss";
 
@@ -297,7 +297,6 @@ const Registration = () => {
           </div>
           <Button
             className={classNames(
-              styles.button,
               "flex",
               "align-items-center",
               "justify-content-center",

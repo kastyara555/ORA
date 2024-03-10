@@ -2,7 +2,6 @@
 import { FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { InputSwitch, InputSwitchChangeEvent } from "primereact/inputswitch";
-import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { BsChevronRight } from "react-icons/bs";
 
@@ -17,9 +16,9 @@ import {
   MINUTES,
 } from "@/consts/registration";
 import { dayTimeByHours, prepareTime } from "@/utils";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
-import { range } from "lodash";
 
 interface SaloonRegistrationTimeLineModel {
   dayName: WorkTableDays;
@@ -227,7 +226,7 @@ const SaloonRegistrationTimeLine: FC<SaloonRegistrationTimeLineModel> = ({
           <div className={classNames("w-full", "flex", "pt-3")}>
             <div className={classNames("w-full", "pr-1")}>
               <Button
-                className={classNames("w-full")}
+                className="w-full"
                 size="small"
                 severity="secondary"
                 onClick={() => setEditingMode(false)}
@@ -238,7 +237,7 @@ const SaloonRegistrationTimeLine: FC<SaloonRegistrationTimeLineModel> = ({
             </div>
             <div className={classNames("w-full", "pl-1")}>
               <Button
-                className={classNames(styles.button, "w-full")}
+                className="w-full"
                 size="small"
                 onClick={applyEditing}
                 disabled={applyButtonDisabled}

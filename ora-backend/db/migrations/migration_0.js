@@ -9,9 +9,9 @@ const ServiceInstanceStatus = require("../models/ServiceInstanceStatus");
 const User = require("../models/User");
 const Review = require("../models/Review");
 const Service = require("../models/Service");
+const ServiceMasterMap = require("../models/ServiceMasterMap");
 const ServiceInstance = require("../models/ServiceInstance");
 const UserCityMap = require("../models/UserCityMap");
-const ServiceSexPriceMap = require("../models/ServiceSexPriceMap");
 const GroupProcedureMap = require("../models/GroupProcedureMap");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
@@ -50,11 +50,11 @@ const migration = async () => {
     await Service(connection).sync();
     await UserRating(connection).sync();
     await UserCityMap(connection).sync();
-    await ServiceSexPriceMap(connection).sync();
     await GroupProcedureMap(connection).sync();
     await SaloonGroupProcedureMap(connection).sync();
     await UserImage(connection).sync();
 
+    await ServiceMasterMap(connection).sync();
     await ServiceInstance(connection).sync();
 
     await Review(connection).sync();

@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import classNames from "classnames";
 import Link from "next/link";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
@@ -17,6 +16,7 @@ import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { commonSetUiToast } from "@/store/common/actions";
 import { setCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
+import Button from "@/components/Button";
 
 import styles from "./page.module.scss";
 
@@ -161,7 +161,6 @@ const Login = () => {
           )}
           <Button
             className={classNames(
-              styles.button,
               "mb-5",
               "w-full",
               "flex",

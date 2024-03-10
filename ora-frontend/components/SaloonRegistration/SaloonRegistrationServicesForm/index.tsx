@@ -3,7 +3,6 @@ import { FC, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { AiOutlinePlus } from "react-icons/ai";
-import { Button } from "primereact/button";
 
 import SaloonRegistrationServiceRedactor from "@/components/SaloonRegistration/SaloonRegistrationServicesForm/SaloonRegistrationServiceRedactor";
 import SaloonRegistrationServicesList from "@/components/SaloonRegistration/SaloonRegistrationServicesForm/SaloonRegistrationServicesList";
@@ -14,6 +13,7 @@ import {
 } from "@/models/SaloonRegistration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetServicesForm } from "@/store/registrationSaloon/actions";
+import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
 
@@ -113,7 +113,6 @@ const SaloonRegistrationServicesForm: FC<
 
       <Button
         className={classNames(
-          styles.button,
           "flex",
           "align-items-center",
           "justify-content-center",

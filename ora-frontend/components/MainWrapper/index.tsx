@@ -17,7 +17,10 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   const privateRouteInfo = useMemo(
-    () => PRIVATE_ROUTES.find(({ url }) => url === pathname),
+    () =>
+      PRIVATE_ROUTES.find(({ url, noStrict }) =>
+        noStrict ? pathname.includes(url) : url === pathname
+      ),
     [pathname]
   );
 

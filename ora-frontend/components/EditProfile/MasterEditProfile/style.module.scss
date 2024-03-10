@@ -1,0 +1,14 @@
+@import '../../../styles/variables';
+
+.input {
+  border-color: $pink-100;
+
+  &:hover {
+    border-color: $pink-500;
+  }
+
+  &:enabled:focus {
+    border-color: $pink-500;
+    box-shadow: 0 0 0 0.2rem $pink-100;
+  }
+}

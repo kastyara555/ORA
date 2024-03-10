@@ -1,17 +1,19 @@
-const { QueryTypes } = require("sequelize");
-
 const { connection } = require("../../db/connection");
 const GroupProcedureMap = require("../../db/models/GroupProcedureMap");
 const Procedure = require("../../db/models/Procedure");
 const ProcedureGroup = require("../../db/models/ProcedureGroup");
+const {
+  searchProceduresByNameSchema,
+} = require("../../schemas/searchProceduresByNameSchema");
+const { DEFAULT_SEARCH_PROCEDURES_LIMIT } = require("../../const");
 
-const getProcedureGroups = async (res) => {
+const getProcedureGroups = async (req, res) => {
   const categories = await ProcedureGroup(connection).findAll();
 
   res.send(Object.values(categories));
 };
 
-const getProceduresTree = async (res) => {
+const getProceduresTree = async (req, res) => {
   try {
     const ProcedureGroupModel = ProcedureGroup(connection);
     const GroupProcedureMapModel = GroupProcedureMap(connection);
@@ -83,24 +85,33 @@ const getProceduresByGroupId = async (req, res) => {
 
 const getProceduresByName = async (req, res) => {
   try {
+    const { value, error } = searchProceduresByNameSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Лимит процедур указан неверно");
+    }
+
+    const { pageSize } = value;
+
     const GroupProcedureMapModel = GroupProcedureMap(connection);
     const ProcedureModel = Procedure(connection);
 
     const procedures = await connection.query(
       `SELECT gpm.idProcedureGroup as procedureGroupId, p.id as procedureId, p.name as procedureName
-    FROM  \`${GroupProcedureMapModel.tableName}\` gpm
-    JOIN \`${ProcedureModel.tableName}\` p
-    ON gpm.idProcedure = p.id
-    WHERE gpm.id IN (
-      SELECT id FROM (
-        SELECT id
-          FROM \`${GroupProcedureMapModel.tableName}\` gpm
-          WHERE gpm.idProcedure = p.id
-          AND LOWER(p.name) LIKE '%${req.params.search.toLowerCase()}%'
-          LIMIT 1
-        )
-      tmp)
-	ORDER BY procedureName`
+      FROM  \`${GroupProcedureMapModel.tableName}\` gpm
+      JOIN \`${ProcedureModel.tableName}\` p
+      ON gpm.idProcedure = p.id
+      WHERE gpm.id IN (
+        SELECT id FROM (
+          SELECT id
+            FROM \`${GroupProcedureMapModel.tableName}\` gpm
+            WHERE gpm.idProcedure = p.id
+            AND LOWER(p.name) LIKE '%${req.params.search.toLowerCase()}%'
+            LIMIT 1
+          )
+        tmp)
+      ORDER BY procedureName
+      LIMIT ${pageSize ? pageSize : DEFAULT_SEARCH_PROCEDURES_LIMIT}`
     );
 
     res.send(procedures[0]);

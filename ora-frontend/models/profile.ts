@@ -11,6 +11,20 @@ export interface ClientProfileModel {
   gallery: string[];
 }
 
+export interface MasterProfileModel {
+  userTypeMapId: number | null;
+  userHash: string | null;
+  bonusCount: number | null;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  userType: string | null;
+  userStatus: string | null;
+  mainImage: string | null;
+  gallery: string[];
+  masterDescription: string;
+}
+
 export interface SaloonProfileModel {
   userTypeMapId: number | null;
   userHash: string | null;
@@ -23,10 +37,10 @@ export interface SaloonProfileModel {
   mainImage: string | null;
   gallery: string[];
   saloonName: string | null;
-  saloonDescription: string | null;
+  saloonDescription: string;
   address: ProfileAddressModel | null;
   visitPayment: number | null;
-  workingTime: any;
+  workingTime: string;
   city: ProfileCityModel | null;
 }
 
