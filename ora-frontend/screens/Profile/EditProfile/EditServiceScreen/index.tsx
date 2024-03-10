@@ -2,21 +2,32 @@
 
 import { FC, memo, useCallback, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dropdown, DropdownProps } from "primereact/dropdown";
-import { InputTextarea } from "primereact/inputtextarea";
-import { DataTable } from "primereact/datatable";
+import { TabPanel, TabView } from "primereact/tabview";
 import { Skeleton } from "primereact/skeleton";
-import { Column } from "primereact/column";
 import classNames from "classnames";
 
+import EditServiceBaseDataForm from "@/screens/Profile/EditProfile/EditServiceScreen/EditServiceBaseDataForm";
+import EditServiceEditMastersTable from "@/screens/Profile/EditProfile/EditServiceScreen/EditServiceEditMastersTable";
+import EditServiceAddMasterForm from "@/screens/Profile/EditProfile/EditServiceScreen/EditServiceAddMasterForm";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { commonSetUiToast } from "@/store/common/actions";
-import { getSaloonServiceDetailsUrl } from "@/api/saloon";
-import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
-import axiosInstance, { BASE_URL } from "@/api";
+import {
+  getSaloonServiceAddMastersUrl,
+  getSaloonServiceDetailsUrl,
+  getSaloonServiceRemoveMastersUrl,
+  getSaloonServiceUpdateBaseDataUrl,
+  getSaloonServiceUpdateMasterUrl,
+} from "@/api/saloon";
+import axiosInstance from "@/api";
 import { isNumeric } from "@/utils";
-import Button from "@/components/Button";
+import {
+  AddingMasterFormPayload,
+  ServiceBaseDataForm,
+  ServiceInfoModel,
+  SubmitEditMasterData,
+} from "@/screens/Profile/EditProfile/EditServiceScreen/types";
+import { prepareServiceInfo } from "@/screens/Profile/EditProfile/EditServiceScreen/helper";
 
 import styles from "./style.module.scss";
 
@@ -24,29 +35,11 @@ interface EditServiceScreenProps {
   serviceId: string;
 }
 
-interface MasterInfoModel {
-  id: number;
-  name: string;
-  email: string;
-  mainImage: string;
-}
-
-interface ActiveMasterInfoModel extends MasterInfoModel {
-  price: number;
-}
-
-interface ServiceInfoModel {
-  id: number;
-  description: string;
-  procedureName: string;
-  activeMasters: ActiveMasterInfoModel[];
-  availableMasters: MasterInfoModel[];
-}
-
 const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
   const { userTypeMapId } = useSelector(profileUserDataSelector);
   const [serviceInfo, setServiceInfo] = useState<ServiceInfoModel | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
@@ -63,27 +56,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
         {}
       );
 
-      const preparedData: ServiceInfoModel = {
-        ...data,
-        availableMasters: data.availableMasters.map(
-          (master: MasterInfoModel) => ({
-            ...master,
-            mainImage: master.mainImage
-              ? BASE_URL.concat(master.mainImage)
-              : DEFAULT_PROFILE_IMAGE,
-          })
-        ),
-        activeMasters: data.activeMasters.map(
-          (master: ActiveMasterInfoModel) => ({
-            ...master,
-            mainImage: master.mainImage
-              ? BASE_URL.concat(master.mainImage)
-              : DEFAULT_PROFILE_IMAGE,
-          })
-        ),
-      };
-
-      setServiceInfo(preparedData);
+      setServiceInfo(prepareServiceInfo(data));
     } catch (e) {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
@@ -98,55 +71,129 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
     }
   }, []);
 
-  const selectedCountryTemplate = (
-    option: MasterInfoModel,
-    props: DropdownProps
-  ) =>
-    option ? (
-      <div className="flex align-items-center">
-        <img
-          src={option.mainImage}
-          alt={option.mainImage}
-          className={classNames(
-            styles.masterAvatar,
-            "h-4rem",
-            "shadow-2",
-            "mr-2"
-          )}
-        />
-        <div>
-          ({option.id})&nbsp;{option.name}&nbsp;{option.email}
-        </div>
-      </div>
-    ) : (
-      <span>{props.placeholder}</span>
-    );
+  const submitBaseDataForm = async (payload: ServiceBaseDataForm) => {
+    try {
+      setDisabled(true);
+      const { data } = await axiosInstance.post(
+        getSaloonServiceUpdateBaseDataUrl(userTypeMapId, +serviceId),
+        payload
+      );
 
-  const countryOptionTemplate = (option: MasterInfoModel) => (
-    <div className="flex align-items-center">
-      <img
-        src={option.mainImage}
-        alt={option.mainImage}
-        className={classNames(
-          styles.masterAvatar,
-          "h-4rem",
-          "shadow-2",
-          "mr-2"
-        )}
-      />
-      <div>
-        ({option.id})&nbsp;{option.name}&nbsp;{option.email}
-      </div>
-    </div>
-  );
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.SUCCESS,
+        summary: "Профиль",
+        detail: "Основная информация об услуге успешно обновлена",
+        life: TOAST_DEFAULT_LIFE,
+      };
 
-  const mainImageTemplate = (master: MasterInfoModel) => (
-    <img
-      src={master.mainImage}
-      alt={master.mainImage}
-      className={classNames(styles.masterAvatar, "h-4rem", "shadow-2")}
-    />
-  );
+      dispatch(commonSetUiToast(toastToBeShown));
+      setServiceInfo(prepareServiceInfo(data));
+    } catch (e) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Профиль",
+        detail: "Ошибка обновления информации об услуге",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setDisabled(false);
+    }
+  };
+
+  const submitAddMasterForm = async (payload: AddingMasterFormPayload) => {
+    try {
+      setDisabled(true);
+      const { data } = await axiosInstance.post(
+        getSaloonServiceAddMastersUrl(userTypeMapId, +serviceId),
+        { masters: [payload] }
+      );
+
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.SUCCESS,
+        summary: "Профиль",
+        detail: "Мастер успешно добавлен для оказания услуги",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+      setServiceInfo(prepareServiceInfo(data));
+    } catch (e) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Профиль",
+        detail: "Ошибка добавления мастера для оказания услуги",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setDisabled(false);
+    }
+  };
+
+  const submitRemoveMasterForm = async (id: number) => {
+    try {
+      setDisabled(true);
+      const { data } = await axiosInstance.post(
+        getSaloonServiceRemoveMastersUrl(userTypeMapId, +serviceId),
+        { codes: [id] }
+      );
+
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.SUCCESS,
+        summary: "Профиль",
+        detail: "Мастер больше не оказывает данную услугу",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+      setServiceInfo(prepareServiceInfo(data));
+    } catch (e) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Профиль",
+        detail: "Ошибка удаления мастера с оказываемой им услуги",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setDisabled(false);
+    }
+  };
+
+  const submitEditMasterForm = async (master: SubmitEditMasterData) => {
+    try {
+      setDisabled(true);
+      const { data } = await axiosInstance.post(
+        getSaloonServiceUpdateMasterUrl(userTypeMapId, +serviceId),
+        { master }
+      );
+
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.SUCCESS,
+        summary: "Профиль",
+        detail: "Информация мастера об оказываемой услуге успешно обновлена",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+      setServiceInfo(prepareServiceInfo(data));
+    } catch (e) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Профиль",
+        detail: "Ошибка редактирования данных мастера и оказываемой им услуги",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setDisabled(false);
+    }
+  };
 
   if (loading) {
     return <Skeleton width="100%" height="512px" className="my-4" />;
@@ -159,50 +206,30 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
   return (
     <div className={classNames(styles.container, "py-4", "grid")}>
       <h3>{serviceInfo.procedureName}</h3>
-      <div className={classNames("col-12", "mt-2")}>
-        <label className={styles.lightText} htmlFor="description">
-          Описание (опционально)
-        </label>
-        <InputTextarea
-          id="description"
-          className={classNames(styles.input, "w-full", "mt-2")}
-          value={serviceInfo.description}
-          maxLength={256}
-          rows={3}
-        />
-      </div>
-      <div className={classNames("col-12", "lg:col-5", "xl:col-5", "py-4")}>
-        <h3>Доступные мастера</h3>
-        <Dropdown
-          options={serviceInfo.availableMasters}
-          optionLabel="name"
-          placeholder="Выберите мастера"
-          filter
-          valueTemplate={selectedCountryTemplate}
-          itemTemplate={countryOptionTemplate}
-          className={classNames("w-full", "mt-4")}
-          disabled={!serviceInfo.availableMasters.length}
-        />
-      </div>
-      <div className={classNames("col-12", "lg:col-7", "xl:col-7", "py-4")}>
-        <h3>Активные мастера</h3>
-        <DataTable
-          value={serviceInfo.activeMasters}
-          className="mt-4"
-          emptyMessage="Мастера не оказывают данную услугу."
-          scrollable
-          scrollHeight="640px"
+      <TabView className={classNames("w-full", "mt-4")}>
+        <TabPanel
+          header="Редактирование базовой информации"
+          disabled={disabled}
         >
-          <Column field="" header="Фото" body={mainImageTemplate} />
-          <Column field="id" header="Код" />
-          <Column field="name" header="Имя" />
-          <Column field="email" header="Почта" />
-          <Column field="price" header="Цена (BYN)" />
-        </DataTable>
-      </div>
-      <Button className={classNames("w-full", "mt-4")}>
-        Сохранить
-      </Button>
+          <EditServiceBaseDataForm
+            serviceInfo={serviceInfo}
+            onSubmit={submitBaseDataForm}
+          />
+        </TabPanel>
+        <TabPanel header="Добавление мастера" disabled={disabled}>
+          <EditServiceAddMasterForm
+            serviceInfo={serviceInfo}
+            onSubmit={submitAddMasterForm}
+          />
+        </TabPanel>
+        <TabPanel header="Редактирование мастеров" disabled={disabled}>
+          <EditServiceEditMastersTable
+            serviceInfo={serviceInfo}
+            onUpdate={submitEditMasterForm}
+            onDelete={submitRemoveMasterForm}
+          />
+        </TabPanel>
+      </TabView>
     </div>
   );
 };

@@ -108,10 +108,7 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
   {
     url: "/profile/edit/team",
     availableUserTypes: [USER_TYPES.saloon],
-  },
-  {
-    url: "/profile/edit/team/add-master",
-    availableUserTypes: [USER_TYPES.saloon],
+    noStrict: true,
   },
   {
     url: "/profile/edit/services",

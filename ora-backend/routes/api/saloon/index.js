@@ -10,6 +10,10 @@ const {
   addSaloonServices,
   updateSaloon,
   getSaloonServiceInfo,
+  updateService,
+  addServiceMasters,
+  removeServiceMasters,
+  updateServiceMaster,
 } = require("../../../controllers/saloonController");
 const { isValidSaloon } = require("../../../middlewares/saloon");
 
@@ -84,6 +88,42 @@ saloonRouter.post(
   isValidSaloon,
   function (req, res) {
     getSaloonServiceInfo(req, res);
+  }
+);
+
+saloonRouter.post(
+  "/:userTypeMapId/services/:serviceId/update",
+  checkAuthorization,
+  isValidSaloon,
+  function (req, res) {
+    updateService(req, res);
+  }
+);
+
+saloonRouter.post(
+  "/:userTypeMapId/services/:serviceId/addMasters",
+  checkAuthorization,
+  isValidSaloon,
+  function (req, res) {
+    addServiceMasters(req, res);
+  }
+);
+
+saloonRouter.post(
+  "/:userTypeMapId/services/:serviceId/removeMasters",
+  checkAuthorization,
+  isValidSaloon,
+  function (req, res) {
+    removeServiceMasters(req, res);
+  }
+);
+
+saloonRouter.post(
+  "/:userTypeMapId/services/:serviceId/updateMaster",
+  checkAuthorization,
+  isValidSaloon,
+  function (req, res) {
+    updateServiceMaster(req, res);
   }
 );
 

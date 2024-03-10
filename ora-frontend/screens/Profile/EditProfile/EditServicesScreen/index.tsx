@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { TabPanel, TabView } from "primereact/tabview";
 import classNames from "classnames";
 
 import AddServiceForm from "@/screens/Profile/EditProfile/EditServicesScreen/AddServiceForm";
@@ -87,13 +88,18 @@ const EditServicesScreen = () => {
 
   return (
     <div className={classNames(styles.container, "py-4")}>
-      <AddServiceForm setServices={setServices} />
-      <h3 className="py-4">Список услуг</h3>
-      <EditServicesTable
-        services={services}
-        loading={loading}
-        deleteService={deleteService}
-      />
+      <TabView className={classNames("w-full", "mt-4")}>
+        <TabPanel header="Добавление услуг">
+          <AddServiceForm setServices={setServices} />
+        </TabPanel>
+        <TabPanel header="Список услуг">
+          <EditServicesTable
+            services={services}
+            loading={loading}
+            deleteService={deleteService}
+          />
+        </TabPanel>
+      </TabView>
     </div>
   );
 };

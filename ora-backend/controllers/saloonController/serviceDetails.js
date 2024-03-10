@@ -9,6 +9,18 @@ const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const MasterInfo = require("../../db/models/MasterInfo");
 const User = require("../../db/models/User");
 const UserImage = require("../../db/models/UserImage");
+const {
+  serviceUpdatingSchema,
+} = require("../../schemas/serviceUpdatingSchema");
+const {
+  serviceMastersRemovingSchema,
+} = require("../../schemas/serviceMastersRemovingSchema");
+const {
+  serviceMastersAddingSchema,
+} = require("../../schemas/serviceMastersAddingSchema");
+const {
+  serviceMasterUpdatingSchema,
+} = require("../../schemas/serviceMasterUpdatingSchema");
 
 const getSaloonServiceInfo = async (req, res) => {
   try {
@@ -125,4 +137,221 @@ const getSaloonServiceInfo = async (req, res) => {
   }
 };
 
-module.exports = { getSaloonServiceInfo };
+const updateService = async (req, res) => {
+  try {
+    const ServiceModel = await Service(connection);
+
+    const { value, error } = serviceUpdatingSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { description } = value;
+
+    const serviceBaseInfo = await ServiceModel.findOne({
+      where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
+    });
+
+    if (!serviceBaseInfo) {
+      return res.status(400).send("Нет информации об услуге.");
+    }
+
+    await ServiceModel.update(
+      { description },
+      {
+        where: {
+          id: req.params.serviceId,
+        },
+      }
+    );
+
+    return await getSaloonServiceInfo(req, res);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+const addServiceMasters = async (req, res) => {
+  try {
+    const ServiceMasterMapModel = await ServiceMasterMap(connection);
+    const SaloonMasterMapModel = await SaloonMasterMap(connection);
+    const ServiceModel = await Service(connection);
+
+    const { value, error } = serviceMastersAddingSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { masters } = value;
+
+    const serviceInfo = await ServiceModel.findOne({
+      where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
+    });
+
+    if (!serviceInfo) {
+      return res.status(400).send("Услуга не принадлежит салону");
+    }
+
+    const requestedMasterIds = masters.map(({ id }) => id);
+
+    const saloonMasters = await SaloonMasterMapModel.findAll({
+      where: {
+        idSaloon: req.params.userTypeMapId,
+        idMaster: { [Op.in]: requestedMasterIds },
+      },
+    });
+
+    if (saloonMasters.length !== masters.length) {
+      return res
+        .status(400)
+        .send("Оказывать услуги могут только мастера, работающие в салоне");
+    }
+
+    const alreadyActiveMasters = await ServiceMasterMapModel.findAll({
+      where: {
+        idService: req.params.serviceId,
+        idMaster: {
+          [Op.in]: requestedMasterIds,
+        },
+      },
+    });
+
+    if (alreadyActiveMasters.length) {
+      return res
+        .status(400)
+        .send("Добавляемый(-ые) мастер(-а) уже оказывают данную услугу");
+    }
+
+    await ServiceMasterMapModel.bulkCreate(
+      masters.map(({ id, price }) => ({
+        idService: req.params.serviceId,
+        idMaster: id,
+        price,
+      }))
+    );
+
+    return await getSaloonServiceInfo(req, res);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+const removeServiceMasters = async (req, res) => {
+  // TODO: После построения полного процесса пересмотреть удаление
+  try {
+    const ServiceMasterMapModel = await ServiceMasterMap(connection);
+    const ServiceModel = await Service(connection);
+
+    const { value, error } = serviceMastersRemovingSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { codes } = value;
+
+    const serviceInfo = await ServiceModel.findOne({
+      where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
+    });
+
+    if (!serviceInfo) {
+      return res.status(400).send("Услуга не принадлежит салону");
+    }
+
+    const uniqMasters = new Set(codes);
+
+    if (uniqMasters.size !== codes.length) {
+      return res.status(400).send("Удалить можно только уникальные записи");
+    }
+
+    await ServiceMasterMapModel.destroy({
+      where: {
+        idService: req.params.serviceId,
+        idMaster: {
+          [Op.in]: codes,
+        },
+      },
+    });
+
+    return await getSaloonServiceInfo(req, res);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+const updateServiceMaster = async (req, res) => {
+  // TODO: пересмотреть политику изменения цен после построения процесса
+  try {
+    const ServiceMasterMapModel = await ServiceMasterMap(connection);
+    const SaloonMasterMapModel = await SaloonMasterMap(connection);
+    const ServiceModel = await Service(connection);
+
+    const { value, error } = serviceMasterUpdatingSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { master } = value;
+
+    const serviceInfo = await ServiceModel.findOne({
+      where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
+    });
+
+    if (!serviceInfo) {
+      return res.status(400).send("Услуга не принадлежит салону");
+    }
+
+    const saloonMasterInfo = await SaloonMasterMapModel.findOne({
+      where: {
+        idSaloon: req.params.userTypeMapId,
+        idMaster: master.id,
+      },
+    });
+
+    if (!saloonMasterInfo) {
+      return res
+        .status(400)
+        .send("Оказывать услуги могут только мастера, работающие в салоне");
+    }
+
+    const alreadyActiveMaster = await ServiceMasterMapModel.findOne({
+      where: {
+        idService: req.params.serviceId,
+        idMaster: master.id,
+      },
+    });
+
+    if (!alreadyActiveMaster) {
+      return res
+        .status(400)
+        .send(
+          "Обновить данные можно только для мастеров, которые оказывают данную услугу"
+        );
+    }
+
+    await ServiceMasterMapModel.update(
+      { price: master.price },
+      {
+        where: {
+          idService: req.params.serviceId,
+          idMaster: master.id,
+        },
+      }
+    );
+
+    return await getSaloonServiceInfo(req, res);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+module.exports = {
+  getSaloonServiceInfo,
+  updateService,
+  addServiceMasters,
+  removeServiceMasters,
+  updateServiceMaster,
+};

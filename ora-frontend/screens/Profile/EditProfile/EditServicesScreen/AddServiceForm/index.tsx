@@ -102,7 +102,7 @@ const AddServiceForm: FC<AddServiceFormProps> = ({ setServices }) => {
 
           setServices(data);
           dispatch(commonSetUiToast(toastToBeShown));
-          formik.setValues(INITIAL_STATE);
+          formik.resetForm();
         })
         .catch(({ response }) => {
           const toastToBeShown = {
@@ -133,103 +133,94 @@ const AddServiceForm: FC<AddServiceFormProps> = ({ setServices }) => {
     <Skeleton width="100%" height="340px" />
   ) : (
     <form
-      className={classNames(styles.container, "p-4")}
+      className={classNames(styles.container, "grid")}
       onSubmit={formik.handleSubmit}
     >
-      <h3 className="pb-4">Добавление услуги</h3>
-      <hr />
-      <div className={classNames("mt-2", "grid")}>
-        <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-          <label className={styles.lightText} htmlFor="procedure">
-            Процедура
+      <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
+        <label className={styles.lightText} htmlFor="procedure">
+          Процедура
+        </label>
+        <AutoComplete
+          className={classNames("p-0", "pt-1", "col-12")}
+          inputClassName="w-full"
+          placeholder="Поиск процедур"
+          field="procedureName"
+          value={formik.values.procedure}
+          suggestions={filteredProcedures}
+          completeMethod={searchProcedure}
+          onChange={(e) => {
+            formik.setFieldValue("procedure", e.value);
+          }}
+        />
+      </div>
+      <div
+        className={classNames(
+          "col-12",
+          "lg:col-6",
+          "xl:col-6",
+          "flex",
+          "align-items-end"
+        )}
+      >
+        <div
+          className={classNames("flex", "flex-column", "jusify-content-end")}
+        >
+          <label className={styles.lightText} htmlFor="hours">
+            Часов
           </label>
-          <AutoComplete
-            className={classNames("p-0", "pt-1", "col-12")}
-            inputClassName="w-full"
-            placeholder="Поиск процедур"
-            field="procedureName"
-            value={formik.values.procedure}
-            suggestions={filteredProcedures}
-            completeMethod={searchProcedure}
+          <Dropdown
+            id="hours"
+            className="mt-1"
+            options={HOURS_PROCEDURE}
+            value={formik.values.hours}
             onChange={(e) => {
-              formik.setFieldValue("procedure", e.value);
+              formik.setFieldValue("hours", e.value);
             }}
+            optionLabel="name"
           />
         </div>
         <div
           className={classNames(
-            "col-12",
-            "lg:col-6",
-            "xl:col-6",
             "flex",
-            "align-items-end"
+            "flex-column",
+            "jusify-content-end",
+            "pl-1",
+            "p-0"
           )}
         >
-          <div
-            className={classNames("flex", "flex-column", "jusify-content-end")}
-          >
-            <label className={styles.lightText} htmlFor="hours">
-              Часов
-            </label>
-            <Dropdown
-              id="hours"
-              className="mt-1"
-              options={HOURS_PROCEDURE}
-              value={formik.values.hours}
-              onChange={(e) => {
-                formik.setFieldValue("hours", e.value);
-              }}
-              optionLabel="name"
-            />
-          </div>
-          <div
-            className={classNames(
-              "flex",
-              "flex-column",
-              "jusify-content-end",
-              "pl-1",
-              "p-0"
-            )}
-          >
-            <label className={styles.lightText} htmlFor="minutes">
-              Минут
-            </label>
-            <Dropdown
-              id="minutes"
-              className="mt-1"
-              options={MINUTES_PROCEDURE}
-              value={formik.values.minutes}
-              onChange={(e) => {
-                formik.setFieldValue("minutes", e.value);
-              }}
-              optionLabel="name"
-            />
-          </div>
-        </div>
-        <div className="col-12">
-          <label className={styles.lightText} htmlFor="description">
-            Описание (опционально)
+          <label className={styles.lightText} htmlFor="minutes">
+            Минут
           </label>
-          <InputTextarea
-            id="description"
-            className={classNames(styles.input, "w-full", "mt-1")}
-            value={formik.values.description}
-            onChange={(e) =>
-              formik.setFieldValue("description", e.target.value)
-            }
-            maxLength={256}
-            rows={3}
+          <Dropdown
+            id="minutes"
+            className="mt-1"
+            options={MINUTES_PROCEDURE}
+            value={formik.values.minutes}
+            onChange={(e) => {
+              formik.setFieldValue("minutes", e.value);
+            }}
+            optionLabel="name"
           />
         </div>
       </div>
-      <Button
-        type="submit"
-        disabled={!formik.isValid}
-        size="small"
-        className={classNames("col-12", "mt-2")}
-      >
-        Добавить
-      </Button>
+      <div className="col-12">
+        <label className={styles.lightText} htmlFor="description">
+          Описание (опционально)
+        </label>
+        <InputTextarea
+          id="description"
+          className={classNames(styles.input, "w-full", "mt-1")}
+          value={formik.values.description}
+          onChange={(e) => formik.setFieldValue("description", e.target.value)}
+          maxLength={256}
+          rows={3}
+        />
+      </div>
+      <div className={classNames("col-12", "mt-2")}>
+        <Button type="submit" disabled={!formik.isValid} className="w-full" size="small">
+          Добавить
+        </Button>
+      </div>
     </form>
   );
 };

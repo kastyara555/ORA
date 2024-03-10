@@ -21,5 +21,34 @@ export const deleteSaloonServicesUrl = (saloonId: number) =>
 export const addSaloonServicesUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/services/add`);
 
-export const getSaloonServiceDetailsUrl = (saloonId: number, serviceId: number) =>
-  BASE_API_URL.concat(`/saloon/${saloonId}/services/${serviceId}`);
+export const getSaloonServiceDetailsUrl = (
+  saloonId: number,
+  serviceId: number
+) => BASE_API_URL.concat(`/saloon/${saloonId}/services/${serviceId}`);
+
+export const getSaloonServiceUpdateBaseDataUrl = (
+  saloonId: number,
+  serviceId: number
+) => BASE_API_URL.concat(`/saloon/${saloonId}/services/${serviceId}/update`);
+
+export const getSaloonServiceAddMastersUrl = (
+  saloonId: number,
+  serviceId: number
+) =>
+  BASE_API_URL.concat(`/saloon/${saloonId}/services/${serviceId}/addMasters`);
+
+export const getSaloonServiceRemoveMastersUrl = (
+  saloonId: number,
+  serviceId: number
+) =>
+  BASE_API_URL.concat(
+    `/saloon/${saloonId}/services/${serviceId}/removeMasters`
+  );
+
+export const getSaloonServiceUpdateMasterUrl = (
+  saloonId: number,
+  serviceId: number
+) =>
+  BASE_API_URL.concat(
+    `/saloon/${saloonId}/services/${serviceId}/updateMaster`
+  );

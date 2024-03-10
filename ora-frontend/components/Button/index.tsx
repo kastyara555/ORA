@@ -13,6 +13,7 @@ export interface IButtonProps {
   size?: ButtonSizeType;
   severity?: ButtonSeverityType;
   outlined?: boolean;
+  rounded?: boolean;
 }
 
 type ButtonType = "submit" | "reset" | "button" | undefined;
@@ -35,6 +36,7 @@ const Button: FC<IButtonProps> = ({
   size,
   severity,
   outlined = false,
+  rounded = false,
 }) => (
   <ButtonComponent
     onClick={onClick}
@@ -46,6 +48,7 @@ const Button: FC<IButtonProps> = ({
     size={size}
     severity={severity}
     outlined={outlined}
+    rounded={rounded}
   >
     {children}
   </ButtonComponent>

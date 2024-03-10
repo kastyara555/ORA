@@ -1,29 +1,6 @@
-@import "../../../../styles/variables";
-
 .container {
     h3 {
         width: 100%;
         text-align: center;
     }
-
-    .lightText {
-        font-weight: 300;
-    }
-
-    .input {
-        height: 48px;
-
-        &:hover {
-            border-color: $pink-500;
-        }
-
-        &:enabled:focus {
-            border-color: $pink-500;
-            box-shadow: 0 0 0 0.2rem $pink-100;
-        }
-    }
-}
-
-.masterAvatar {
-    border-radius: 50%;
 }

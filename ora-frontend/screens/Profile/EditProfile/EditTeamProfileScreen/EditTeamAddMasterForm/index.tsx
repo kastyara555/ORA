@@ -17,7 +17,7 @@ import { addSaloonMastersUrl } from "@/api/saloon";
 
 import styles from "./style.module.scss";
 
-const EditTeamAddMasterScreen = () => {
+const EditTeamAddMasterForm = () => {
   const { userTypeMapId } = useSelector(profileUserDataSelector);
   const [code, setCode] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -133,4 +133,4 @@ const EditTeamAddMasterScreen = () => {
   );
 };
 
-export default EditTeamAddMasterScreen;
+export default EditTeamAddMasterForm;
