@@ -30,6 +30,8 @@ const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { transporter } = require("../../email");
 
 const registrationSaloon = async (req, res) => {
+  const transaction = await connection.transaction();
+
   try {
     const { value, error } = saloonRegistrationSchema.validate(req.body);
 
@@ -97,12 +99,15 @@ const registrationSaloon = async (req, res) => {
         );
     }
 
-    const addedUser = await UserModel.create({
-      name: aboutForm.name,
-      email: emailForm.email,
-      phone: aboutForm.phone,
-      password: generateHash(passwordForm.password),
-    });
+    const addedUser = await UserModel.create(
+      {
+        name: aboutForm.name,
+        email: emailForm.email,
+        phone: aboutForm.phone,
+        password: generateHash(passwordForm.password),
+      },
+      { transaction }
+    );
 
     const isSelfEmployed = stuffCountForm.count === 1;
     const { hasAdress } = adressTypeForm;
@@ -117,35 +122,41 @@ const registrationSaloon = async (req, res) => {
       },
     });
 
-    const { dataValues: addedUserSaloonType } = await UserTypeMapModel.create({
-      idUser: addedUser.id,
-      idUserType: saloonType.id,
-      idUserStatus: activeUserStatus.id,
-      hash: generateHash(`${addedUser.id}-${saloonType.id}`),
-      bonusCount: 0,
-    });
+    const { dataValues: addedUserSaloonType } = await UserTypeMapModel.create(
+      {
+        idUser: addedUser.id,
+        idUserType: saloonType.id,
+        idUserStatus: activeUserStatus.id,
+        hash: generateHash(`${addedUser.id}-${saloonType.id}`),
+        bonusCount: 0,
+      },
+      { transaction }
+    );
 
-    const addedSaloonInfo = await SaloonInfoModel.create({
-      idCity: adressForm.city,
-      idStreetType: adressForm.streetType,
-      idUserTypeMap: addedUserSaloonType.id,
-      street: hasAdress ? adressForm.street : "",
-      building: hasAdress ? adressForm.building : "",
-      stage: hasAdress ? adressForm.stage : "",
-      office: hasAdress ? adressForm.office : "",
-      visitPayment: visitPaymentForm.payment,
-      workingTime: timeForm.timeLine,
-      description: aboutForm.description,
-      name: aboutForm.saloonName,
-    });
+    await SaloonInfoModel.create(
+      {
+        idCity: adressForm.city,
+        idStreetType: adressForm.streetType,
+        idUserTypeMap: addedUserSaloonType.id,
+        street: hasAdress ? adressForm.street : "",
+        building: hasAdress ? adressForm.building : "",
+        stage: hasAdress ? adressForm.stage : "",
+        office: hasAdress ? adressForm.office : "",
+        visitPayment: visitPaymentForm.payment,
+        workingTime: timeForm.timeLine,
+        description: aboutForm.description,
+        name: aboutForm.saloonName,
+      },
+      { transaction }
+    );
 
-    const addedCategoriesToSaloon =
-      await SaloonGroupProcedureMapModel.bulkCreate(
-        categoriesForm.categories.map((categoryId) => ({
-          idProcedureGroup: categoryId,
-          idUserTypeMap: addedUserSaloonType.id,
-        }))
-      );
+    await SaloonGroupProcedureMapModel.bulkCreate(
+      categoriesForm.categories.map((categoryId) => ({
+        idProcedureGroup: categoryId,
+        idUserTypeMap: addedUserSaloonType.id,
+      })),
+      { transaction }
+    );
 
     if (isSelfEmployed) {
       const { dataValues: masterType } = await UserTypeModel.findOne({
@@ -161,19 +172,25 @@ const registrationSaloon = async (req, res) => {
           idUserStatus: activeUserStatus.id,
           hash: generateHash(`${addedUser.id}-${masterType.id}`),
           bonusCount: 0,
-        }
+        },
+        { transaction }
       );
 
-      const addedMasterInfo = await MasterInfoModel.create({
-        idUserTypeMap: addedUserMasterType.id,
-        description: "",
-      });
+      await MasterInfoModel.create(
+        {
+          idUserTypeMap: addedUserMasterType.id,
+          description: "",
+        },
+        { transaction }
+      );
 
-      const { dataValues: addedSaloonMasterMap } =
-        await SaloonMasterMapModel.create({
+      await SaloonMasterMapModel.create(
+        {
           idMaster: addedUserMasterType.id,
           idSaloon: addedUserSaloonType.id,
-        });
+        },
+        { transaction }
+      );
 
       if (servicesForm.services.length) {
         const addedServices = await ServiceModel.bulkCreate(
@@ -185,17 +202,17 @@ const registrationSaloon = async (req, res) => {
               time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
             }`,
           })),
-          { returning: true }
+          { returning: true, transaction }
         );
 
-        const addedMasterServiceMapItems =
-          await ServiceMasterMapModel.bulkCreate(
-            addedServices.map(({ dataValues }, index) => ({
-              idService: dataValues.id,
-              idMaster: addedUserMasterType.id,
-              price: servicesForm.services[index].price,
-            }))
-          );
+        await ServiceMasterMapModel.bulkCreate(
+          addedServices.map(({ dataValues }, index) => ({
+            idService: dataValues.id,
+            idMaster: addedUserMasterType.id,
+            price: servicesForm.services[index].price,
+          })),
+          { transaction }
+        );
       }
     }
 
@@ -212,20 +229,27 @@ const registrationSaloon = async (req, res) => {
       let buff = new Buffer.from(data.split(",")[1], "base64");
       fs.writeFileSync(fullImageName, buff);
 
-      await UserImageModel.create({
-        idUserTypeMap: addedUserSaloonType.id,
-        url: imageName,
-        isMain: false,
-      });
+      await UserImageModel.create(
+        {
+          idUserTypeMap: addedUserSaloonType.id,
+          url: imageName,
+          isMain: false,
+        },
+        { transaction }
+      );
     }
 
+    await transaction.commit();
     res.send(addedUser);
   } catch (e) {
+    await transaction.rollback();
     res.status(500).send();
   }
 };
 
 const registrationUser = async (req, res) => {
+  const transaction = await connection.transaction();
+
   try {
     const { value, error } = userRegistrationSchema.validate(req.body);
 
@@ -262,12 +286,15 @@ const registrationUser = async (req, res) => {
           "Пользователь с данной почтой или телефоном уже зарегистрирован."
         );
 
-    const addedUser = await UserModel.create({
-      name,
-      email,
-      phone,
-      password: generateHash(password),
-    });
+    const addedUser = await UserModel.create(
+      {
+        name,
+        email,
+        phone,
+        password: generateHash(password),
+      },
+      { transaction }
+    );
 
     const { dataValues: userTypesToBeCreated } = await UserTypeModel.findOne({
       where: {
@@ -279,21 +306,27 @@ const registrationUser = async (req, res) => {
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: addedUserClientType } = await UserTypeMapModel.create({
-      idUser: addedUser.id,
-      idUserType: userTypesToBeCreated.id,
-      idUserStatus: activeUserStatus.id,
-      hash: generateHash(`${addedUser.id}-${userTypesToBeCreated.id}`),
-      bonusCount: 0,
-    });
+    const { dataValues: addedUserClientType } = await UserTypeMapModel.create(
+      {
+        idUser: addedUser.id,
+        idUserType: userTypesToBeCreated.id,
+        idUserStatus: activeUserStatus.id,
+        hash: generateHash(`${addedUser.id}-${userTypesToBeCreated.id}`),
+        bonusCount: 0,
+      },
+      { transaction }
+    );
 
-    const addedClientInfo = await ClientInfoModel.create({
-      idUserTypeMap: addedUserClientType.id,
-      idSex: sex,
-      birthday,
-      lastName,
-      agree,
-    });
+    await ClientInfoModel.create(
+      {
+        idUserTypeMap: addedUserClientType.id,
+        idSex: sex,
+        birthday,
+        lastName,
+        agree,
+      },
+      { transaction }
+    );
 
     transporter.sendMail(
       {
@@ -314,13 +347,17 @@ const registrationUser = async (req, res) => {
       }
     );
 
+    await transaction.commit();
     res.send(addedUser);
   } catch (e) {
+    await transaction.rollback();
     res.status(500).send();
   }
 };
 
 const registrationMaster = async (req, res) => {
+  const transaction = await connection.transaction();
+
   try {
     const { value, error } = masterRegistrationSchema.validate(req.body);
 
@@ -380,12 +417,15 @@ const registrationMaster = async (req, res) => {
       }
     }
 
-    const addedUser = await UserModel.create({
-      name,
-      email,
-      phone,
-      password: generateHash(password),
-    });
+    const addedUser = await UserModel.create(
+      {
+        name,
+        email,
+        phone,
+        password: generateHash(password),
+      },
+      { transaction }
+    );
 
     const { dataValues: userTypesToBeCreated } = await UserTypeModel.findOne({
       where: {
@@ -397,25 +437,33 @@ const registrationMaster = async (req, res) => {
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: addedMasterType } = await UserTypeMapModel.create({
-      idUser: addedUser.id,
-      idUserType: userTypesToBeCreated.id,
-      idUserStatus: activeUserStatus.id,
-      hash: generateHash(`${addedUser.id}-${userTypesToBeCreated.id}`),
-      bonusCount: 0,
-    });
+    const { dataValues: addedMasterType } = await UserTypeMapModel.create(
+      {
+        idUser: addedUser.id,
+        idUserType: userTypesToBeCreated.id,
+        idUserStatus: activeUserStatus.id,
+        hash: generateHash(`${addedUser.id}-${userTypesToBeCreated.id}`),
+        bonusCount: 0,
+      },
+      { transaction }
+    );
 
-    const addedMasterInfo = await MasterInfoModel.create({
-      idUserTypeMap: addedMasterType.id,
-      description,
-    });
+    await MasterInfoModel.create(
+      {
+        idUserTypeMap: addedMasterType.id,
+        description,
+      },
+      { transaction }
+    );
 
     if (relatedSaloonMapId) {
-      const { dataValues: addedSaloonMasterMap } =
-        await SaloonMasterMapModel.create({
+      await SaloonMasterMapModel.create(
+        {
           idMaster: addedMasterType.id,
           idSaloon: relatedSaloonMapId,
-        });
+        },
+        { transaction }
+      );
     }
 
     transporter.sendMail(
@@ -437,8 +485,10 @@ const registrationMaster = async (req, res) => {
       }
     );
 
+    await transaction.commit();
     res.send(addedUser);
   } catch (e) {
+    await transaction.rollback();
     res.status(500).send();
   }
 };

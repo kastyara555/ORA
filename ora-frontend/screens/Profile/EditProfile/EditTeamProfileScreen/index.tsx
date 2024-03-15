@@ -9,11 +9,11 @@ import EditTeamAddMasterForm from "@/screens/Profile/EditProfile/EditTeamProfile
 
 const EditTeamProfileScreen = () => (
   <TabView className={classNames("w-full", "mt-4")}>
-    <TabPanel header="Добавление мастеров">
-      <EditTeamAddMasterForm />
-    </TabPanel>
     <TabPanel header="Список мастеров">
       <EditTeamMastersTable />
+    </TabPanel>
+    <TabPanel header="Добавление мастеров">
+      <EditTeamAddMasterForm />
     </TabPanel>
   </TabView>
 );

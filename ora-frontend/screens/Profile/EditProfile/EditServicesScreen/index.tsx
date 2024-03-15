@@ -89,15 +89,15 @@ const EditServicesScreen = () => {
   return (
     <div className={classNames(styles.container, "py-4")}>
       <TabView className={classNames("w-full", "mt-4")}>
-        <TabPanel header="Добавление услуг">
-          <AddServiceForm setServices={setServices} />
-        </TabPanel>
         <TabPanel header="Список услуг">
           <EditServicesTable
             services={services}
             loading={loading}
             deleteService={deleteService}
           />
+        </TabPanel>
+        <TabPanel header="Добавление услуг">
+          <AddServiceForm setServices={setServices} />
         </TabPanel>
       </TabView>
     </div>
