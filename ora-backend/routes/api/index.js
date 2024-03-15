@@ -6,7 +6,10 @@ const {
   getProceduresByGroupId,
   getProceduresByName,
 } = require("../../controllers/proceduresController");
-const { getCities } = require("../../controllers/locationController");
+const {
+  getCities,
+  getStreetTypes,
+} = require("../../controllers/locationController");
 const { loginUser } = require("../../controllers/loginController");
 const { getUserData } = require("../../controllers/userController");
 const { checkAuthorization } = require("../../middlewares/auth");
@@ -41,6 +44,10 @@ router.post("/searchProcedures/:search", function (req, res) {
 
 router.get("/cities", cache(600), function (req, res) {
   getCities(req, res);
+});
+
+router.get("/streetTypes", cache(600), function (req, res) {
+  getStreetTypes(req, res);
 });
 
 router.post("/login", function (req, res) {

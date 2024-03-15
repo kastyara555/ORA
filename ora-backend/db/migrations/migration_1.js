@@ -4,11 +4,13 @@ const { roles } = require("../consts/roles");
 const { categories } = require("../consts/categories");
 const { sexes } = require("../consts/sexes");
 const { userStatuses } = require("../consts/userStatuses");
+const { STREET_TYPES } = require("../consts/streetTypes");
 const City = require("../models/City");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
 const UserStatus = require("../models/UserStatus");
 const ProcedureGroup = require("../models/ProcedureGroup");
+const StreetType = require("../models/StreetType");
 
 const sequelize = connection;
 
@@ -22,6 +24,7 @@ const migration = async () => {
     await UserType(connection).bulkCreate(Object.values(roles));
     await UserStatus(connection).bulkCreate(Object.values(userStatuses));
     await ProcedureGroup(connection).bulkCreate(Object.values(categories));
+    await StreetType(connection).bulkCreate(Object.values(STREET_TYPES));
 
     await sequelize.close();
   } catch (error) {

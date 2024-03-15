@@ -127,6 +127,7 @@ const registrationSaloon = async (req, res) => {
 
     const addedSaloonInfo = await SaloonInfoModel.create({
       idCity: adressForm.city,
+      idStreetType: adressForm.streetType,
       idUserTypeMap: addedUserSaloonType.id,
       street: hasAdress ? adressForm.street : "",
       building: hasAdress ? adressForm.building : "",
@@ -228,8 +229,9 @@ const registrationUser = async (req, res) => {
   try {
     const { value, error } = userRegistrationSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const { email, phone, name, lastName, password, birthday, sex, agree } =
       value;

@@ -45,10 +45,17 @@ export interface SaloonProfileModel {
 }
 
 export interface ProfileAddressModel {
+  streetType: ProfileStreetTypeModel | null;
   street: string;
   building: string;
   stage: string;
   office: string;
+}
+
+export interface ProfileStreetTypeModel {
+  id: number;
+  name: string;
+  shortName: string;
 }
 
 export interface ProfileCityModel {

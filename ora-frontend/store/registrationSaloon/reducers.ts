@@ -5,6 +5,7 @@ import { RegistrationSaloonStoreModel } from "@/store/registrationSaloon/model";
 import {
   registrationSaloonFetchCategories,
   registrationSaloonFetchCities,
+  registrationSaloonFetchStreetTypes,
   registrationSaloonPostForm,
   registrationSaloonResetForm,
   registrationSaloonSetAboutForm,
@@ -121,6 +122,26 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
         }
       )
       .addCase(registrationSaloonFetchCities.rejected, (state) => {
+        state.ui.isLoading = false;
+      })
+      .addCase(registrationSaloonFetchStreetTypes.pending, (state) => {
+        state.ui.isLoading = true;
+      })
+      .addCase(
+        registrationSaloonFetchStreetTypes.fulfilled,
+        (state, { payload }) => {
+          const mappedStreetTypes = payload.map(
+            ({ id, name }: { id: number; name: string }) => ({
+              code: id.toString(),
+              name,
+            })
+          );
+
+          state.filterValues.streetTypes = mappedStreetTypes;
+          state.ui.isLoading = false;
+        }
+      )
+      .addCase(registrationSaloonFetchStreetTypes.rejected, (state) => {
         state.ui.isLoading = false;
       })
       .addCase(registrationSaloonPostForm.pending, (state) => {

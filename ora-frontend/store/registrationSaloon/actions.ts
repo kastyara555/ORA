@@ -1,7 +1,11 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axiosInstance from "@/api";
-import { getCitiesUrl, getProcedureCategoriesUrl } from "@/api/categories";
+import {
+  getCitiesUrl,
+  getProcedureCategoriesUrl,
+  getStreetTypesUrl,
+} from "@/api/categories";
 import { postSaloonRegistrationUrl } from "@/api/registration";
 import {
   RegistrationSaloonAboutFormModel,
@@ -34,6 +38,15 @@ export const registrationSaloonFetchCities = createAsyncThunk(
   "registrationSaloon/registrationSaloonFetchCities",
   async () => {
     const { data } = await axiosInstance(getCitiesUrl);
+
+    return data ?? [];
+  }
+);
+
+export const registrationSaloonFetchStreetTypes = createAsyncThunk(
+  "registrationSaloon/registrationSaloonFetchStreetTypes",
+  async () => {
+    const { data } = await axiosInstance(getStreetTypesUrl);
 
     return data ?? [];
   }

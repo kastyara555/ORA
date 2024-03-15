@@ -1,5 +1,6 @@
 const { connection } = require("../connection");
 
+const StreetType = require("../models/StreetType");
 const ProcedureGroup = require("../models/ProcedureGroup");
 const Procedure = require("../models/Procedure");
 const City = require("../models/City");
@@ -36,6 +37,7 @@ const migration = async () => {
     await ServiceInstanceStatus(connection).sync();
     await ProcedureGroup(connection).sync();
     await UserType(connection).sync();
+    await StreetType(connection).sync();
 
     await User(connection).sync();
     await Procedure(connection).sync();

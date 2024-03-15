@@ -30,6 +30,11 @@ export const registrationSaloonCitiesSelector = createSelector(
   (state) => state.cities
 );
 
+export const registrationSaloonStreetTypesSelector = createSelector(
+  registrationSaloonFilterValuesSelector,
+  (state) => state.streetTypes
+);
+
 export const registrationSaloonSelectedValuesSelector = createSelector(
   registrationSaloonSelector,
   (state) => state.selectedValues
