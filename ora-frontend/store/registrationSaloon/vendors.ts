@@ -28,6 +28,7 @@ export const prepareSaloonRegistrationForm = (
   result.adressForm = {
     ...result.adressForm,
     city: +result.adressForm.city.code,
+    streetType: +result.adressForm.streetType.code,
     street: result.adressTypeForm.hasAdress
       ? result.adressForm.street.trim()
       : "",

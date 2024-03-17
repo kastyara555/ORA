@@ -11,6 +11,7 @@ const UserTypeMap = require("../../db/models/UserTypeMap");
 const SaloonInfo = require("../../db/models/SaloonInfo");
 const City = require("../../db/models/City");
 const MasterInfo = require("../../db/models/MasterInfo");
+const StreetType = require("../../db/models/StreetType");
 
 const getUserData = async (req, res) => {
   try {
@@ -29,6 +30,7 @@ const getUserData = async (req, res) => {
     const SaloonInfoModel = await SaloonInfo(connection);
     const MasterInfoModel = await MasterInfo(connection);
     const CityModel = await City(connection);
+    const StreetTypeModel = await StreetType(connection);
 
     const userMapInfo = await UserTypeMapModel.findOne({
       where: { id: userTypeMapId },
@@ -113,17 +115,24 @@ const getUserData = async (req, res) => {
         visitPayment,
         workingTime,
         idCity,
+        idStreetType,
       } = saloonInfo;
 
       result.saloonName = name;
       result.saloonDescription = description;
+
+      const streetTypeInfo = await StreetTypeModel.findOne({
+        where: { id: idStreetType },
+      });
+
       result.address =
-        street && building && stage && office
+        street && building && stage && office && streetTypeInfo
           ? {
               street,
               building,
               stage,
               office,
+              streetType: { id: streetTypeInfo.id, name: streetTypeInfo.name },
             }
           : null;
       result.visitPayment = visitPayment;

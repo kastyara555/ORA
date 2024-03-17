@@ -48,6 +48,7 @@ const Registration = () => {
   const searchParams = useSearchParams();
   const formik = useFormik({
     initialValues: REGISTRATION_INITIAL_STATE,
+    validateOnMount: true,
     validate: (data) => {
       try {
         masterSchema.validateSync(data);

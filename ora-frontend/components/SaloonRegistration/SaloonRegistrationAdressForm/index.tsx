@@ -10,9 +10,11 @@ import {
   registrationSaloonLoadingSelector,
   registrationSaloonCitiesSelector,
   registrationSaloonSelectedValuesSelector,
+  registrationSaloonStreetTypesSelector,
 } from "@/store/registrationSaloon/selectors";
 import {
   registrationSaloonFetchCities,
+  registrationSaloonFetchStreetTypes,
   registrationSaloonSetAdressForm,
 } from "@/store/registrationSaloon/actions";
 import { RegistrationSaloonAdressFormModel } from "@/models/SaloonRegistration";
@@ -33,6 +35,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
     adressTypeForm: { hasAdress },
   } = useSelector(registrationSaloonSelectedValuesSelector);
   const citiesList = useSelector(registrationSaloonCitiesSelector);
+  const streetTypesList = useSelector(registrationSaloonStreetTypesSelector);
   const loading = useSelector(registrationSaloonLoadingSelector);
 
   const [state, setState] =
@@ -80,8 +83,15 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
     }));
   };
 
+  const setStreetType = (e: DropdownChangeEvent) => {
+    setState((oldState) => ({
+      ...oldState,
+      streetType: e.value,
+    }));
+  };
+
   const disabledButton = useMemo<boolean>(() => {
-    if (!state.city) return true;
+    if (!state.city || !state.streetType) return true;
 
     if (
       hasAdress &&
@@ -96,8 +106,17 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
     return false;
   }, [state]);
 
+  const fetchAdressBaseInfo = async () => {
+    if (!citiesList.length) {
+      await dispatch(registrationSaloonFetchCities() as any);
+    }
+    if (!streetTypesList.length) {
+      await dispatch(registrationSaloonFetchStreetTypes() as any);
+    }
+  };
+
   useEffect(() => {
-    if (!citiesList.length) dispatch(registrationSaloonFetchCities() as any);
+    fetchAdressBaseInfo();
   }, []);
 
   return !loading ? (
@@ -129,6 +148,15 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
         <div
           className={classNames("w-full", "grid", "column-gap-2", "row-gap-4")}
         >
+          <Dropdown
+            value={state.streetType}
+            onChange={setStreetType}
+            options={streetTypesList}
+            showClear
+            placeholder="Тип улицы"
+            className={classNames(styles.input, "w-full")}
+            optionLabel="name"
+          />
           <InputText
             className={classNames(styles.input, "w-full", "col-12")}
             placeholder="Улица"

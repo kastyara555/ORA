@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 
 const City = require("./City");
 const UserTypeMap = require("./UserTypeMap");
+const StreetType = require("./StreetType");
 
 const SaloonInfo = (sequelize) =>
   sequelize.define(
@@ -16,6 +17,14 @@ const SaloonInfo = (sequelize) =>
         type: DataTypes.INTEGER,
         references: {
           model: City(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
+      idStreetType: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: StreetType(sequelize),
           key: "id",
         },
         allowNull: false,

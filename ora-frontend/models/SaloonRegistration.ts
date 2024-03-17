@@ -25,6 +25,7 @@ export interface RegistrationSaloonAdressTypeFormModel {
 
 export interface RegistrationSaloonAdressFormModel {
   city: any;
+  streetType: any;
   street: string;
   building: string;
   stage: string;

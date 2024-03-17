@@ -13,6 +13,9 @@ const config = {
     name: process.env.EMAIL_NAME,
     password: process.env.EMAIL_PASSWORD,
   },
+  hosts: {
+    frontEnd: process.env.FRONT_END_HOST,
+  },
 };
 
 module.exports = config;

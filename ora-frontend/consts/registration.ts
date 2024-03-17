@@ -157,6 +157,7 @@ export const ADRESS_TYPE_FORM_INITIAL_STATE: RegistrationSaloonAdressTypeFormMod
 
 export const ADRESS_FORM_INITIAL_STATE: RegistrationSaloonAdressFormModel = {
   city: null,
+  streetType: null,
   street: "",
   building: "",
   stage: "",

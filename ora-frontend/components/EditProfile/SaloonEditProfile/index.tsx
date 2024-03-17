@@ -162,7 +162,7 @@ const SaloonEditProfile = () => {
           />
         </div>
 
-        <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
+        <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
           <label className={styles.lightText} htmlFor="city">
             Город
           </label>
@@ -175,7 +175,19 @@ const SaloonEditProfile = () => {
         </div>
         {profileInfo.address ? (
           <>
-            <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
+            <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
+              <label className={styles.lightText} htmlFor="streetType">
+                Тип улицы
+              </label>
+              <InputText
+                id="streetType"
+                className={classNames("w-full", "mt-2")}
+                value={profileInfo.address.streetType.name}
+                disabled
+              />
+            </div>
+
+            <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
               <label className={styles.lightText} htmlFor="street">
                 Улица
               </label>
@@ -235,7 +247,9 @@ const SaloonEditProfile = () => {
           </div>
         )}
 
-        <SaloonEditTime value={JSON.parse(profileInfo.workingTime) as WorkTableModel} />
+        <SaloonEditTime
+          value={JSON.parse(profileInfo.workingTime) as WorkTableModel}
+        />
 
         <div className={classNames("col-12", "mt-4")}>
           <Button

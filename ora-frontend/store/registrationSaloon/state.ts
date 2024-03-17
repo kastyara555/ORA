@@ -17,6 +17,7 @@ export const initialRegistrationSaloonState: RegistrationSaloonStoreModel = {
   filterValues: {
     categories: [],
     cities: [],
+    streetTypes: [],
   },
   selectedValues: {
     emailForm: EMAIL_FORM_INITIAL_STATE,

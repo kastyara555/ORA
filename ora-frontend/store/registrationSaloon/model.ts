@@ -30,6 +30,7 @@ export interface RegistrationSaloonStoreModel {
   filterValues: {
     categories: any[];
     cities: any[];
+    streetTypes: any[];
   };
   selectedValues: RegistrationFormSelectedValuesModel;
   ui: {

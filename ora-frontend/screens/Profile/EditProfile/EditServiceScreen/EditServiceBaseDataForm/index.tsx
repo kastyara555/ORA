@@ -32,6 +32,7 @@ const EditServiceBaseDataForm: FC<EditServiceBaseDataFormProps> = ({
 
   const formik = useFormik<ServiceBaseDataForm>({
     enableReinitialize: true,
+    validateOnMount: true,
     initialValues: { description: serviceInfo.description },
     validate: (data) => {
       const errors: any = {};
