@@ -20,7 +20,7 @@ const aboutFormSchema = Joi.object({
 });
 
 const passwordFormSchema = Joi.object({
-  password: Joi.string().min(5).max(32).required(),
+  password: Joi.string().trim().min(5).max(32).required(),
 });
 
 const categoriesFormSchema = Joi.object({

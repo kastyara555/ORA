@@ -47,4 +47,26 @@ const sendRegistrationMail = ({ to, username }) => {
   });
 };
 
-module.exports = { sendRegistrationMail };
+const sendPasswordRestorationMail = ({ to, href }) => {
+  const source = fs
+    .readFileSync(
+      path.resolve(__dirname, "./templates/password-restoration-template.html"),
+      "utf-8"
+    )
+    .toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    href,
+  };
+  const htmlToSend = template(replacements);
+
+  sendMail({
+    sender: "ORA-Email Service",
+    subject: "Обновление пароля учётной записи ora-beauty.by",
+    to,
+    text: "", // при отправке html смысловой нагрузки не несёт, но рекомендуют оставлять
+    html: htmlToSend,
+  });
+};
+
+module.exports = { sendRegistrationMail, sendPasswordRestorationMail };

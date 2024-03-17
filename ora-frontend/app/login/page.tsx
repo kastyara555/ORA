@@ -178,7 +178,7 @@ const Login = () => {
           >
             Регистрация
           </Link>
-          <Link className={styles.link} href="/restore">
+          <Link className={styles.link} href="/restore/request">
             Забыли пароль?
           </Link>
         </div>

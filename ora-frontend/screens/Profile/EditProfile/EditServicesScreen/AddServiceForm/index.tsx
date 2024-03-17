@@ -67,6 +67,7 @@ const AddServiceForm: FC<AddServiceFormProps> = ({ setServices }) => {
   const [filteredProcedures, setFilteredProcedures] = useState([]);
   const formik = useFormik({
     initialValues: INITIAL_STATE,
+    validateOnMount: true,
     validate: (data) => {
       try {
         serviceSchema.validateSync(data);

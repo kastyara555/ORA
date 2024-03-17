@@ -5,12 +5,16 @@ const { categories } = require("../consts/categories");
 const { sexes } = require("../consts/sexes");
 const { userStatuses } = require("../consts/userStatuses");
 const { STREET_TYPES } = require("../consts/streetTypes");
+const {
+  PASSWORD_RESTORATION_STATUSES,
+} = require("../consts/passwordRestorationStatuses");
 const City = require("../models/City");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
 const UserStatus = require("../models/UserStatus");
 const ProcedureGroup = require("../models/ProcedureGroup");
 const StreetType = require("../models/StreetType");
+const PasswordRestorationStatus = require("../models/PasswordRestorationStatus");
 
 const sequelize = connection;
 
@@ -25,6 +29,9 @@ const migration = async () => {
     await UserStatus(connection).bulkCreate(Object.values(userStatuses));
     await ProcedureGroup(connection).bulkCreate(Object.values(categories));
     await StreetType(connection).bulkCreate(Object.values(STREET_TYPES));
+    await PasswordRestorationStatus(connection).bulkCreate(
+      Object.values(PASSWORD_RESTORATION_STATUSES)
+    );
 
     await sequelize.close();
   } catch (error) {
