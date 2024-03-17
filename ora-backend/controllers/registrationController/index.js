@@ -27,7 +27,7 @@ const Service = require("../../db/models/Service");
 const User = require("../../db/models/User");
 const { generateHash } = require("../../utils/hash");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
-const { transporter } = require("../../email");
+const { sendRegistrationMail } = require("../../email");
 
 const registrationSaloon = async (req, res) => {
   const transaction = await connection.transaction();
@@ -35,8 +35,9 @@ const registrationSaloon = async (req, res) => {
   try {
     const { value, error } = saloonRegistrationSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const {
       aboutForm,
@@ -279,12 +280,13 @@ const registrationUser = async (req, res) => {
       },
     });
 
-    if (existsUsers.length)
+    if (existsUsers.length) {
       return res
         .status(400)
         .send(
           "Пользователь с данной почтой или телефоном уже зарегистрирован."
         );
+    }
 
     const addedUser = await UserModel.create(
       {
@@ -328,24 +330,10 @@ const registrationUser = async (req, res) => {
       { transaction }
     );
 
-    transporter.sendMail(
-      {
-        from: "ORA-Email Service",
-        to: email,
-        subject: "Регистрация ora-beauty.by",
-        text: `Рады приветствовать Вас от лица всей команды ORA. ${name}, спасибо, что Вы с нами!`,
-      },
-      (err, info) => {
-        if (err) {
-          console.log("Email sending error:");
-          console.log(error);
-        } else {
-          console.log("Email sending info:");
-          console.log(info.envelope);
-          console.log(info.messageId);
-        }
-      }
-    );
+    sendRegistrationMail({
+      to: email,
+      username: name,
+    });
 
     await transaction.commit();
     res.send(addedUser);
@@ -466,24 +454,10 @@ const registrationMaster = async (req, res) => {
       );
     }
 
-    transporter.sendMail(
-      {
-        from: "ORA-Email Service",
-        to: email,
-        subject: "Регистрация ora-beauty.by",
-        text: `Рады приветствовать Вас от лица всей команды ORA. ${name}, спасибо, что Вы с нами!`,
-      },
-      (err, info) => {
-        if (err) {
-          console.log("Email sending error:");
-          console.log(error);
-        } else {
-          console.log("Email sending info:");
-          console.log(info.envelope);
-          console.log(info.messageId);
-        }
-      }
-    );
+    sendRegistrationMail({
+      to: email,
+      username: name,
+    });
 
     await transaction.commit();
     res.send(addedUser);
