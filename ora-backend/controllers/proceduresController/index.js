@@ -72,9 +72,10 @@ const getProceduresByGroupId = async (req, res) => {
 
     const procedures = await connection.query(
       `SELECT *
-    FROM \`${GroupProcedureMapModel.tableName}\` map JOIN \`${ProcedureModel.tableName}\` p
-    ON map.idProcedure = p.id
-    WHERE map.idProcedureGroup = ${req.params.categoryId}`
+      FROM \`${GroupProcedureMapModel.tableName}\` map
+      JOIN \`${ProcedureModel.tableName}\` p
+      ON map.idProcedure = p.id
+      WHERE map.idProcedureGroup = ${req.params.categoryId}`
     );
 
     res.send(procedures);
