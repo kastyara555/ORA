@@ -11,8 +11,6 @@ import styles from "./style.module.scss";
 
 const MasterProfile = () => {
   const profileInfo = useSelector(profileUserDataSelector);
-  console.log("profileInfo");
-  console.log(profileInfo);
 
   return (
     <>

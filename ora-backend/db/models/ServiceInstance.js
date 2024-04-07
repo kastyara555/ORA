@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
-const Service = require("./Service");
 const User = require("./User");
+const ServiceMasterMap = require("./ServiceMasterMap");
 const ServiceInstanceStatus = require("./ServiceInstanceStatus");
 
 const ServiceInstance = (sequelize) =>
@@ -13,10 +13,10 @@ const ServiceInstance = (sequelize) =>
         autoIncrement: true,
         primaryKey: true,
       },
-      idService: {
+      idServiceMasterMap: {
         type: DataTypes.INTEGER,
         references: {
-          model: Service(sequelize),
+          model: ServiceMasterMap(sequelize),
           key: "id",
         },
         allowNull: false,
@@ -27,7 +27,6 @@ const ServiceInstance = (sequelize) =>
           model: User(sequelize),
           key: "id",
         },
-        allowNull: false,
       },
       idServiceInstanceStatus: {
         type: DataTypes.INTEGER,

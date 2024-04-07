@@ -1,6 +1,7 @@
 var express = require("express");
 
 const { checkAuthorization } = require("../../../middlewares/auth");
+const { isValidUserByType } = require("../../../middlewares/user");
 const {
   getSaloonMasters,
   deleteSaloonMasters,
@@ -15,9 +16,11 @@ const {
   removeServiceMasters,
   updateServiceMaster,
 } = require("../../../controllers/saloonController");
-const { isValidSaloon } = require("../../../middlewares/saloon");
+const { roles } = require("../../../db/consts/roles");
 
 var saloonRouter = express.Router();
+
+const isValidSaloon = isValidUserByType(roles.saloon.name);
 
 saloonRouter.post(
   "/:userTypeMapId/update",

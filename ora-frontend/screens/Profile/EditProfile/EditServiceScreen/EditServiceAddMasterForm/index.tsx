@@ -55,7 +55,7 @@ const EditServiceAddMasterForm: FC<EditServiceAddMasterFormProps> = ({
     </div>
   );
 
-  const selectedCountryTemplate = (
+  const selectedMasterTemplate = (
     option: MasterInfoModel | null,
     props: DropdownProps
   ) =>
@@ -116,7 +116,7 @@ const EditServiceAddMasterForm: FC<EditServiceAddMasterFormProps> = ({
           placeholder="Выберите мастера"
           itemTemplate={masterOptionTemplate}
           options={serviceInfo.availableMasters}
-          valueTemplate={selectedCountryTemplate}
+          valueTemplate={selectedMasterTemplate}
           className={classNames("w-full", "mt-2")}
           disabled={!serviceInfo.availableMasters.length}
         />

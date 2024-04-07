@@ -1,16 +1,15 @@
 const { connection } = require("../db/connection");
-const { roles } = require("../db/consts/roles");
 const UserType = require("../db/models/UserType");
 const UserTypeMap = require("../db/models/UserTypeMap");
 
-const isValidSaloon = async (req, res, next) => {
+const isValidUserByType = (userTypeName) => async (req, res, next) => {
   try {
     const UserTypeModel = await UserType(connection);
     const UserTypeMapModel = await UserTypeMap(connection);
 
     const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
       where: {
-        name: roles.saloon.name,
+        name: userTypeName,
       },
     });
 
@@ -27,8 +26,8 @@ const isValidSaloon = async (req, res, next) => {
 
     next();
   } catch (e) {
-    return res.status(400).send("Ошибка валидации салона.");
+    return res.status(400).send("Ошибка валидации пользователя.");
   }
 };
 
-module.exports = { isValidSaloon };
+module.exports = { isValidUserByType };

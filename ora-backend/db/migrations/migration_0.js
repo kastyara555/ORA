@@ -61,6 +61,7 @@ const migration = async () => {
     await UserImage(connection).sync();
 
     await ServiceMasterMap(connection).sync();
+
     await ServiceInstance(connection).sync();
 
     await Review(connection).sync();
