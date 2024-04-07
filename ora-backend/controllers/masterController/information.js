@@ -14,8 +14,9 @@ const updateMaster = async (req, res) => {
 
     const { value, error } = masterUpdatingSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const { description, mainImage } = value;
 

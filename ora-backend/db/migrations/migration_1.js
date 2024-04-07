@@ -8,6 +8,7 @@ const { STREET_TYPES } = require("../consts/streetTypes");
 const {
   PASSWORD_RESTORATION_STATUSES,
 } = require("../consts/passwordRestorationStatuses");
+const { SERVICE_INSTANCE_STATUSES } = require("../consts/serviceInstanceStatuses");
 const City = require("../models/City");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
@@ -15,6 +16,7 @@ const UserStatus = require("../models/UserStatus");
 const ProcedureGroup = require("../models/ProcedureGroup");
 const StreetType = require("../models/StreetType");
 const PasswordRestorationStatus = require("../models/PasswordRestorationStatus");
+const ServiceInstanceStatus = require("../models/ServiceInstanceStatus");
 
 const sequelize = connection;
 
@@ -31,6 +33,9 @@ const migration = async () => {
     await StreetType(connection).bulkCreate(Object.values(STREET_TYPES));
     await PasswordRestorationStatus(connection).bulkCreate(
       Object.values(PASSWORD_RESTORATION_STATUSES)
+    );
+    await ServiceInstanceStatus(connection).bulkCreate(
+      Object.values(SERVICE_INSTANCE_STATUSES)
     );
 
     await sequelize.close();

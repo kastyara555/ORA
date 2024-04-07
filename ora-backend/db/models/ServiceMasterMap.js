@@ -5,7 +5,7 @@ const Service = require("./Service");
 
 const ServiceMasterMap = (sequelize) =>
   sequelize.define(
-    "saloon_master_map",
+    "service_master_map",
     {
       id: {
         type: DataTypes.INTEGER,

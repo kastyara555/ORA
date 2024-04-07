@@ -6,6 +6,9 @@ const {
   updateMaster,
   timetableInformation,
   timetableAvailability,
+  getServicesBySaloon,
+  createServiceInstance,
+  cancelServiceInstance,
 } = require("../../../controllers/masterController");
 const { roles } = require("../../../db/consts/roles");
 
@@ -37,6 +40,33 @@ masterRouter.get(
   isValidMaster,
   function (req, res) {
     timetableInformation(req, res);
+  }
+);
+
+masterRouter.get(
+  "/:userTypeMapId/services/:idSaloon",
+  checkAuthorization,
+  isValidMaster,
+  function (req, res) {
+    getServicesBySaloon(req, res);
+  }
+);
+
+masterRouter.post(
+  "/:userTypeMapId/services",
+  checkAuthorization,
+  isValidMaster,
+  function (req, res) {
+    createServiceInstance(req, res);
+  }
+);
+
+masterRouter.post(
+  "/:userTypeMapId/services/:serviceInstanceId/cancel",
+  checkAuthorization,
+  isValidMaster,
+  function (req, res) {
+    cancelServiceInstance(req, res);
   }
 );
 
