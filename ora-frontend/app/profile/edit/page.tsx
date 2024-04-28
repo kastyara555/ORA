@@ -1,10 +1,10 @@
 import EditProfile from "@/components/EditProfile";
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 
 const ProfileEditPage = () => (
-  <ProfileWrapper backHref="/profile" title="Настройки учетной записи">
+  <ContentWrapper backHref="/profile" title="Настройки учетной записи">
     <EditProfile />
-  </ProfileWrapper>
+  </ContentWrapper>
 );
 
 export default ProfileEditPage;

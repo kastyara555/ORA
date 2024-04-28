@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import "../../styles/variables";
 
 .header {
     display: flex;
@@ -22,4 +22,10 @@
 .saloonRegistrationLink {
     font-weight: 700;
     color: $gray-500;
+}
+
+@media (max-width: 896px) {
+    .header {
+        padding: 0 16px;
+    }
 }

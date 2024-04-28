@@ -10,7 +10,9 @@ const UserImage = require("../../db/models/UserImage");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
 const { connection } = require("../../db/connection");
-const { SERVICE_INSTANCE_STATUSES } = require("../../db/consts/serviceInstanceStatuses");
+const {
+  SERVICE_INSTANCE_STATUSES,
+} = require("../../db/consts/serviceInstanceStatuses");
 
 const timetableAvailability = async (req, res) => {
   try {

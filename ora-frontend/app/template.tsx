@@ -1,12 +1,13 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import MainWrapper from "@/components/MainWrapper";
 import ToastManager from "@/components/ToastManager";
 import { store, persistor } from "@/store";
-import MainWrapper from "@/components/MainWrapper";
-import { PersistGate } from "redux-persist/integration/react";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -27,6 +28,7 @@ const Template = ({ children }: { children: React.ReactNode }) => {
           }
         />
         <MainWrapper>{children}</MainWrapper>
+        <Footer />
         <ToastManager />
       </PersistGate>
     </Provider>

@@ -1,27 +1,38 @@
 import { getProceduresTreeUrl } from "@/api/categories";
-
-import { configureUrl } from "@/utils";
-
 import CategoriesMenu from "@/components/Categories/CategoriesMenu";
 
-const Categories = async () => {
-  const res = await fetch(getProceduresTreeUrl, { cache: "no-cache" });
-  const tmp = await res.json();
+interface ProcedureModel {
+  id: number;
+  name: string;
+  url: string;
+}
 
-  const categoriesTree = tmp.map((category: any) => ({
-    ...category,
-    procedures: [
-      ...category.procedures.map((procedure: any) => ({
-        ...procedure,
-        url: configureUrl("/book", [
-          { name: "categoryId", value: category.id.toString() },
-          { name: "procedureId", value: procedure.id.toString() },
-        ]),
-      })),
+interface CategoryModel {
+  id: number;
+  name: string;
+  procedures: ProcedureModel[];
+}
+
+const Categories = async () => {
+  const res = await fetch(getProceduresTreeUrl, { next: { revalidate: 600 } });
+  const proceduresTree = await res.json();
+
+  const categoriesTree = proceduresTree.map((category: CategoryModel) => ({
+    label: category.name,
+    items: [
+      [
+        {
+          label: null,
+          items: category.procedures.map(({ id, name }: ProcedureModel) => ({
+            label: name,
+            url: `/procedures/${id.toString()}`,
+          })),
+        },
+      ],
     ],
   }));
 
-  return (<CategoriesMenu categoriesTree={categoriesTree} />);
+  return <CategoriesMenu categoriesTree={categoriesTree} />;
 };
 
 export default Categories;

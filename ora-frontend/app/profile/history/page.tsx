@@ -1,9 +1,9 @@
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 
 const ProfileHistoryPage = () => (
-  <ProfileWrapper>
+  <ContentWrapper>
     История бронирования
-  </ProfileWrapper>
+  </ContentWrapper>
 );
 
 export default ProfileHistoryPage;

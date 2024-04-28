@@ -1,12 +1,12 @@
 import { memo } from "react";
 
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 import EditServicesScreen from "@/screens/Profile/EditProfile/EditServicesScreen";
 
 const ServicesPage = () => (
-  <ProfileWrapper backHref="/profile" title="Редактирование услуг">
+  <ContentWrapper backHref="/profile" title="Редактирование услуг">
     <EditServicesScreen />
-  </ProfileWrapper>
+  </ContentWrapper>
 );
 
 export default memo(ServicesPage);

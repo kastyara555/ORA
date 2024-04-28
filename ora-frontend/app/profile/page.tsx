@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import storage from "redux-persist/lib/storage";
 import { useRouter } from "next/navigation";
 
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 import { resetProfileUserData } from "@/store/profile/actions";
 import { deleteCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
@@ -22,7 +22,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <ProfileWrapper>
+    <ContentWrapper>
       <Profile />
       <Button
         className="my-4"
@@ -32,7 +32,7 @@ const ProfilePage = () => {
       >
         Выйти
       </Button>
-    </ProfileWrapper>
+    </ContentWrapper>
   );
 };
 

@@ -16,8 +16,9 @@ const { checkAuthorization } = require("../../middlewares/auth");
 const clientRouter = require("./client");
 const saloonRouter = require("./saloon");
 const masterRouter = require("./master");
-const registrationRouter = require("./registration");
 const passwordRouter = require("./password");
+const procedureRouter = require("./procedure");
+const registrationRouter = require("./registration");
 const { cache } = require("../../middlewares/cache");
 
 var router = express.Router();
@@ -26,6 +27,7 @@ router.use("/client", clientRouter);
 router.use("/saloon", saloonRouter);
 router.use("/master", masterRouter);
 router.use("/password", passwordRouter);
+router.use("/procedure", procedureRouter);
 router.use("/registration", registrationRouter);
 
 router.get("/categories", function (req, res) {

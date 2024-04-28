@@ -2,8 +2,11 @@ import { getProceduresUrl } from "@/api/categories";
 
 import styles from "./page.module.scss";
 
-const Book = async ({ searchParams }: any) => {
-  const res = await fetch(getProceduresUrl.concat(`/${searchParams.categoryId}`));
+const ProceduresPage = async ({ searchParams }: any) => {
+  const res = await fetch(
+    getProceduresUrl.concat(`/${searchParams.categoryId}`),
+    { next: { revalidate: 600 } }
+  );
   const services = await res.json();
 
   return (
@@ -15,4 +18,4 @@ const Book = async ({ searchParams }: any) => {
   );
 };
 
-export default Book;
+export default ProceduresPage;
