@@ -10,6 +10,8 @@ import { AUTH_COOKIE_NAME } from "@/consts";
 import { PRIVATE_ROUTES } from "@/consts/profile";
 import NotFound from "@/app/not-found";
 
+import styles from "./style.module.scss";
+
 const MainWrapper = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const userInfo = useSelector(profileUserDataSelector);
@@ -51,7 +53,11 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  return <main>{showNotFound ? <NotFound /> : children}</main>;
+  return (
+    <main className={styles.content}>
+      {showNotFound ? <NotFound /> : children}
+    </main>
+  );
 };
 
 export default memo(MainWrapper);

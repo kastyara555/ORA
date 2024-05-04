@@ -4,7 +4,7 @@ import BookingBannerForm from "@/components/BookingBanner/BookingBannerForm";
 import styles from "./style.module.scss";
 
 const BookingBanner = async () => {
-  const citiesRes = await fetch(getCitiesUrl, { cache: "no-cache" });
+  const citiesRes = await fetch(getCitiesUrl, { next: { revalidate: 600 } });
   const cities = (await citiesRes.json()).map(({ id, name }: any) => ({
     label: name,
     value: id,

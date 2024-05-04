@@ -3,13 +3,10 @@ import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import { AutoComplete } from "primereact/AutoComplete";
-import { addLocale } from "primereact/api";
 
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
-import { configureUrl } from "@/utils";
-import RU_LOCALE from "@/consts/locale";
 import Button from "@/components/Button";
 
 interface BookingBannerFormModel {
@@ -25,10 +22,7 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
 
   const searchButtonDisabled = useMemo(
     () =>
-      !selectedCity ||
-      // !selectedDate ||
-      !selectedProcedure?.procedureGroupId ||
-      !selectedProcedure?.procedureId,
+      !selectedProcedure?.procedureGroupId || !selectedProcedure?.procedureId,
     [selectedProcedure, selectedCity]
   );
 
@@ -42,14 +36,14 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
   }, []);
 
   const searchButtonClick = useCallback(() => {
-    router.push(
-      configureUrl(`/procedures/${selectedProcedure?.procedureId}`, [
-        { name: "cityId", value: String(selectedCity) },
-      ])
-    );
+    if (selectedCity) {
+      router.push(
+        `/procedures/${selectedProcedure?.procedureId}/${selectedCity}`
+      );
+    } else {
+      router.push(`/procedures/${selectedProcedure?.procedureId}`);
+    }
   }, [selectedProcedure, selectedCity]);
-
-  addLocale("ru", RU_LOCALE);
 
   return (
     <>

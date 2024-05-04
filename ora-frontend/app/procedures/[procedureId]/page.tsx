@@ -1,46 +1,48 @@
 import { FC } from "react";
 
-import { getProcedureDataUrl } from "@/api/categories";
+import { getCitiesProcedureIdUrl } from "@/api/categories";
 import NotFound from "@/app/not-found";
-import { configureGetServicesBody } from "@/utils/procedure";
-import Procedure from "@/screens/Procedure";
+import ContentWrapper from "@/components/ContentWrapper";
+import ProcedureCities from "@/screens/ProcedureCities";
 
 interface ProcedurePageProps {
   params: {
     procedureId: string;
   };
-  searchParams: {
-    cityId: string;
-    date: string;
-  };
 }
 
-const ProcedurePage: FC<ProcedurePageProps> = async ({
-  params,
-  searchParams,
-}) => {
-  const res = await fetch(getProcedureDataUrl(params.procedureId), {
-    cache: "no-cache",
-    method: "POST",
-    body: JSON.stringify(
-      configureGetServicesBody({
-        cityId: searchParams.cityId,
-        date: searchParams.date,
-      })
-    ),
-  });
+interface ProcedureCitiesResponseModel {
+  name: string;
+  cities: { id: number; name: string }[];
+}
 
-  if (res.status === 500 || res.status === 400) {
-    return <div>Что-то пошло не так.</div>;
-  }
+const ProcedurePage: FC<ProcedurePageProps> = async ({ params }) => {
+  const res = await fetch(getCitiesProcedureIdUrl(params.procedureId), {
+    cache: "no-cache",
+  });
 
   if (res.status === 404) {
     return <NotFound />;
   }
 
-  const procedureInfo = await res.json();
+  if (res.status !== 200) {
+    return <div>Что-то пошло не так.</div>;
+  }
 
-  return <Procedure procedure={procedureInfo} />;
+  const procedureInfo = (await res.json()) as ProcedureCitiesResponseModel;
+
+  return (
+    <ContentWrapper title={procedureInfo.name}>
+      {procedureInfo.cities.length ? (
+        <ProcedureCities
+          procedureId={+params.procedureId}
+          cities={procedureInfo.cities}
+        />
+      ) : (
+        "Данную услугу через наш сервис пока никто не оказывает :("
+      )}
+    </ContentWrapper>
+  );
 };
 
 export default ProcedurePage;

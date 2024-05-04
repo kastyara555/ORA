@@ -16,7 +16,15 @@ const ContentWrapper: FC<ContentWrapperProps> = ({
   title,
   backHref,
 }) => (
-  <div className={classNames(styles.contentWrapper, "px-4")}>
+  <div
+    className={classNames(
+      styles.contentWrapper,
+      "px-4",
+      "flex",
+      "flex-column",
+      "align-items-center"
+    )}
+  >
     {(backHref || title) && (
       <div className={classNames(styles.headingWrapper, "pt-1")}>
         {title && <h3 className="px-6">{title}</h3>}
