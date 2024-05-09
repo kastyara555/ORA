@@ -2,10 +2,10 @@
 import { FC } from "react";
 import classNames from "classnames";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import { ListBox } from "primereact/listbox";
 
 import Button from "@/components/Button";
-import { useRouter } from "next/navigation";
 
 type City = { id: number; name: string };
 
@@ -29,7 +29,6 @@ const ProcedureCities: FC<ProcedureCitiesProps> = ({ cities, procedureId }) => {
     initialValues: PROCEDURE_CITY_INITIAL_STATE,
     validateOnMount: true,
     validate: (data) => {
-      console.log(data);
       if (!data.city) {
         return {
           city: "Город должен быть выбран.",
@@ -39,20 +38,21 @@ const ProcedureCities: FC<ProcedureCitiesProps> = ({ cities, procedureId }) => {
       return {};
     },
     onSubmit: async (data) => {
-      router.push(`/${procedureId}/${data.city}`);
+      router.push(`/procedures/${procedureId}/${data.city}`);
     },
   });
 
   return (
     <form
       className={classNames(
-        "pt-2",
+        "pt-4",
         "flex",
         "flex-column",
         "justify-content-between"
       )}
       onSubmit={formik.handleSubmit}
     >
+      <h2>Выберите город:</h2>
       <ListBox
         filter
         value={formik.values.city}
@@ -62,13 +62,13 @@ const ProcedureCities: FC<ProcedureCitiesProps> = ({ cities, procedureId }) => {
         options={cities}
         optionValue="id"
         optionLabel="name"
-        className="w-full"
+        className={classNames("w-full", "mt-2")}
         listStyle={{ maxHeight: 256 }}
       />
       <Button
         type="submit"
         disabled={!formik.isValid}
-        className={classNames("mt-2", "w-full")}
+        className={classNames("mt-4", "w-full")}
       >
         Выбрать
       </Button>

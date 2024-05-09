@@ -3,17 +3,13 @@ const SaloonInfo = require("../../db/models/SaloonInfo");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
 const City = require("../../db/models/City");
-const { procedureDataSchema } = require("../../schemas/procedureDataSchema");
 
-const getProcedureData = async (req, res) => {
+const getProcedureDataByCity = async (req, res) => {
   try {
+    const SaloonInfoModel = await SaloonInfo(connection);
     const ProcedureModel = await Procedure(connection);
-
-    const { value, error } = procedureDataSchema.validate(req.body);
-
-    if (error) {
-      return res.status(400).send("Проверьте правильность введённых данных");
-    }
+    const ServiceModel = await Service(connection);
+    const CityModel = await City(connection);
 
     const existProcedure = await ProcedureModel.findOne({
       where: { id: req.params.procedureId },
@@ -23,22 +19,27 @@ const getProcedureData = async (req, res) => {
       return res.status(404).send("Процедура не существует.");
     }
 
-    // const date = moment(value.date, "DD-MM-YYYY", true);
+    const existCity = await CityModel.findOne({
+      where: { id: req.params.cityId },
+    });
 
-    // if (!date.isValid()) {
-    //   return res.status(400).send("Неверный формат даты.");
-    // }
+    if (!existCity) {
+      return res.status(404).send("Города не существует.");
+    }
 
-    // if (!date.isSameOrAfter(moment(), "day")) {
-    //   return res
-    //     .status(400)
-    //     .send(
-    //       "Просматривать доступные записи можно только для сегодня и будущих дней."
-    //     );
-    // }
+    const [saloonsData] = await connection.query(
+      `SELECT DISTINCT si.id as id, si.name as name, si.description as description
+      FROM \`${SaloonInfoModel.tableName}\` si
+      JOIN \`${ServiceModel.tableName}\` s
+      ON s.idSaloon = si.idUserTypeMap
+      WHERE s.idProcedure = ${existProcedure.dataValues.id}
+      AND si.idCity = ${existCity.dataValues.id}`
+    );
 
     res.send({
+      cityName: existCity.dataValues.name,
       procedureName: existProcedure.dataValues.name,
+      saloons: saloonsData,
     });
   } catch (e) {
     res.status(500).send();
@@ -77,6 +78,6 @@ const getProcedureCities = async (req, res) => {
 };
 
 module.exports = {
-  getProcedureData,
+  getProcedureDataByCity,
   getProcedureCities,
 };

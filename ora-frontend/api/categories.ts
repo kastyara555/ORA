@@ -16,4 +16,4 @@ export const getCitiesProcedureIdUrl = (procedureId: string) =>
   BASE_API_URL.concat(`/procedure/${procedureId}/cities`);
 
 export const getProcedureDataUrl = (procedureId: string, cityId: string) =>
-  BASE_API_URL.concat(`/procedure/${procedureId}/${cityId}`);
+  BASE_API_URL.concat(`/procedure/${procedureId}/cities/${cityId}`);

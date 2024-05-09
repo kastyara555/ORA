@@ -1,4 +1,3 @@
-import ContentWrapper from "@/components/ContentWrapper";
 import { FC } from "react";
 
 interface ProcedureProps {
@@ -6,7 +5,7 @@ interface ProcedureProps {
 }
 
 const Procedure: FC<ProcedureProps> = ({ procedure }) => (
-  <ContentWrapper title={procedure.procedureName}></ContentWrapper>
+  <div>here will be info</div>
 );
 
 export default Procedure;

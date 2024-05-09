@@ -1,13 +1,13 @@
 var express = require("express");
 const {
-  getProcedureData,
+  getProcedureDataByCity,
   getProcedureCities,
 } = require("../../../controllers/procedureController");
 
 var procedureRouter = express.Router();
 
-procedureRouter.post("/:procedureId", function (req, res) {
-  getProcedureData(req, res);
+procedureRouter.get("/:procedureId/cities/:cityId", function (req, res) {
+  getProcedureDataByCity(req, res);
 });
 
 procedureRouter.get("/:procedureId/cities", function (req, res) {

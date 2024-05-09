@@ -39,7 +39,9 @@ const ProcedurePage: FC<ProcedurePageProps> = async ({ params }) => {
           cities={procedureInfo.cities}
         />
       ) : (
-        "Данную услугу через наш сервис пока никто не оказывает :("
+        <p className="my-4">
+          Данную услугу через наш сервис пока никто не оказывает :(
+        </p>
       )}
     </ContentWrapper>
   );
