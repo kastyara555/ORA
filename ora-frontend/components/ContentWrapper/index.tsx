@@ -37,7 +37,7 @@ const ContentWrapper: FC<ContentWrapperProps> = ({
         )}
       </div>
     )}
-    {children}
+    <section className="py-4">{children}</section>
   </div>
 );
 

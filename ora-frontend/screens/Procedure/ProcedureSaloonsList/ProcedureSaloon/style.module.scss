@@ -1,0 +1,26 @@
+.saloonAvatar {
+    border-radius: 50%;
+}
+
+.card {
+    :global(div.p-card-content) {
+        padding: 0;
+    }
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 896px) {
+    .content {
+        display: block;
+
+        .chooseDataButton {
+            margin-top: 2rem;
+            width: 100%;
+        }
+    }
+}

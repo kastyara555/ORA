@@ -35,37 +35,22 @@ const getSaloonMasters = async (req, res) => {
     const mastersIds = masters.map(({ dataValues }) => dataValues.idMaster);
 
     const [mastersData] = await connection.query(
-      `SELECT utm.id code, u.name name, u.email as email, u.phone as phone
+      `SELECT utm.id code, u.name name, u.email as email, u.phone as phone, uim.url as mainImage 
       FROM \`${MasterInfoModel.tableName}\` m
       JOIN \`${UserTypeMapModel.tableName}\` utm
       ON utm.id = m.idUserTypeMap
       JOIN \`${UserModel.tableName}\` u
       ON u.id = utm.idUser
+      LEFT JOIN (
+        SELECT idUserTypeMap, url
+        FROM \`${UserImageModel.tableName}\`
+        WHERE isMain = 1
+      ) uim
+      ON uim.idUserTypeMap = m.idUserTypeMap
       WHERE m.idUserTypeMap IN (${mastersIds.join(", ")})`
     );
 
-    const mainImages = await UserImageModel.findAll({
-      where: {
-        idUserTypeMap: {
-          [Op.in]: mastersIds,
-        },
-        isMain: true,
-      },
-    });
-
-    const mappedImages = mainImages
-      .map(({ dataValues }) => dataValues)
-      .reduce(
-        (accum, { idUserTypeMap, url }) => ({ ...accum, [idUserTypeMap]: url }),
-        {}
-      );
-
-    const result = mastersData.map((master) => ({
-      ...master,
-      mainImage: mappedImages[master.code] || null,
-    }));
-
-    return res.send(result);
+    return res.send(mastersData);
   } catch (e) {
     res.status(500).send();
   }

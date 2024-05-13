@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -7,6 +9,11 @@
     .title {
         align-self: center;
         padding-bottom: 32px;
+
+        .ora {
+            font-weight: 700;
+            color: $pink-500;
+        }
     }
 
     .advantages {

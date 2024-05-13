@@ -32,7 +32,7 @@ const ProcedurePage: FC<ProcedurePageProps> = async ({ params }) => {
   const procedureInfo = (await res.json()) as ProcedureCitiesResponseModel;
 
   return (
-    <ContentWrapper title={procedureInfo.name}>
+    <ContentWrapper title={procedureInfo.name} backHref="/">
       {procedureInfo.cities.length ? (
         <ProcedureCities
           procedureId={+params.procedureId}
