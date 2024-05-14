@@ -19,6 +19,7 @@ const masterRouter = require("./master");
 const passwordRouter = require("./password");
 const procedureRouter = require("./procedure");
 const registrationRouter = require("./registration");
+const serviceInstanceRouter = require("./serviceInstance");
 const { cache } = require("../../middlewares/cache");
 
 var router = express.Router();
@@ -29,6 +30,7 @@ router.use("/master", masterRouter);
 router.use("/password", passwordRouter);
 router.use("/procedure", procedureRouter);
 router.use("/registration", registrationRouter);
+router.use("/serviceInstance", serviceInstanceRouter);
 
 router.get("/categories", function (req, res) {
   getProcedureGroups(req, res);

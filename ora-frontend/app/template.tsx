@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MainWrapper from "@/components/MainWrapper";
 import ToastManager from "@/components/ToastManager";
+import ModalManager from "@/components/ModalManager";
 import { store, persistor } from "@/store";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -30,6 +31,7 @@ const Template = ({ children }: { children: React.ReactNode }) => {
         <MainWrapper>{children}</MainWrapper>
         <Footer />
         <ToastManager />
+        <ModalManager />
       </PersistGate>
     </Provider>
   );

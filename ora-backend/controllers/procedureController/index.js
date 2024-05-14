@@ -77,7 +77,7 @@ const getProcedureDataByCity = async (req, res) => {
     AND si.idCity = ${existCity.dataValues.id}`;
 
     const [[{ total }]] = await connection.query(
-      `SELECT COUNT(DISTINCT si.id) as total
+      `SELECT COUNT(DISTINCT si.idUserTypeMap) as total
       ${queryBody}`
     );
 
@@ -87,7 +87,7 @@ const getProcedureDataByCity = async (req, res) => {
       total === 0 || offset >= total
         ? [[]]
         : await connection.query(
-            `SELECT DISTINCT si.id as id, si.name as name, si.description as description, uim.url as mainImage
+            `SELECT DISTINCT si.idUserTypeMap as id, si.name as name, si.description as description, uim.url as mainImage
       ${queryBody}
       LIMIT ${pageSize}
       OFFSET ${offset}`

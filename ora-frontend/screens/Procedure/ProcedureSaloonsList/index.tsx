@@ -13,7 +13,7 @@ const ProcedureSaloonsList: FC<ProcedureSaloonsListProps> = ({
 }) => (
   <div>
     {saloonsData.map((saloonData) => (
-      <ProcedureSaloon saloonInfo={saloonData} />
+      <ProcedureSaloon key={saloonData.id} saloonInfo={saloonData} />
     ))}
   </div>
 );

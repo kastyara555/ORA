@@ -16,10 +16,8 @@ import { rootReducer } from "@/store/root-reducer";
 
 const persistConfig = {
   key: "root",
-  version: 1,
   storage,
-  whiteList: ["profile"],
-  blackList: ["registrationSaloon", "common"],
+  whitelist: ["profile"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -2,12 +2,14 @@
 import { FC } from "react";
 import classNames from "classnames";
 import { Card } from "primereact/card";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useDispatch } from "react-redux";
 
 import { BASE_URL } from "@/api";
 import Button from "@/components/Button";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { ProcedureSaloonSaloonModel } from "@/models/procedure";
+import { commonSetBookingModalData } from "@/store/common/actions";
 
 import styles from "./style.module.scss";
 
@@ -16,13 +18,18 @@ interface ProcedureSaloonProps {
 }
 
 const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo }) => {
-  const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useDispatch();
 
   const handleRecord = () => {
     const splittedPathname = pathname.split("/");
 
-    router.push(`/saloons/${saloonInfo.id}/${splittedPathname[2]}`);
+    dispatch(
+      commonSetBookingModalData({
+        idSalon: saloonInfo.id,
+        idProcedure: +splittedPathname[2],
+      })
+    );
   };
 
   return (
