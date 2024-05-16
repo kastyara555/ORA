@@ -26,7 +26,7 @@ const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo }) => {
 
     dispatch(
       commonSetBookingModalData({
-        idSalon: saloonInfo.id,
+        idSaloon: saloonInfo.id,
         idProcedure: +splittedPathname[2],
       })
     );

@@ -16,6 +16,6 @@ export const common: Reducer<CommonStoreModel> = createReducer(
         state.ui.toast = { id: uniqueId(), content: payload };
       })
       .addCase(commonSetBookingModalData, (state, { payload }) => {
-        state.ui.modals.bookingBannerData = payload;
+        state.ui.modals.bookingSidebarData = payload;
       })
 );

@@ -19,5 +19,5 @@ export const commonUiModalsSelector = createSelector(
 
 export const commonBookingModalDataSelector = createSelector(
   commonUiModalsSelector,
-  ({ bookingBannerData }) => bookingBannerData
+  ({ bookingSidebarData }) => bookingSidebarData
 );

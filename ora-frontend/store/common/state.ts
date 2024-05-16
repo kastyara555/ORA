@@ -4,7 +4,7 @@ export const initialCommonState: CommonStoreModel = {
   ui: {
     toast: null,
     modals: {
-      bookingBannerData: null,
+      bookingSidebarData: null,
     },
   },
 };

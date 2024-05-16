@@ -7,7 +7,7 @@ const isValidUserByType = (userTypeName) => async (req, res, next) => {
     const UserTypeModel = await UserType(connection);
     const UserTypeMapModel = await UserTypeMap(connection);
 
-    const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
+    const { dataValues: userTypeData } = await UserTypeModel.findOne({
       where: {
         name: userTypeName,
       },
@@ -16,7 +16,7 @@ const isValidUserByType = (userTypeName) => async (req, res, next) => {
     const userTypeMap = await UserTypeMapModel.findOne({
       where: {
         id: req.params.userTypeMapId,
-        idUserType: saloonUserTypeData.id,
+        idUserType: userTypeData.id,
       },
     });
 

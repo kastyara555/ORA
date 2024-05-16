@@ -5,8 +5,7 @@ import { Button as ButtonComponent } from "primereact/button";
 import styles from "./style.module.scss";
 
 export interface IButtonProps {
-  children: ReactElement | null | string | string[];
-  onClick?(): void;
+  children?: ReactElement | null | string | string[];
   disabled?: boolean;
   className?: string;
   type?: ButtonType;
@@ -15,6 +14,9 @@ export interface IButtonProps {
   outlined?: boolean;
   rounded?: boolean;
   loading?: boolean;
+  icon?: string;
+  text?: boolean;
+  onClick?(): void;
 }
 
 type ButtonType = "submit" | "reset" | "button" | undefined;
@@ -30,7 +32,6 @@ type ButtonSeverityType =
 
 const Button: FC<IButtonProps> = ({
   children,
-  onClick = () => {},
   className,
   disabled = false,
   type,
@@ -39,6 +40,9 @@ const Button: FC<IButtonProps> = ({
   outlined = false,
   rounded = false,
   loading = false,
+  icon,
+  text,
+  onClick = () => {},
 }) => (
   <ButtonComponent
     onClick={onClick}
@@ -52,6 +56,8 @@ const Button: FC<IButtonProps> = ({
     outlined={outlined}
     rounded={rounded}
     loading={loading}
+    icon={icon}
+    text={text}
   >
     {children}
   </ButtonComponent>

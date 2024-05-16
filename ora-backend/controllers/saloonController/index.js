@@ -15,9 +15,10 @@ const {
   removeServiceMasters,
   updateServiceMaster,
 } = require("./serviceDetails");
-const { updateSaloon } = require("./information");
+const { updateSaloon, getSaloonBaseInfo } = require("./information");
 
 module.exports = {
+  getSaloonBaseInfo,
   getSaloonMasters,
   deleteSaloonMasters,
   addSaloonMaster,

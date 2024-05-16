@@ -2,12 +2,12 @@ export interface CommonStoreModel {
   ui: {
     toast: null | any;
     modals: {
-      bookingBannerData: null | BookingBannerDataModel;
+      bookingSidebarData: null | BookingSidebarDataModel;
     };
   };
 }
 
-export interface BookingBannerDataModel {
+export interface BookingSidebarDataModel {
   idProcedure: number;
-  idSalon: number;
+  idSaloon: number;
 }
