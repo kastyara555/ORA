@@ -1,3 +1,5 @@
+@import "../../../../styles/variables";
+
 .saloonAvatar {
     border-radius: 50%;
 }
@@ -12,6 +14,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.link {
+    * {
+        transition: 0.1s all;
+    }
+
+    &:hover {
+        * {
+            color: $pink-500;
+        }
+
+        img {
+            filter: brightness(0.975);
+        }
+    }
 }
 
 @media (max-width: 896px) {
