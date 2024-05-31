@@ -12,11 +12,13 @@ const {
 } = require("../../schemas/userRegistrationSchema");
 const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
+const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
 const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const UserTypeMap = require("../../db/models/UserTypeMap");
+const StreetType = require("../../db/models/StreetType");
 const ClientInfo = require("../../db/models/ClientInfo");
 const MasterInfo = require("../../db/models/MasterInfo");
 const UserStatus = require("../../db/models/UserStatus");
@@ -66,6 +68,7 @@ const registrationSaloon = async (req, res) => {
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
     const UserImageModel = await UserImage(connection);
+    const StreetTypeModel = await StreetType(connection);
 
     const suspectPicture = picturesForm.pictures.find(
       ({ data, fileName, fileType }) =>
@@ -134,10 +137,16 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
+    const { dataValues: defaultStreetType } = await StreetTypeModel.findOne({
+      where: {
+        name: STREET_TYPES.STREET.name,
+      },
+    });
+
     await SaloonInfoModel.create(
       {
         idCity: adressForm.city,
-        idStreetType: adressForm.streetType,
+        idStreetType: hasAdress ? adressForm.streetType : defaultStreetType.id,
         idUserTypeMap: addedUserSaloonType.id,
         street: hasAdress ? adressForm.street : "",
         building: hasAdress ? adressForm.building : "",

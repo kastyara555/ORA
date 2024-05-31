@@ -5,6 +5,7 @@ const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
 const UserImage = require("../../db/models/UserImage");
 const SaloonInfo = require("../../db/models/SaloonInfo");
+const StreetType = require("../../db/models/StreetType");
 const City = require("../../db/models/City");
 const { getUserData } = require("../userController");
 
@@ -95,14 +96,17 @@ const updateSaloon = async (req, res) => {
 const getSaloonBaseInfo = async (req, res) => {
   try {
     const SaloonInfoModel = await SaloonInfo(connection);
+    const StreetTypeModel = await StreetType(connection);
     const UserImageModel = await UserImage(connection);
     const CityModel = await City(connection);
 
     const [saloonInfo] = await connection.query(
-      `SELECT si.idUserTypeMap as id,si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, uim.url as mainImage
+      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, st.shortName as streetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
       FROM \`${SaloonInfoModel.tableName}\` si
       JOIN \`${CityModel.tableName}\` c
       ON si.idCity = c.id
+      JOIN \`${StreetTypeModel.tableName}\` st
+      ON si.idStreetType = st.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
         FROM \`${UserImageModel.tableName}\`
