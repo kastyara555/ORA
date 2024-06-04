@@ -59,7 +59,7 @@ const Button: FC<IButtonProps> = ({
     icon={icon}
     text={text}
   >
-    {children}
+    {!loading && children}
   </ButtonComponent>
 );
 

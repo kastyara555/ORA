@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-const User = require("./User");
+const UserTypeMap = require("./UserTypeMap");
 const ServiceMasterMap = require("./ServiceMasterMap");
 const ServiceInstanceStatus = require("./ServiceInstanceStatus");
 
@@ -24,7 +24,7 @@ const ServiceInstance = (sequelize) =>
       idClient: {
         type: DataTypes.INTEGER,
         references: {
-          model: User(sequelize),
+          model: UserTypeMap(sequelize),
           key: "id",
         },
       },

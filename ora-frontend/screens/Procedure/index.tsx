@@ -74,7 +74,7 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
           loading={isLoading}
           className={classNames("w-full", "mt-4")}
         >
-          {isLoading ? "" : "Показать ещё"}
+          Показать ещё
         </Button>
       )}
     </div>

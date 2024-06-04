@@ -1,10 +1,10 @@
 "use client";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { AutoComplete, AutoCompleteChangeEvent } from "primereact/AutoComplete";
+import { AutoComplete, AutoCompleteChangeEvent, AutoCompleteCompleteEvent } from "primereact/AutoComplete";
 import {
   InputNumber,
-  InputNumberValueChangeEvent,
+  InputNumberChangeEvent,
 } from "primereact/inputnumber";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import isEqual from "lodash/isEqual";
@@ -17,7 +17,7 @@ import Button from "@/components/Button";
 
 interface SaloonRegistrationServiceRedactorModel {
   initialValue: SaloonRegistrationServiceModel;
-  onApply: (service: SaloonRegistrationServiceModel) => void;
+  onApply(service: SaloonRegistrationServiceModel): void;
   onCancel(): void;
 }
 
@@ -28,7 +28,7 @@ const SaloonRegistrationServiceRedactor: FC<
     useState<SaloonRegistrationServiceModel>(initialValue);
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
-  const searchProcedure = useCallback(async (event: any) => {
+  const searchProcedure = useCallback(async (event: AutoCompleteCompleteEvent) => {
     const response = await axiosInstance.post(
       searchProceduresUrl.concat(`/${event.query}`),
       {}
@@ -45,8 +45,7 @@ const SaloonRegistrationServiceRedactor: FC<
       service.procedure === null ||
       typeof service.procedure === "string" ||
       (+service.time.hours.code === 0 && +service.time.minutes.code === 0)
-    )
-      return true;
+    ) { return true; }
 
     return false;
   }, [
@@ -59,7 +58,7 @@ const SaloonRegistrationServiceRedactor: FC<
   const setProcedure = (e: AutoCompleteChangeEvent) =>
     setService((oldService) => ({ ...oldService, procedure: e.value }));
 
-  const setPrice = (e: InputNumberValueChangeEvent) =>
+  const setPrice = (e: InputNumberChangeEvent) =>
     setService((oldService) => ({ ...oldService, price: e.value ?? 0 }));
 
   const setHours = (e: DropdownChangeEvent) =>
@@ -123,7 +122,7 @@ const SaloonRegistrationServiceRedactor: FC<
       >
         <InputNumber
           value={service.price}
-          onValueChange={setPrice}
+          onChange={setPrice}
           min={0}
           max={500}
         />

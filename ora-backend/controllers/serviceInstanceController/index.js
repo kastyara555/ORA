@@ -1,11 +1,15 @@
 const moment = require("moment");
 
 const { connection } = require("../../db/connection");
-const Service = require("../../db/models/Service");
-const UserImage = require("../../db/models/UserImage");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const UserTypeMap = require("../../db/models/UserTypeMap");
+const { roles } = require("../../db/consts/roles");
+const { userStatuses } = require("../../db/consts/userStatuses");
 const User = require("../../db/models/User");
+const Service = require("../../db/models/Service");
+const UserType = require("../../db/models/UserType");
+const UserImage = require("../../db/models/UserImage");
+const UserStatus = require("../../db/models/UserStatus");
+const UserTypeMap = require("../../db/models/UserTypeMap");
+const ServiceInstance = require("../../db/models/ServiceInstance");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
 const {
@@ -20,6 +24,10 @@ const {
 const {
   procedureAvailableRecordsBySaloonDateAndMasterSchema,
 } = require("../../schemas/procedureAvailableRecordsBySaloonDateAndMasterSchema");
+const { bookServiceInstanceSchema } = require("../../schemas/bookServiceInstanceSchema");
+const { loginBookServiceInstanceSchema } = require("../../schemas/loginBookServiceInstanceSchema");
+const { generateHash } = require("../../utils/hash");
+const { createToken } = require("../../utils/jwt");
 
 const getAvailableDatesForProcedureBySaloon = async (req, res) => {
   try {
@@ -173,8 +181,154 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
   }
 };
 
+const bookServiceInstance = async (
+  req,
+  res
+) => {
+  try {
+    const { value, error } = bookServiceInstanceSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { serviceInstanceId, clientUserTypeMapId, comment } = value;
+
+    const UserTypeModel = await UserType(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const ServiceInstanceModel = await ServiceInstance(connection);
+    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+
+    const [clientsInfo] = await connection.query(
+      `SELECT *
+      FROM \`${UserTypeMapModel.tableName}\` utm
+      JOIN \`${UserTypeModel.tableName}\` ut
+      ON utm.idUserType = ut.id
+      WHERE utm.id = ${clientUserTypeMapId}
+      AND ut.name = '${roles.client.name}'`
+    );
+
+    if (!clientsInfo.length) {
+      return res.status(400).send("Учётная запись клиента не найдена.")
+    }
+
+    const [serviceInstancesInfo] = await connection.query(
+      `SELECT sis.name as statusName
+      FROM \`${ServiceInstanceModel.tableName}\` si
+      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      ON si.idServiceInstanceStatus = sis.id
+      WHERE si.id = ${serviceInstanceId}`
+    );
+
+    if (!serviceInstancesInfo.length) {
+      return res.status(400).send("Услуга не найдена.")
+    }
+
+    if (serviceInstancesInfo[0].statusName !== SERVICE_INSTANCE_STATUSES.empty.name) {
+      return res.status(400).send("Услуга не доступна для записи.")
+    }
+
+    const appliedServiceInstanceStatus = await ServiceInstanceStatusModel.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
+
+    await ServiceInstanceModel.update(
+      {
+        idServiceInstanceStatus: appliedServiceInstanceStatus.dataValues.id,
+        idClient: clientUserTypeMapId,
+        comment,
+      },
+      {
+        where: {
+          id: serviceInstanceId,
+        },
+      }
+    );
+
+    res.send({});
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+const loginBookServiceInstance = async (
+  req,
+  res
+) => {
+  try {
+    const { value, error } = loginBookServiceInstanceSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { serviceInstanceId, comment, email, password } = value;
+
+    const UserModel = await User(connection);
+    const UserTypeModel = await UserType(connection);
+    const UserStatusModel = await UserStatus(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const ServiceInstanceModel = await ServiceInstance(connection);
+    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+
+    const [clientsInfo] = await connection.query(
+      `SELECT utm.id as id
+      FROM \`${UserModel.tableName}\` u
+      JOIN \`${UserTypeMapModel.tableName}\` utm
+      ON u.id = utm.idUser
+      JOIN \`${UserTypeModel.tableName}\` ut
+      ON utm.idUserType = ut.id
+      JOIN \`${UserStatusModel.tableName}\` us
+      ON utm.idUserStatus = us.id
+      WHERE u.email = '${email}'
+      AND u.password = '${generateHash(password)}'
+      AND ut.name = '${roles.client.name}'
+      AND us.name = '${userStatuses.active.name}'`
+    );
+
+    if (!clientsInfo.length) {
+      return res.status(400).send("Учётная запись клиента не найдена.")
+    }
+
+    const [serviceInstancesInfo] = await connection.query(
+      `SELECT sis.name as statusName
+      FROM \`${ServiceInstanceModel.tableName}\` si
+      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      ON si.idServiceInstanceStatus = sis.id
+      WHERE si.id = ${serviceInstanceId}`
+    );
+
+    if (!serviceInstancesInfo.length) {
+      return res.status(400).send("Услуга не найдена.")
+    }
+
+    if (serviceInstancesInfo[0].statusName !== SERVICE_INSTANCE_STATUSES.empty.name) {
+      return res.status(400).send("Услуга не доступна для записи.")
+    }
+
+    const appliedServiceInstanceStatus = await ServiceInstanceStatusModel.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
+
+    await ServiceInstanceModel.update(
+      {
+        idServiceInstanceStatus: appliedServiceInstanceStatus.dataValues.id,
+        idClient: clientsInfo[0].id,
+        comment,
+      },
+      {
+        where: {
+          id: serviceInstanceId,
+        },
+      }
+    );
+
+    res.send({ token: createToken(clientsInfo[0].id) });
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
 module.exports = {
   getAvailableDatesForProcedureBySaloon,
   getAvailableMastersForProcedureBySaloonAndDate,
   getAvailableRecordsForProcedureBySaloonDateAndMaster,
+  bookServiceInstance,
+  loginBookServiceInstance,
 };

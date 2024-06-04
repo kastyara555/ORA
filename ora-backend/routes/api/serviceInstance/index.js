@@ -4,6 +4,8 @@ const {
   getAvailableDatesForProcedureBySaloon,
   getAvailableMastersForProcedureBySaloonAndDate,
   getAvailableRecordsForProcedureBySaloonDateAndMaster,
+  bookServiceInstance,
+  loginBookServiceInstance,
 } = require("../../../controllers/serviceInstanceController");
 
 var serviceInstanceRouter = express.Router();
@@ -26,6 +28,20 @@ serviceInstanceRouter.post(
   "/:saloonId/:procedureId/availableRecords",
   function (req, res) {
     getAvailableRecordsForProcedureBySaloonDateAndMaster(req, res);
+  }
+);
+
+serviceInstanceRouter.post(
+  "/book",
+  function (req, res) {
+    bookServiceInstance(req, res);
+  }
+);
+
+serviceInstanceRouter.post(
+  "/login-book",
+  function (req, res) {
+    loginBookServiceInstance(req, res);
   }
 );
 

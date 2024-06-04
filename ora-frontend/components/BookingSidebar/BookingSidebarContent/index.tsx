@@ -1,8 +1,13 @@
 import { FC, useState } from "react";
 import classNames from "classnames";
+import { Skeleton } from "primereact/skeleton";
 import { ProgressBar } from "primereact/progressbar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AxiosError } from "axios";
 
+import axiosInstance from "@/api";
+import { bookServiceInstanceUrl, loginBookServiceInstanceUrl } from "@/api/serviceInstance";
+import { profileUserDataSelector } from "@/store/profile/selectors";
 import { BookingSidebarDataModel } from "@/store/common/model";
 import Button from "@/components/Button";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
@@ -10,6 +15,9 @@ import {
   commonSetBookingModalData,
   commonSetUiToast,
 } from "@/store/common/actions";
+import { profileGetInfo } from "@/store/profile/actions";
+import { setCookie } from "@/utils/cookie";
+import { AUTH_COOKIE_NAME } from "@/consts";
 
 import { SIDEBAR_PROGRESS_LIST, SIDEBAR_PROGRESS_MAPPING } from "./consts";
 import BookingMonthStep from "./BookingMonthStep";
@@ -31,6 +39,9 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
   const [dateForm, setDateForm] = useState<null | Date>(null);
   const [masterForm, setMasterForm] = useState<null | BookingMaster>(null);
   const [timeForm, setTimeForm] = useState<null | BookingRecord>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const profileData = useSelector(profileUserDataSelector);
 
   const dispatch = useDispatch();
 
@@ -54,16 +65,83 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
     setBookingStep(SIDEBAR_PROGRESS_MAPPING.checkoutForm.step);
   };
 
-  const applyCheckoutForm = (checkoutFormData: string) => {
-    const toastToBeShown = {
-      severity: TOAST_SEVERITIES.SUCCESS,
-      summary: "Запись",
-      detail: "Запись успешно осуществлена.",
-      life: TOAST_DEFAULT_LIFE,
-    };
+  const applyCheckoutForm = async (checkoutFormData: string) => {
+    try {
+      setIsLoading(true);
+      if (timeForm) {
+        await axiosInstance.post(
+          bookServiceInstanceUrl(),
+          {
+            serviceInstanceId: timeForm.id,
+            clientUserTypeMapId: profileData.userTypeMapId,
+            comment: checkoutFormData,
+          },
+        );
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.SUCCESS,
+          summary: "Запись",
+          detail: "Запись успешно осуществлена.",
+          life: TOAST_DEFAULT_LIFE,
+        };
 
-    dispatch(commonSetUiToast(toastToBeShown));
-    dispatch(commonSetBookingModalData(null));
+        dispatch(commonSetUiToast(toastToBeShown));
+        dispatch(commonSetBookingModalData(null));
+      }
+    } catch (e) {
+      const { response } = e as AxiosError;
+
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Запись",
+        detail: response?.data || "Неизвестная ошибка",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const applyLoginCheckoutForm = async (email: string, password: string, checkoutFormData: string) => {
+    if (timeForm) {
+      try {
+        setIsLoading(true);
+        const { data } = await axiosInstance.post(loginBookServiceInstanceUrl(),
+          {
+            serviceInstanceId: timeForm.id,
+            comment: checkoutFormData,
+            email,
+            password,
+          },
+        );
+
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.SUCCESS,
+          summary: "Запись",
+          detail: "Запись успешно осуществлена.",
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        setCookie(AUTH_COOKIE_NAME, data.token);
+        dispatch(commonSetUiToast(toastToBeShown));
+        dispatch(commonSetBookingModalData(null));
+        dispatch(profileGetInfo() as any);
+      } catch (e) {
+        const { response } = e as AxiosError;
+
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.ERROR,
+          summary: "Запись",
+          detail: response?.data || "Неизвестная ошибка",
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   const handleBackButtonClick = () => {
@@ -159,14 +237,17 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
           {bookingStep === SIDEBAR_PROGRESS_MAPPING.checkoutForm.step &&
             dateForm &&
             masterForm &&
-            timeForm && (
+            timeForm && (isLoading ? (
+              <Skeleton width="100%" height="256px" />
+            ) : (
               <BookingCheckoutStep
                 date={dateForm}
                 master={masterForm}
                 record={timeForm}
                 handleApply={applyCheckoutForm}
+                handleApplyLogin={applyLoginCheckoutForm}
               />
-            )}
+            ))}
         </div>
       </div>
     </div>

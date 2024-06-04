@@ -12,3 +12,7 @@ export const getAvailableRecordsForProcedureBySaloonDateAndMasterUrl = (
   idSaloon: number,
   idProcedure: number
 ) => `/serviceInstance/${idSaloon}/${idProcedure}/availableRecords`;
+
+export const bookServiceInstanceUrl = () => '/serviceInstance/book';
+
+export const loginBookServiceInstanceUrl = () => '/serviceInstance/login-book';

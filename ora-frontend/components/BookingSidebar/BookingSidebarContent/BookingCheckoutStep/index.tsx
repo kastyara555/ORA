@@ -3,9 +3,8 @@ import moment from "moment";
 import classNames from "classnames";
 import { InputTextarea } from "primereact/inputtextarea";
 
-import Button from "@/components/Button";
-
 import { BookingMaster, BookingRecord } from "../models";
+import BookingButton from "../BookingButton";
 import styles from "./style.module.scss";
 
 interface BookingCheckoutStepProps {
@@ -13,6 +12,7 @@ interface BookingCheckoutStepProps {
   record: BookingRecord;
   master: BookingMaster;
   handleApply(comment: string): void;
+  handleApplyLogin(login: string, password: string, comment: string): void;
 }
 
 const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
@@ -20,6 +20,7 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
   record,
   master,
   handleApply,
+  handleApplyLogin,
 }) => {
   const [comment, setComment] = useState<string>("");
 
@@ -47,16 +48,15 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
         placeholder="Комментарий"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
+        maxLength={256}
         rows={5}
         cols={30}
       />
 
-      <Button
-        className={classNames("w-full", "mt-4")}
-        onClick={() => handleApply(comment)}
-      >
-        Записаться
-      </Button>
+      <BookingButton
+        handleApply={() => handleApply(comment)}
+        handleApplyLogin={(login: string, password: string) => handleApplyLogin(login, password, comment)}
+      />
     </div>
   );
 };

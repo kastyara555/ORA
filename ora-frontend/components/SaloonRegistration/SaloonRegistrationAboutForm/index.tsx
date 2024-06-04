@@ -7,9 +7,14 @@ import { InputText } from "primereact/inputtext";
 import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 import { InputTextarea } from "primereact/inputtextarea";
 
+import axiosInstance from "@/api";
+import { postCheckCredentialsAvailabilityUrl } from "@/api/registration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { RegistrationSaloonAboutFormModel } from "@/models/SaloonRegistration";
+import { CredentialsAvailabilityModel } from "@/models/registration";
 import { registrationSaloonSetAboutForm } from "@/store/registrationSaloon/actions";
+import { commonSetUiToast } from "@/store/common/actions";
+import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
@@ -24,12 +29,40 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
   const { aboutForm } = useSelector(registrationSaloonSelectedValuesSelector);
   const [state, setState] =
     useState<RegistrationSaloonAboutFormModel>(aboutForm);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
-  const onApply = () => {
-    dispatch(registrationSaloonSetAboutForm(state));
-    onCountinueClick();
+  const onApply = async () => {
+    try {
+      setIsLoading(true);
+      const { data }: { data: CredentialsAvailabilityModel } = await axiosInstance.post(postCheckCredentialsAvailabilityUrl, { phone: state.phone.replace(/\D/g, "") });
+
+      if (data.available) {
+        dispatch(registrationSaloonSetAboutForm(state));
+        onCountinueClick();
+      } else {
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.WARN,
+          summary: "Регистрация",
+          detail: "Аккаунт с указанным номером телефона существует.",
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      }
+    } catch {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Регистрация",
+        detail: "Ошибка проверки доступности номера телефона.",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const setSaloonName = (e: ChangeEvent) => {
@@ -129,10 +162,12 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
           "justify-content-center",
           "col-12",
           "mt-4",
-          "mb-3"
+          "mb-3",
+          "w-full"
         )}
         onClick={onApply}
         disabled={disabledButton}
+        loading={isLoading}
       >
         Продолжить
       </Button>

@@ -5,3 +5,5 @@ export const postSaloonRegistrationUrl = BASE_API_URL.concat("/registration/salo
 export const postUserRegistrationUrl = BASE_API_URL.concat("/registration/user");
 
 export const postMasterRegistrationUrl = BASE_API_URL.concat("/registration/master");
+
+export const postCheckCredentialsAvailabilityUrl = BASE_API_URL.concat("/registration/check-credentials-availability");
