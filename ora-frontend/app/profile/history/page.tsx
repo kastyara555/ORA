@@ -1,8 +1,9 @@
 import ContentWrapper from "@/components/ContentWrapper";
+import BookingHistoryScreen from "@/screens/BookingHistory";
 
 const ProfileHistoryPage = () => (
-  <ContentWrapper>
-    История бронирования
+  <ContentWrapper backHref="/profile" title="История бронирования">
+    <BookingHistoryScreen />
   </ContentWrapper>
 );
 

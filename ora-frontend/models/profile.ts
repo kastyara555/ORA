@@ -62,3 +62,24 @@ export interface ProfileCityModel {
   id: number;
   name: string;
 }
+
+export interface ProfileClientHistoryDataModel {
+  data: ProfileClientHistoryModel[];
+  total: number;
+}
+
+export interface ProfileClientHistoryModel {
+  id: number;
+  date: string;
+  procedureName: string;
+  statusName: string;
+  saloonName: string;
+  saloonImage: string | null;
+  masterName: string;
+  masterImage: string | null;
+}
+
+export const INITIAL_CLIENT_HISTORY: ProfileClientHistoryDataModel = {
+  data: [],
+  total: 0,
+}
