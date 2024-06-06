@@ -1,7 +1,10 @@
 import { BASE_API_URL } from "@/api/index";
 
-export const saloonUpdateUrl = (masterId: number) =>
-  BASE_API_URL.concat(`/saloon/${masterId}/update`);
+export const saloonBaseInfoUrl = (saloonId: number) =>
+  BASE_API_URL.concat(`/saloon/${saloonId}`);
+
+export const saloonUpdateUrl = (saloonId: number) =>
+  BASE_API_URL.concat(`/saloon/${saloonId}/update`);
 
 export const getSaloonMastersUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/masters/get`);
@@ -49,6 +52,4 @@ export const getSaloonServiceUpdateMasterUrl = (
   saloonId: number,
   serviceId: number
 ) =>
-  BASE_API_URL.concat(
-    `/saloon/${saloonId}/services/${serviceId}/updateMaster`
-  );
+  BASE_API_URL.concat(`/saloon/${saloonId}/services/${serviceId}/updateMaster`);

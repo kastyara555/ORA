@@ -2,15 +2,11 @@
 import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
 import { AutoComplete } from "primereact/AutoComplete";
-import { addLocale } from "primereact/api";
 
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
-import { configureUrl } from "@/utils";
-import RU_LOCALE from "@/consts/locale";
 import Button from "@/components/Button";
 
 interface BookingBannerFormModel {
@@ -22,16 +18,12 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
 
   const [selectedProcedure, setSelectedProcedure] = useState<any>(null);
   const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedDate, setSelectedDate] = useState<null | Date>(null);
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
   const searchButtonDisabled = useMemo(
     () =>
-      !selectedCity ||
-      !selectedDate ||
-      !selectedProcedure?.procedureGroupId ||
-      !selectedProcedure?.procedureId,
-    [selectedProcedure, selectedCity, selectedDate]
+      !selectedProcedure?.procedureGroupId || !selectedProcedure?.procedureId,
+    [selectedProcedure, selectedCity]
   );
 
   const searchProcedure = useCallback(async (event: any) => {
@@ -44,41 +36,17 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
   }, []);
 
   const searchButtonClick = useCallback(() => {
-    router.push(
-      configureUrl("/book", [
-        { name: "selectedCityId", value: String(selectedCity) },
-        {
-          name: "selectedDate",
-          value: selectedDate?.toLocaleDateString().replaceAll(".", "/") ?? "",
-        },
-        {
-          name: "categoryId",
-          value: String(selectedProcedure?.procedureGroupId),
-        },
-        { name: "procedureId", value: String(selectedProcedure?.procedureId) },
-      ])
-    );
-  }, [selectedProcedure, selectedCity, selectedDate]);
-
-  addLocale("ru", RU_LOCALE);
+    if (selectedCity) {
+      router.push(
+        `/procedures/${selectedProcedure?.procedureId}/${selectedCity}`
+      );
+    } else {
+      router.push(`/procedures/${selectedProcedure?.procedureId}`);
+    }
+  }, [selectedProcedure, selectedCity]);
 
   return (
     <>
-      <Dropdown
-        value={selectedCity}
-        onChange={(e) => setSelectedCity(e.value)}
-        options={cities}
-        showClear
-        placeholder="Ваш город"
-        className="w-full"
-      />
-      <Calendar
-        value={selectedDate}
-        onChange={(e: any) => setSelectedDate(e.value)}
-        placeholder="Дата записи"
-        locale="ru"
-        showButtonBar
-      />
       <div className="card p-fluid">
         <AutoComplete
           placeholder="Поиск процедур"
@@ -89,6 +57,14 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
           onChange={(e) => setSelectedProcedure(e.value)}
         />
       </div>
+      <Dropdown
+        value={selectedCity}
+        onChange={(e) => setSelectedCity(e.value)}
+        options={cities}
+        showClear
+        placeholder="Ваш город"
+        className="w-full"
+      />
       <Button
         severity="secondary"
         disabled={searchButtonDisabled}

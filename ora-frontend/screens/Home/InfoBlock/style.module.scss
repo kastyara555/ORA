@@ -1,0 +1,15 @@
+.wrapper {
+  max-width: 960px;
+  align-self: center;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 896px) {
+  .info {
+    flex-wrap: wrap;
+  }
+}

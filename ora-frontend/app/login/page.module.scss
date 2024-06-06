@@ -1,5 +1,5 @@
-@import '../../styles/mixins';
-@import '../../styles/variables';
+@import "../../styles/mixins";
+@import "../../styles/variables";
 
 .main {
   display: flex;
@@ -47,16 +47,16 @@
 }
 
 .loadingEnabled {
-    top: 0px;
-    bottom: 0px;
-    width: 100%;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0,0,0,0.2);
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .loadingBlock {
-    display: none;
+  display: none;
 }

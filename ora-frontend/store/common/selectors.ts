@@ -11,3 +11,13 @@ export const commonUiToastSelector = createSelector(
   commonUiSelector,
   ({ toast }) => toast
 );
+
+export const commonUiModalsSelector = createSelector(
+  commonUiSelector,
+  ({ modals }) => modals
+);
+
+export const commonBookingModalDataSelector = createSelector(
+  commonUiModalsSelector,
+  ({ bookingSidebarData }) => bookingSidebarData
+);

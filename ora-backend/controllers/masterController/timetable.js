@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const moment = require("moment");
 
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
@@ -10,7 +9,9 @@ const UserImage = require("../../db/models/UserImage");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
 const { connection } = require("../../db/connection");
-const { SERVICE_INSTANCE_STATUSES } = require("../../db/consts/serviceInstanceStatuses");
+const {
+  SERVICE_INSTANCE_STATUSES,
+} = require("../../db/consts/serviceInstanceStatuses");
 
 const timetableAvailability = async (req, res) => {
   try {
@@ -63,36 +64,19 @@ const timetableInformation = async (req, res) => {
       res.send(null);
     }
 
-    const [saloonsTmp] = await connection.query(
-      `SELECT smm.idSaloon as id, si.name as name
+    const [saloons] = await connection.query(
+      `SELECT smm.idSaloon as id, si.name as name, uim.url as mainImage
       FROM \`${SaloonMasterMapModel.tableName}\` smm
       JOIN \`${SaloonInfoModel.tableName}\` si
       ON smm.idSaloon = si.idUserTypeMap
+      LEFT JOIN (
+        SELECT idUserTypeMap, url
+        FROM \`${UserImageModel.tableName}\`
+        WHERE isMain = 1
+      ) uim
+      ON uim.idUserTypeMap = smm.idSaloon
       WHERE smm.idMaster = ${req.params.userTypeMapId}`
     );
-
-    const saloonsIds = saloonsTmp.map(({ id }) => id);
-
-    const saloonsImages = saloonsIds.length
-      ? await UserImageModel.findAll({
-          where: { idUserTypeMap: { [Op.in]: saloonsIds }, isMain: 1 },
-          attributes: ["idUserTypeMap", "url"],
-        })
-      : [];
-
-    const saloonsImagesMap = saloonsImages.reduce(
-      (accum, { dataValues: { idUserTypeMap, url } }) => ({
-        ...accum,
-        [idUserTypeMap]: url,
-      }),
-      {}
-    );
-
-    const saloons = saloonsTmp.map(({ id, name }) => ({
-      name,
-      id,
-      mainImage: saloonsImagesMap[id] ?? null,
-    }));
 
     const [tmpTimetable] = await connection.query(
       `SELECT si.id as id, p.name as name, si.time as time, s.idSaloon as saloonId, sis.name as statusName

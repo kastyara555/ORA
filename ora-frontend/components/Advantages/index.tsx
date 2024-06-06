@@ -2,7 +2,7 @@ import styles from './style.module.scss';
 
 const Advantages = () => (
     <div className={styles.wrapper}>
-        <div className={styles.title}>ПОЧЕМУ ORA?</div>
+        <div className={styles.title}>ПОЧЕМУ <span className={styles.ora}>ORA</span>?</div>
         <div className={styles.advantages}>
             <div className={styles.advantage}>
                 <div>Лучшие предложения</div>

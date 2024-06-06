@@ -1,7 +1,7 @@
 var express = require("express");
 
 const { checkAuthorization } = require("../../../middlewares/auth");
-const { updateClient } = require("../../../controllers/clientController");
+const { updateClient, clientHistory } = require("../../../controllers/clientController");
 
 var clientRouter = express.Router();
 
@@ -10,6 +10,14 @@ clientRouter.post(
   checkAuthorization,
   function (req, res) {
     updateClient(req, res);
+  }
+);
+
+clientRouter.post(
+  "/:userTypeMapId/history",
+  checkAuthorization,
+  function (req, res) {
+    clientHistory(req, res);
   }
 );
 

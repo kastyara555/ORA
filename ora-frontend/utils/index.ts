@@ -1,7 +1,7 @@
 export const configureUrl = (
   base: string,
   parameters: Array<{ name: string; value: string }>
-) => {
+): string => {
   if (!parameters.length) return base;
 
   const parametersToString = parameters.reduce(

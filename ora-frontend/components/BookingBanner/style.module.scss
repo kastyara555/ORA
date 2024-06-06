@@ -3,7 +3,11 @@
     align-items: center;
     height: 480px;
     padding: 0 128px;
-    background-color: silver;
+    background-color: #CBCBCB;
+    background-image: url("../../public/assets/images/booking-banner-beauty.jpg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right;
 
     .form {
         display: flex;
@@ -18,6 +22,8 @@
 
 @media (max-width: 896px) {
     .banner {
+        height: 320px;
         padding: 0 32px;
+        background-image: none;
     }
 }

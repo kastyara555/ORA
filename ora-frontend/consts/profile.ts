@@ -22,9 +22,7 @@ export const PROFILE_CLIENT_LINKS: ProfileLinkModel[] = [
   {
     href: "/profile/history",
     title: "История бронирования",
-    description:
-      "Просматривайте и управляйте своими прошлыми и предстоящими бронированиями",
-    disabled: true,
+    description: "Просматривайте и управляйте своими прошлыми и предстоящими бронированиями",
   },
   {
     href: "/profile/edit",
@@ -123,3 +121,5 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
     url: "/profile/history",
   },
 ];
+
+export const HISTORY_ITEMS_PAGE_SIZE = 8;

@@ -5,6 +5,8 @@ const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
 const UserImage = require("../../db/models/UserImage");
 const SaloonInfo = require("../../db/models/SaloonInfo");
+const StreetType = require("../../db/models/StreetType");
+const City = require("../../db/models/City");
 const { getUserData } = require("../userController");
 
 const updateSaloon = async (req, res) => {
@@ -14,8 +16,9 @@ const updateSaloon = async (req, res) => {
 
     const { value, error } = saloonUpdatingSchema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
+    }
 
     const { description, mainImage } = value;
 
@@ -90,4 +93,37 @@ const updateSaloon = async (req, res) => {
   }
 };
 
-module.exports = { updateSaloon };
+const getSaloonBaseInfo = async (req, res) => {
+  try {
+    const SaloonInfoModel = await SaloonInfo(connection);
+    const StreetTypeModel = await StreetType(connection);
+    const UserImageModel = await UserImage(connection);
+    const CityModel = await City(connection);
+
+    const [saloonInfo] = await connection.query(
+      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, st.shortName as streetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
+      FROM \`${SaloonInfoModel.tableName}\` si
+      JOIN \`${CityModel.tableName}\` c
+      ON si.idCity = c.id
+      JOIN \`${StreetTypeModel.tableName}\` st
+      ON si.idStreetType = st.id
+      LEFT JOIN (
+        SELECT idUserTypeMap, url
+        FROM \`${UserImageModel.tableName}\`
+        WHERE isMain = 1
+      ) uim
+      ON uim.idUserTypeMap = si.idUserTypeMap
+      WHERE si.idUserTypeMap = ${req.params.userTypeMapId}`
+    );
+
+    if (!saloonInfo.length) {
+      return res.status(404).send();
+    }
+
+    res.send(saloonInfo[0]);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+module.exports = { updateSaloon, getSaloonBaseInfo };

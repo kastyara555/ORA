@@ -61,66 +61,29 @@ const getSaloonServiceInfo = async (req, res) => {
         ({ dataValues }) => dataValues.idMaster
       );
 
-      const [mastersData] = await connection.query(
-        `SELECT utm.id id, u.name name, u.email as email
+      const [preparedAllMasters] = await connection.query(
+        `SELECT utm.id id, u.name name, u.email as email, uim.url as mainImage, smm.price as price
       FROM \`${MasterInfoModel.tableName}\` m
       JOIN \`${UserTypeMapModel.tableName}\` utm
       ON utm.id = m.idUserTypeMap
       JOIN \`${UserModel.tableName}\` u
       ON u.id = utm.idUser
+      LEFT JOIN \`${ServiceMasterMapModel.tableName}\` smm
+      ON smm.idMaster = m.idUserTypeMap
+      LEFT JOIN (
+        SELECT idUserTypeMap, url
+        FROM \`${UserImageModel.tableName}\`
+        WHERE isMain = 1
+      ) uim
+      ON uim.idUserTypeMap = m.idUserTypeMap
       WHERE m.idUserTypeMap IN (${mastersIds.join(", ")})`
       );
 
-      const mainImages = await UserImageModel.findAll({
-        where: {
-          idUserTypeMap: {
-            [Op.in]: mastersIds,
-          },
-          isMain: true,
-        },
-      });
+      activeMasters = preparedAllMasters.filter(({ price }) => price);
 
-      const mappedImages = mainImages
-        .map(({ dataValues }) => dataValues)
-        .reduce(
-          (accum, { idUserTypeMap, url }) => ({
-            ...accum,
-            [idUserTypeMap]: url,
-          }),
-          {}
-        );
-
-      const preparedAllMasters = mastersData.map((master) => ({
-        ...master,
-        mainImage: mappedImages[master.id] || null,
-      }));
-
-      const activeMastersBaseInfo = await ServiceMasterMapModel.findAll({
-        where: {
-          idService: req.params.serviceId,
-          idMaster: {
-            [Op.in]: mastersIds,
-          },
-        },
-      });
-
-      const activeMastersBaseInfoMap = activeMastersBaseInfo
-        .map(({ dataValues }) => dataValues)
-        .reduce(
-          (accum, { idMaster, price }) => ({ ...accum, [idMaster]: price }),
-          {}
-        );
-
-      activeMasters = preparedAllMasters
-        .filter(({ id }) => activeMastersBaseInfoMap[id])
-        .map((masterInfo) => ({
-          ...masterInfo,
-          price: activeMastersBaseInfoMap[masterInfo.id],
-        }));
-
-      availableMasters = preparedAllMasters.filter(
-        ({ id }) => !activeMastersBaseInfoMap[id]
-      );
+      availableMasters = preparedAllMasters
+        .filter(({ price }) => !price)
+        .map(({ price, ...master }) => master);
     }
 
     const result = {

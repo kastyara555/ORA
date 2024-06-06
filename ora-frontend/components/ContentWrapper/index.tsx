@@ -5,18 +5,26 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 
 import styles from "./style.module.scss";
 
-interface ProfileWrapperProps {
+interface ContentWrapperProps {
   children?: ReactNode;
   title?: string;
   backHref?: string;
 }
 
-const ProfileWrapper: FC<ProfileWrapperProps> = ({
+const ContentWrapper: FC<ContentWrapperProps> = ({
   children,
   title,
   backHref,
 }) => (
-  <div className={classNames(styles.profileWrapper, "px-4")}>
+  <div
+    className={classNames(
+      styles.contentWrapper,
+      "px-4",
+      "flex",
+      "flex-column",
+      "align-items-center"
+    )}
+  >
     {(backHref || title) && (
       <div className={classNames(styles.headingWrapper, "pt-1")}>
         {title && <h3 className="px-6">{title}</h3>}
@@ -29,8 +37,8 @@ const ProfileWrapper: FC<ProfileWrapperProps> = ({
         )}
       </div>
     )}
-    {children}
+    <section className="py-4">{children}</section>
   </div>
 );
 
-export default ProfileWrapper;
+export default ContentWrapper;

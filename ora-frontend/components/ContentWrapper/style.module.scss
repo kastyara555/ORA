@@ -1,12 +1,8 @@
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
+@import "../../styles/mixins";
+@import "../../styles/variables";
 
-.profileWrapper {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    &>* {
+.contentWrapper {
+    & > * {
         max-width: 960px;
         width: 100%;
     }
@@ -16,6 +12,7 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid $black-500;
+    height: 44px;
 
     h3 {
         @include available-width;

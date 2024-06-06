@@ -200,6 +200,7 @@ const SaloonRegistrationPicturesForm: FC<
             "mb-3"
           )}
           onClick={onApply}
+          disabled={loading}
         >
           Продолжить
         </Button>

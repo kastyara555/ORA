@@ -11,3 +11,9 @@ export const getStreetTypesUrl = BASE_API_URL.concat("/streetTypes");
 export const getProceduresUrl = BASE_API_URL.concat("/procedures");
 
 export const searchProceduresUrl = BASE_API_URL.concat("/searchProcedures");
+
+export const getCitiesProcedureIdUrl = (procedureId: string) =>
+  BASE_API_URL.concat(`/procedure/${procedureId}/cities`);
+
+export const getProcedureDataUrl = (procedureId: string, cityId: string) =>
+  BASE_API_URL.concat(`/procedure/${procedureId}/cities/${cityId}`);

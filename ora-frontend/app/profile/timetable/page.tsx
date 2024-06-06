@@ -1,12 +1,12 @@
 import { memo } from "react";
 
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 import EditMasterTimetableScreen from "@/screens/Profile/EditProfile/EditMasterTimetableScreen";
 
 const TeamPage = () => (
-  <ProfileWrapper backHref="/profile" title="Выбор даты записи">
+  <ContentWrapper backHref="/profile" title="Выбор даты записи">
     <EditMasterTimetableScreen />
-  </ProfileWrapper>
+  </ContentWrapper>
 );
 
 export default memo(TeamPage);

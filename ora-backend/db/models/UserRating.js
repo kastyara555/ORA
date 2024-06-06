@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-const User = require("./User");
+const UserTypeMap = require("./UserTypeMap");
 
 const UserRating = (sequelize) =>
   sequelize.define(
@@ -14,7 +14,7 @@ const UserRating = (sequelize) =>
       idUser: {
         type: DataTypes.INTEGER,
         references: {
-          model: User(sequelize),
+          model: UserTypeMap(sequelize),
           key: "id",
         },
         allowNull: false,

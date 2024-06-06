@@ -1,0 +1,50 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.darkOnHover {
+    transition: 0.1s filter linear;
+
+    &:hover {
+        filter: grayscale(50%);
+    }
+}
+
+.linkLogo {
+    @extend .darkOnHover;
+
+    height: 32px;
+    width: 32px;
+    display: block;
+    background-size: contain;
+}
+
+.header {
+    height: 88px;
+    border-bottom: 1px solid black;
+    padding: 0 72px;
+    background-color: $black-500;
+    color: $white-500;
+
+    * {
+        color: $white-500;
+    }
+
+    .content {
+        @include available-width;
+
+        max-width: 960px;
+    }
+}
+
+.instagram {
+    @extend .linkLogo;
+
+    border-radius: 8px;
+    background-image: url(../../public/assets/images/vendors/instagram.png);
+}
+
+@media (max-width: 896px) {
+    .header {
+        padding: 0 16px;
+    }
+}

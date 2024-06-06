@@ -10,13 +10,16 @@ const {
 const {
   userRegistrationSchema,
 } = require("../../schemas/userRegistrationSchema");
+const { credentialsAvailabilitySchema } = require("../../schemas/credentialsAvailabilitySchema");
 const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
+const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
 const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const UserTypeMap = require("../../db/models/UserTypeMap");
+const StreetType = require("../../db/models/StreetType");
 const ClientInfo = require("../../db/models/ClientInfo");
 const MasterInfo = require("../../db/models/MasterInfo");
 const UserStatus = require("../../db/models/UserStatus");
@@ -66,6 +69,7 @@ const registrationSaloon = async (req, res) => {
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
     const UserImageModel = await UserImage(connection);
+    const StreetTypeModel = await StreetType(connection);
 
     const suspectPicture = picturesForm.pictures.find(
       ({ data, fileName, fileType }) =>
@@ -134,10 +138,16 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
+    const { dataValues: defaultStreetType } = await StreetTypeModel.findOne({
+      where: {
+        name: STREET_TYPES.STREET.name,
+      },
+    });
+
     await SaloonInfoModel.create(
       {
         idCity: adressForm.city,
-        idStreetType: adressForm.streetType,
+        idStreetType: hasAdress ? adressForm.streetType : defaultStreetType.id,
         idUserTypeMap: addedUserSaloonType.id,
         street: hasAdress ? adressForm.street : "",
         building: hasAdress ? adressForm.building : "",
@@ -199,9 +209,8 @@ const registrationSaloon = async (req, res) => {
             idSaloon: addedUserSaloonType.id,
             idProcedure: procedureId,
             description: "",
-            time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${
-              time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
-            }`,
+            time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
+              }`,
           })),
           { returning: true, transaction }
         );
@@ -467,8 +476,47 @@ const registrationMaster = async (req, res) => {
   }
 };
 
+const checkCredentialsAvailability = async (req, res) => {
+  try {
+    const { value, error } = credentialsAvailabilitySchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { email, phone } = value;
+
+    const UserModel = await User(connection);
+
+    let userConditions = [];
+
+    if (email) {
+      userConditions.push({ email });
+    }
+
+    if (phone) {
+      userConditions.push({ phone });
+    }
+
+    if (!userConditions.length) {
+      res.status(400).send('Должен быть указан как минимум один критерий проверки.');
+    }
+
+    const existsUsers = await UserModel.findAll({
+      where: {
+        [Sequelize.Op.or]: userConditions,
+      },
+    });
+
+    res.send({ available: !existsUsers.length });
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
 module.exports = {
   registrationSaloon,
   registrationUser,
   registrationMaster,
+  checkCredentialsAvailability
 };

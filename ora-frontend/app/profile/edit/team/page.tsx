@@ -1,12 +1,12 @@
 import { memo } from "react";
 
-import ProfileWrapper from "@/components/Profile/ProfileWrapper";
+import ContentWrapper from "@/components/ContentWrapper";
 import EditTeamProfileScreen from "@/screens/Profile/EditProfile/EditTeamProfileScreen";
 
 const TeamPage = () => (
-  <ProfileWrapper backHref="/profile" title="Редактирование команды">
+  <ContentWrapper backHref="/profile" title="Редактирование команды">
     <EditTeamProfileScreen />
-  </ProfileWrapper>
+  </ContentWrapper>
 );
 
 export default memo(TeamPage);

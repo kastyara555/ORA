@@ -1,0 +1,30 @@
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.authorizationTitle {
+    text-align: center;
+    border-bottom: 2px solid $pink-500;
+}
+
+.input {
+    &:hover {
+        border-color: $pink-500;
+    }
+
+    &:enabled:focus {
+        border-color: $pink-500;
+        box-shadow: 0 0 0 0.2rem $pink-100;
+    }
+}
+
+.password {
+    @include available-width;
+}
+
+.link {
+    color: $pink-500;
+
+    &:hover {
+        color: $gray-300;
+    }
+}

@@ -46,8 +46,8 @@ const SaloonEditTime: FC<SaloonEditTimeProps> = ({ value }) => (
             {prepareTime(
               +dayConfig.startHour ?? 0,
               +dayConfig.startMinute ?? 0
-            )}{" "}
-            -{" "}
+            )}
+            &nbsp;-&nbsp;
             {prepareTime(
               +dayConfig.finishHour ?? 0,
               +dayConfig.finishMinute ?? 0
