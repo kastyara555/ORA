@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 
+const ServiceMasterMapStatus = require("./ServiceMasterMapStatus");
 const UserTypeMap = require("./UserTypeMap");
 const Service = require("./Service");
 
@@ -28,9 +29,17 @@ const ServiceMasterMap = (sequelize) =>
         },
         allowNull: false,
       },
+      idServiceMasterMapStatus: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: ServiceMasterMapStatus(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
       price: {
         type: DataTypes.FLOAT,
-      }
+      },
     },
     {
       tableName: "service_master_map",

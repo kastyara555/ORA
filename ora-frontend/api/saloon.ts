@@ -18,9 +18,6 @@ export const addSaloonMastersUrl = (saloonId: number) =>
 export const getSaloonServicesUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/services/get`);
 
-export const deleteSaloonServicesUrl = (saloonId: number) =>
-  BASE_API_URL.concat(`/saloon/${saloonId}/services/delete`);
-
 export const addSaloonServicesUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/services/add`);
 

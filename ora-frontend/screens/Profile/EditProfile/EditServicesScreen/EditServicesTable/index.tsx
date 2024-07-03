@@ -11,13 +11,11 @@ import { ServiceModel } from "@/screens/Profile/EditProfile/EditServicesScreen";
 export interface EditServicesTableProps {
   services: ServiceModel[];
   loading: boolean;
-  deleteService: (id: number) => void;
 }
 
 const EditServicesTable: FC<EditServicesTableProps> = ({
   services,
   loading,
-  deleteService,
 }) => {
   const router = useRouter();
 
@@ -32,20 +30,6 @@ const EditServicesTable: FC<EditServicesTableProps> = ({
       size="small"
     >
       &nbsp;Редактировать
-    </Button>
-  );
-
-  const deleteColumnTemplate = (service: ServiceModel) => (
-    <Button
-      rounded
-      outlined
-      icon="pi pi-times"
-      severity="danger"
-      aria-label="Удалить"
-      onClick={() => deleteService(service.id)}
-      size="small"
-    >
-      &nbsp;Удалить
     </Button>
   );
 
@@ -64,12 +48,6 @@ const EditServicesTable: FC<EditServicesTableProps> = ({
         header=""
         headerStyle={{ width: "2rem" }}
         body={editColumnTemplate}
-      />
-      <Column
-        field=""
-        header=""
-        headerStyle={{ width: "2rem" }}
-        body={deleteColumnTemplate}
       />
     </DataTable>
   );

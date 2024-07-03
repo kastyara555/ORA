@@ -8,7 +8,6 @@ const {
   deleteSaloonMasters,
   addSaloonMaster,
   getSaloonServices,
-  deleteSaloonServices,
   addSaloonServices,
   updateSaloon,
   getSaloonServiceInfo,
@@ -69,15 +68,6 @@ saloonRouter.post(
   isValidSaloon,
   function (req, res) {
     getSaloonServices(req, res);
-  }
-);
-
-saloonRouter.post(
-  "/:userTypeMapId/services/delete",
-  checkAuthorization,
-  isValidSaloon,
-  function (req, res) {
-    deleteSaloonServices(req, res);
   }
 );
 

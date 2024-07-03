@@ -15,7 +15,11 @@ const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
 const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
+const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
+const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const UserTypeMap = require("../../db/models/UserTypeMap");
@@ -56,20 +60,20 @@ const registrationSaloon = async (req, res) => {
       picturesForm,
     } = value;
 
-    const UserModel = await User(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const SaloonGroupProcedureMapModel = await SaloonGroupProcedureMap(
-      connection
-    );
-    const ServiceModel = await Service(connection);
+    const SaloonGroupProcedureMapModel = await SaloonGroupProcedureMap(connection);
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserImageModel = await UserImage(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const SaloonInfoModel = await SaloonInfo(connection);
+    const MasterInfoModel = await MasterInfo(connection);
+    const UserStatusModel = await UserStatus(connection);
     const StreetTypeModel = await StreetType(connection);
+    const UserImageModel = await UserImage(connection);
+    const UserTypeModel = await UserType(connection);
+    const ServiceModel = await Service(connection);
+    const UserModel = await User(connection);
 
     const suspectPicture = picturesForm.pictures.find(
       ({ data, fileName, fileType }) =>
@@ -195,10 +199,17 @@ const registrationSaloon = async (req, res) => {
         { transaction }
       );
 
+      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+        where: {
+          name: SALOON_MASTER_MAP_STATUSES.active.name,
+        },
+      });
+
       await SaloonMasterMapModel.create(
         {
           idMaster: addedUserMasterType.id,
           idSaloon: addedUserSaloonType.id,
+          idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
         },
         { transaction }
       );
@@ -215,11 +226,18 @@ const registrationSaloon = async (req, res) => {
           { returning: true, transaction }
         );
 
+        const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+          where: {
+            name: SERVICES_MASTER_MAP_STATUSES.active.name,
+          },
+        });
+
         await ServiceMasterMapModel.bulkCreate(
           addedServices.map(({ dataValues }, index) => ({
             idService: dataValues.id,
             idMaster: addedUserMasterType.id,
             price: servicesForm.services[index].price,
+            idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
           })),
           { transaction }
         );
@@ -365,12 +383,13 @@ const registrationMaster = async (req, res) => {
     const { name, email, phone, password, description, relatedSaloonMapId } =
       value;
 
-    const UserModel = await User(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const MasterInfoModel = await MasterInfo(connection);
+    const UserStatusModel = await UserStatus(connection);
+    const UserTypeModel = await UserType(connection);
+    const UserModel = await User(connection);
 
     const existsUsers = await UserModel.findAll({
       where: {
@@ -454,10 +473,17 @@ const registrationMaster = async (req, res) => {
     );
 
     if (relatedSaloonMapId) {
+      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+        where: {
+          name: SALOON_MASTER_MAP_STATUSES.active.name,
+        },
+      });
+
       await SaloonMasterMapModel.create(
         {
           idMaster: addedMasterType.id,
           idSaloon: relatedSaloonMapId,
+          idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
         },
         { transaction }
       );

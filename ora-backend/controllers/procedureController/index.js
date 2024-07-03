@@ -1,6 +1,7 @@
 const moment = require("moment");
 
 const { connection } = require("../../db/connection");
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const ServiceInstance = require("../../db/models/ServiceInstance");
@@ -12,12 +13,14 @@ const City = require("../../db/models/City");
 const {
   SERVICE_INSTANCE_STATUSES,
 } = require("../../db/consts/serviceInstanceStatuses");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const {
   procedureSaloonsSchema,
 } = require("../../schemas/procedureSaloonsSchema");
 
 const getProcedureDataByCity = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
     const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceModel = await ServiceInstance(connection);
@@ -55,11 +58,14 @@ const getProcedureDataByCity = async (req, res) => {
 
     const subQueryAvailableServices = `SELECT smm.idService as availableServiceId
     FROM \`${ServiceMasterMapModel.tableName}\` smm
+    JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+    ON smm.idServiceMasterMapStatus = smms.id
     JOIN \`${ServiceInstanceModel.tableName}\` si
     ON smm.id = si.idServiceMasterMap
     JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
     ON si.idServiceInstanceStatus = sis.id
     WHERE sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
+    AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
     AND si.time > '${thisTimeFormatted}'`;
 
     const subQueryMainImages = `SELECT idUserTypeMap, url

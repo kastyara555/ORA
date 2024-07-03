@@ -10,6 +10,7 @@ import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Calendar, CalendarChangeEvent } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
 import { useRouter } from "next/navigation";
+import moment from "moment";
 
 import RU_LOCALE from "@/consts/locale";
 import { isEmailValid } from "@/utils/forms";
@@ -121,12 +122,7 @@ const Registration = () => {
     const preparedState = {
       ...state,
       phone: state.phone.replace(/\D/g, ""),
-      birthday:
-        state.birthday?.getDate() +
-        "-" +
-        (state.birthday?.getMonth() || 0 + 1) +
-        "-" +
-        state.birthday?.getFullYear(),
+      birthday: moment(state.birthday).format("DD-MM-YYYY"),
       sex: +state.sex,
     };
 

@@ -26,6 +26,8 @@ const MasterInfo = require("../models/MasterInfo");
 const SaloonMasterMap = require("../models/SaloonMasterMap");
 const PasswordRestorationStatus = require("../models/PasswordRestorationStatus");
 const PasswordRestoration = require("../models/PasswordRestoration");
+const SaloonMasterMapStatus = require("../models/SaloonMasterMapStatus");
+const ServiceMasterMapStatus = require("../models/ServiceMasterMapStatus");
 
 const migration = async () => {
   try {
@@ -51,6 +53,7 @@ const migration = async () => {
     await MasterInfo(connection).sync();
     await ClientInfo(connection).sync();
 
+    await SaloonMasterMapStatus(connection).sync();
     await SaloonMasterMap(connection).sync();
 
     await Service(connection).sync();
@@ -60,6 +63,7 @@ const migration = async () => {
     await SaloonGroupProcedureMap(connection).sync();
     await UserImage(connection).sync();
 
+    await ServiceMasterMapStatus(connection).sync();
     await ServiceMasterMap(connection).sync();
 
     await ServiceInstance(connection).sync();
