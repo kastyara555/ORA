@@ -5,7 +5,6 @@ import {
   RegistrationSaloonAboutFormModel,
   RegistrationSaloonAdressFormModel,
   RegistrationSaloonAdressTypeFormModel,
-  RegistrationSaloonCategoriesFormModel,
   RegistrationSaloonEmailFormModel,
   RegistrationSaloonPasswordFormModel,
   RegistrationSaloonPicturesFormModel,
@@ -17,16 +16,15 @@ import {
 
 export const STEP_MAPPING = {
   "0": 0,
-  "1": 5,
-  "2": 10,
-  "3": 20,
-  "4": 30,
-  "5": 50,
-  "6": 60,
-  "7": 70,
-  "8": 80,
-  "9": 90,
-  "10": 100,
+  "1": 10,
+  "2": 20,
+  "3": 30,
+  "4": 50,
+  "5": 60,
+  "6": 70,
+  "7": 80,
+  "8": 90,
+  "9": 100,
 };
 
 export const DEFAULT_WORKING_START_HOURS = 10;
@@ -143,11 +141,6 @@ export const ABOUT_FORM_INITIAL_STATE: RegistrationSaloonAboutFormModel = {
 export const PASSWORD_FORM_INITIAL_STATE: RegistrationSaloonPasswordFormModel =
   {
     password: "",
-  };
-
-export const CATEGORIES_FORM_INITIAL_STATE: RegistrationSaloonCategoriesFormModel =
-  {
-    categories: [],
   };
 
 export const ADRESS_TYPE_FORM_INITIAL_STATE: RegistrationSaloonAdressTypeFormModel =

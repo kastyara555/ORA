@@ -7,7 +7,6 @@ import SaloonRegistrationProgress from "@/components/SaloonRegistration/SaloonRe
 import SaloonRegistrationEmailForm from "@/components/SaloonRegistration/SaloonRegistrationEmailForm";
 import SaloonRegistrationAboutForm from "@/components/SaloonRegistration/SaloonRegistrationAboutForm";
 import SaloonRegistrationPasswordForm from "@/components/SaloonRegistration/SaloonRegistrationPasswordForm";
-import SaloonRegistrationCategoriesForm from "@/components/SaloonRegistration/SaloonRegistrationCategoriesForm";
 import SaloonRegistrationAdressTypeForm from "@/components/SaloonRegistration/SaloonRegistrationAdressTypeForm";
 import SaloonRegistrationAdressForm from "@/components/SaloonRegistration/SaloonRegistrationAdressForm";
 import SaloonRegistrationStuffCountForm from "@/components/SaloonRegistration/SaloonRegistrationStuffCountForm";
@@ -55,23 +54,17 @@ const SaloonRegistration = () => {
         );
       case 3:
         return (
-          <SaloonRegistrationCategoriesForm
-            onCountinueClick={() => setRegistrationStep(4)}
-          />
-        );
-      case 4:
-        return (
           <SaloonRegistrationAdressTypeForm
             onCountinueClick={() => setRegistrationStep(5)}
           />
         );
-      case 5:
+      case 4:
         return (
           <SaloonRegistrationAdressForm
             onCountinueClick={() => setRegistrationStep(6)}
           />
         );
-      case 6:
+      case 5:
         return (
           <SaloonRegistrationStuffCountForm
             onCountinueClick={() =>
@@ -79,13 +72,13 @@ const SaloonRegistration = () => {
             }
           />
         );
-      case 7:
+      case 6:
         return (
           <SaloonRegistrationVisitPaymentForm
             onCountinueClick={() => setRegistrationStep(8)}
           />
         );
-      case 8:
+      case 7:
         return (
           <SaloonRegistrationTimeForm
             onCountinueClick={() =>
@@ -93,13 +86,13 @@ const SaloonRegistration = () => {
             }
           />
         );
-      case 9:
+      case 8:
         return (
           <SaloonRegistrationServicesForm
             onCountinueClick={() => setRegistrationStep(10)}
           />
         );
-      case 10:
+      case 9:
         return (
           <SaloonRegistrationPicturesForm
             onCountinueClick={() =>
@@ -117,10 +110,10 @@ const SaloonRegistration = () => {
       <SaloonRegistrationProgress
         step={registrationStep}
         setPreviosStep={() => {
-          if (registrationStep === 8 && adressTypeForm.hasAdress) {
-            setRegistrationStep(6);
-          } else if (registrationStep === 10 && stuffCountForm.count > 1) {
-            setRegistrationStep(8);
+          if (registrationStep === 7 && adressTypeForm.hasAdress) {
+            setRegistrationStep(5);
+          } else if (registrationStep === 9 && stuffCountForm.count > 1) {
+            setRegistrationStep(7);
           } else {
             setRegistrationStep(registrationStep - 1);
           }

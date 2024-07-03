@@ -18,7 +18,6 @@ const { roles } = require("../../db/consts/roles");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
 const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
 const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
@@ -54,13 +53,11 @@ const registrationSaloon = async (req, res) => {
       adressForm,
       visitPaymentForm,
       timeForm,
-      categoriesForm,
       stuffCountForm,
       servicesForm,
       picturesForm,
     } = value;
 
-    const SaloonGroupProcedureMapModel = await SaloonGroupProcedureMap(connection);
     const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
     const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
@@ -162,14 +159,6 @@ const registrationSaloon = async (req, res) => {
         description: aboutForm.description,
         name: aboutForm.saloonName,
       },
-      { transaction }
-    );
-
-    await SaloonGroupProcedureMapModel.bulkCreate(
-      categoriesForm.categories.map((categoryId) => ({
-        idProcedureGroup: categoryId,
-        idUserTypeMap: addedUserSaloonType.id,
-      })),
       { transaction }
     );
 

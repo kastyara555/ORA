@@ -19,7 +19,6 @@ const UserType = require("../models/UserType");
 const UserRating = require("../models/UserRating");
 const SaloonInfo = require("../models/SaloonInfo");
 const ClientInfo = require("../models/ClientInfo");
-const SaloonGroupProcedureMap = require("../models/SaloonGroupProcedureMap");
 const UserTypeMap = require("../models/UserTypeMap");
 const UserImage = require("../models/UserImage");
 const MasterInfo = require("../models/MasterInfo");
@@ -60,7 +59,6 @@ const migration = async () => {
     await UserRating(connection).sync();
     await UserCityMap(connection).sync();
     await GroupProcedureMap(connection).sync();
-    await SaloonGroupProcedureMap(connection).sync();
     await UserImage(connection).sync();
 
     await ServiceMasterMapStatus(connection).sync();

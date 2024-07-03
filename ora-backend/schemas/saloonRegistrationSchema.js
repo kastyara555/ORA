@@ -23,10 +23,6 @@ const passwordFormSchema = Joi.object({
   password: Joi.string().trim().min(5).max(32).required(),
 });
 
-const categoriesFormSchema = Joi.object({
-  categories: Joi.array().items(Joi.number()).min(1).required(),
-});
-
 const adressTypeFormSchema = Joi.object({
   hasAdress: Joi.boolean().required(),
 });
@@ -83,7 +79,6 @@ const saloonRegistrationSchema = Joi.object({
   emailForm: emailFormSchema,
   aboutForm: aboutFormSchema,
   passwordForm: passwordFormSchema,
-  categoriesForm: categoriesFormSchema,
   adressTypeForm: adressTypeFormSchema,
   adressForm: adressFormSchema,
   stuffCountForm: stuffCountFormSchema,

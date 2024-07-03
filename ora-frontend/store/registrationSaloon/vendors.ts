@@ -20,11 +20,6 @@ export const prepareSaloonRegistrationForm = (
     phone: result.aboutForm.phone.replace(/\D/g, ""),
   };
 
-  result.categoriesForm = {
-    ...result.categoriesForm,
-    categories: result.categoriesForm.categories.map(({ code }) => +code),
-  };
-
   result.adressForm = {
     ...result.adressForm,
     city: +result.adressForm.city.code,

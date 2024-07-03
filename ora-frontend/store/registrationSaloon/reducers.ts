@@ -11,7 +11,6 @@ import {
   registrationSaloonSetAboutForm,
   registrationSaloonSetAdressForm,
   registrationSaloonSetAdressTypeForm,
-  registrationSaloonSetCategoriesForm,
   registrationSaloonSetEmailForm,
   registrationSaloonSetPasswordForm,
   registrationSaloonSetPicturesForm,
@@ -24,7 +23,6 @@ import {
   ABOUT_FORM_INITIAL_STATE,
   ADRESS_FORM_INITIAL_STATE,
   ADRESS_TYPE_FORM_INITIAL_STATE,
-  CATEGORIES_FORM_INITIAL_STATE,
   EMAIL_FORM_INITIAL_STATE,
   PASSWORD_FORM_INITIAL_STATE,
   PICTURES_FORM_INITIAL_STATE,
@@ -45,9 +43,6 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
       })
       .addCase(registrationSaloonSetPasswordForm, (state, { payload }) => {
         state.selectedValues.passwordForm = payload;
-      })
-      .addCase(registrationSaloonSetCategoriesForm, (state, { payload }) => {
-        state.selectedValues.categoriesForm = payload;
       })
       .addCase(registrationSaloonSetAdressTypeForm, (state, { payload }) => {
         state.selectedValues.adressTypeForm = payload;
@@ -74,7 +69,6 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
         state.selectedValues.emailForm = EMAIL_FORM_INITIAL_STATE;
         state.selectedValues.aboutForm = ABOUT_FORM_INITIAL_STATE;
         state.selectedValues.passwordForm = PASSWORD_FORM_INITIAL_STATE;
-        state.selectedValues.categoriesForm = CATEGORIES_FORM_INITIAL_STATE;
         state.selectedValues.adressTypeForm = ADRESS_TYPE_FORM_INITIAL_STATE;
         state.selectedValues.adressForm = ADRESS_FORM_INITIAL_STATE;
         state.selectedValues.stuffCountForm = STUFF_COUNT_FORM_INITIAL_STATE;
