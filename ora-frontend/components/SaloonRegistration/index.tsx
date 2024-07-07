@@ -55,41 +55,41 @@ const SaloonRegistration = () => {
       case 3:
         return (
           <SaloonRegistrationAdressTypeForm
-            onCountinueClick={() => setRegistrationStep(5)}
+            onCountinueClick={() => setRegistrationStep(4)}
           />
         );
       case 4:
         return (
           <SaloonRegistrationAdressForm
-            onCountinueClick={() => setRegistrationStep(6)}
+            onCountinueClick={() => setRegistrationStep(5)}
           />
         );
       case 5:
         return (
           <SaloonRegistrationStuffCountForm
             onCountinueClick={() =>
-              setRegistrationStep(!adressTypeForm.hasAdress ? 7 : 8)
+              setRegistrationStep(!adressTypeForm.hasAdress ? 6 : 7)
             }
           />
         );
       case 6:
         return (
           <SaloonRegistrationVisitPaymentForm
-            onCountinueClick={() => setRegistrationStep(8)}
+            onCountinueClick={() => setRegistrationStep(7)}
           />
         );
       case 7:
         return (
           <SaloonRegistrationTimeForm
             onCountinueClick={() =>
-              setRegistrationStep(stuffCountForm.count === 1 ? 9 : 10)
+              setRegistrationStep(stuffCountForm.count === 1 ? 8 : 9)
             }
           />
         );
       case 8:
         return (
           <SaloonRegistrationServicesForm
-            onCountinueClick={() => setRegistrationStep(10)}
+            onCountinueClick={() => setRegistrationStep(9)}
           />
         );
       case 9:

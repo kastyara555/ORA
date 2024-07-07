@@ -72,19 +72,20 @@ const registrationSaloon = async (req, res) => {
     const ServiceModel = await Service(connection);
     const UserModel = await User(connection);
 
-    const suspectPicture = picturesForm.pictures.find(
-      ({ data, fileName, fileType }) =>
-        data.indexOf(",") === -1 ||
-        fileType.indexOf("image/") !== 0 ||
-        fileName.indexOf(".") < 1 ||
-        !IMAGE_EXTENSIONS.includes(fileName.split(".")[1])
-    );
+    const suspectPicture =
+      !!picturesForm.mainImage &&
+      (
+        picturesForm.mainImage.data.indexOf(",") === -1 ||
+        picturesForm.mainImage.fileType.indexOf("image/") !== 0 ||
+        picturesForm.mainImage.fileName.indexOf(".") < 1 ||
+        !IMAGE_EXTENSIONS.includes(picturesForm.mainImage.fileName.split(".")[1])
+      );
 
     if (suspectPicture) {
       return res.status(400).send("Неверный формат/размер изображения.");
     }
 
-    const existsUsers = await UserModel.findAll({
+    const existsUsers = await UserModel.findOne({
       where: {
         [Sequelize.Op.or]: [
           {
@@ -97,7 +98,7 @@ const registrationSaloon = async (req, res) => {
       },
     });
 
-    if (existsUsers.length) {
+    if (existsUsers) {
       return res
         .status(400)
         .send(
@@ -233,24 +234,24 @@ const registrationSaloon = async (req, res) => {
       }
     }
 
-    for (const { data, fileName } of picturesForm.pictures) {
+    if (picturesForm.mainImage) {
       const dirName = "/userUploads/" + addedUserSaloonType.id + "/images/";
       const fullDirName = "public" + dirName;
-      const imageName = dirName + fileName;
+      const imageName = dirName + picturesForm.mainImage.fileName;
       const fullImageName = "public" + imageName;
 
       if (!fs.existsSync(fullDirName)) {
         fs.mkdirSync(fullDirName, { recursive: true });
       }
 
-      let buff = new Buffer.from(data.split(",")[1], "base64");
+      let buff = new Buffer.from(picturesForm.mainImage.data.split(",")[1], "base64");
       fs.writeFileSync(fullImageName, buff);
 
       await UserImageModel.create(
         {
           idUserTypeMap: addedUserSaloonType.id,
           url: imageName,
-          isMain: false,
+          isMain: true,
         },
         { transaction }
       );

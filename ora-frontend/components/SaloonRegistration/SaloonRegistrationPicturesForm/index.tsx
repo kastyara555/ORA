@@ -53,19 +53,17 @@ const SaloonRegistrationPicturesForm: FC<
         )}
       >
         <h2 className={styles.lightText} style={{ textAlign: "center" }}>
-          Покажите клиентам Ваш
-          <br />
-          профессионализм
+          Логотип салона
         </h2>
         <p className={classNames(styles.lightText, styles.subtitle)}>
-          Фотографии отображаются в вашем профиле и клиентском поиске на ORA
+          Миниатюра отображается в Вашем профиле и клиентском поиске на ORA
         </p>
         <div className={classNames("grid", "w-full", "row-gap-3")}>
           <ImageUploading
             multiple
             value={picturesForm.pictures}
             onChange={onChange}
-            maxNumber={3}
+            maxNumber={1}
             maxFileSize={3000000}
             dataURLKey="data_url"
           >
@@ -73,7 +71,6 @@ const SaloonRegistrationPicturesForm: FC<
               imageList,
               onImageUpload,
               onImageRemoveAll,
-              onImageRemove,
               isDragging,
               dragProps,
               errors,
@@ -123,25 +120,52 @@ const SaloonRegistrationPicturesForm: FC<
                     )}
                   </div>
                 )}
-                <Button
-                  style={{ height: 256 }}
-                  className={classNames(
-                    "flex",
-                    "align-items-center",
-                    "justify-content-center",
-                    "col-12",
-                    {
-                      [styles.button]: isDragging,
-                      [styles.uploadingButton]: !isDragging,
-                    }
-                  )}
-                  onClick={onImageUpload}
-                  {...dragProps}
-                >
-                  Для загрузки кликните или наведите файл
-                </Button>
-                {!!imageList.length && (
+                {!imageList.length ? (
+                  <Button
+                    style={{ height: 256 }}
+                    className={classNames(
+                      "flex",
+                      "align-items-center",
+                      "justify-content-center",
+                      "col-12",
+                      {
+                        [styles.button]: isDragging,
+                        [styles.uploadingButton]: !isDragging,
+                      }
+                    )}
+                    onClick={onImageUpload}
+                    {...dragProps}
+                  >
+                    Для загрузки кликните или наведите файл
+                  </Button>
+                ) : (
                   <>
+                    <div className={classNames("col-12", "flex", "flex-wrap", "gap-4")}>
+                      <img
+                        className={classNames(styles.avatar,
+                          "w-8rem",
+                          "h-8rem",
+                          "shadow-2",
+                        )}
+                        src={imageList[0]["data_url"]}
+                      />
+                      <img
+                        className={classNames(styles.avatar,
+                          "w-4rem",
+                          "h-4rem",
+                          "shadow-2",
+                        )}
+                        src={imageList[0]["data_url"]}
+                      />
+                      <img
+                        className={classNames(styles.avatar,
+                          "w-2rem",
+                          "h-2rem",
+                          "shadow-2",
+                        )}
+                        src={imageList[0]["data_url"]}
+                      />
+                    </div>
                     <Button
                       className={classNames(
                         "flex",
@@ -152,38 +176,8 @@ const SaloonRegistrationPicturesForm: FC<
                       severity="secondary"
                       onClick={onImageRemoveAll}
                     >
-                      Очистить изображения
+                      Отменить выбор
                     </Button>
-                    <div className={classNames("col-12", "flex")}>
-                      {imageList.map((image, index) => (
-                        <div
-                          key={index}
-                          className={classNames(
-                            styles.selectedImage,
-                            "flex",
-                            "flex-column",
-                            "align-items-center",
-                            "mr-1"
-                          )}
-                        >
-                          <img
-                            className={classNames("py-1")}
-                            src={image["data_url"]}
-                            alt=""
-                            height={108}
-                          />
-                          <div className="pt-1">
-                            <Button
-                              severity="secondary"
-                              size="small"
-                              onClick={() => onImageRemove(index)}
-                            >
-                              Удалить
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
                   </>
                 )}
               </>

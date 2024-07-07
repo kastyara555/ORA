@@ -72,7 +72,7 @@ const pictureSchema = Joi.object({
 });
 
 const picturesFormSchema = Joi.object({
-  pictures: Joi.array().items(pictureSchema).required(),
+  mainImage: pictureSchema.allow(null).required(),
 });
 
 const saloonRegistrationSchema = Joi.object({

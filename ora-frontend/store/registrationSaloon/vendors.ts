@@ -1,46 +1,45 @@
-import cloneDeep from "lodash/cloneDeep";
-
 import { RegistrationFormSelectedValuesModel } from "@/store/registrationSaloon/model";
 
 export const prepareSaloonRegistrationForm = (
   selectedValues: RegistrationFormSelectedValuesModel
 ) => {
-  const result = cloneDeep(selectedValues);
+  const result: any = {};
+  const { picturesForm, emailForm, aboutForm, adressForm, adressTypeForm, servicesForm, ...rest } = selectedValues;
 
   result.emailForm = {
-    ...result.emailForm,
-    email: result.emailForm.email.trim(),
+    ...emailForm,
+    email: emailForm.email.trim(),
   };
 
   result.aboutForm = {
-    ...result.aboutForm,
-    name: result.aboutForm.name.trim(),
-    saloonName: result.aboutForm.saloonName.trim(),
-    description: result.aboutForm.description.trim(),
-    phone: result.aboutForm.phone.replace(/\D/g, ""),
+    ...aboutForm,
+    name: aboutForm.name.trim(),
+    saloonName: aboutForm.saloonName.trim(),
+    description: aboutForm.description.trim(),
+    phone: aboutForm.phone.replace(/\D/g, ""),
   };
 
   result.adressForm = {
-    ...result.adressForm,
-    city: +result.adressForm.city.code,
-    streetType: +result.adressForm.streetType.code,
-    street: result.adressTypeForm.hasAdress
-      ? result.adressForm.street.trim()
+    ...adressForm,
+    city: +adressForm.city.code,
+    streetType: +adressForm.streetType.code,
+    street: adressTypeForm.hasAdress
+      ? adressForm.street.trim()
       : "",
-    building: result.adressTypeForm.hasAdress
-      ? result.adressForm.building.trim()
+    building: adressTypeForm.hasAdress
+      ? adressForm.building.trim()
       : "",
-    stage: result.adressTypeForm.hasAdress
-      ? result.adressForm.stage.trim()
+    stage: adressTypeForm.hasAdress
+      ? adressForm.stage.trim()
       : "",
-    office: result.adressTypeForm.hasAdress
-      ? result.adressForm.office.trim()
+    office: adressTypeForm.hasAdress
+      ? adressForm.office.trim()
       : "",
   };
 
   result.servicesForm = {
-    ...result.servicesForm,
-    services: result.servicesForm.services.map(
+    ...servicesForm,
+    services: servicesForm.services.map(
       ({ price, procedure, time }) => ({
         price,
         procedureId: procedure.procedureId,
@@ -50,16 +49,13 @@ export const prepareSaloonRegistrationForm = (
   };
 
   result.picturesForm = {
-    ...result.picturesForm,
-    pictures: result.picturesForm.pictures
-      .filter((el) => !!el)
-      .map(({ file, data_url }) => ({
-        fileName: file?.name,
-        fileSize: file?.size,
-        fileType: file?.type,
-        data: data_url,
-      })),
+    mainImage: picturesForm.pictures.length ? {
+      fileName: picturesForm.pictures[0].file?.name,
+      fileSize: picturesForm.pictures[0].file?.size,
+      fileType: picturesForm.pictures[0].file?.type,
+      data: picturesForm.pictures[0].data_url,
+    } : null,
   };
 
-  return result;
+  return { adressTypeForm, ...rest, ...result };
 };
