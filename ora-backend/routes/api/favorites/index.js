@@ -1,12 +1,12 @@
 var express = require("express");
 
 const { checkAuthorization } = require("../../../middlewares/auth");
-const { saveFavorites, clearFavorites } = require("../../../controllers/favoritesController");
+const { saveFavorites, clearFavorites, checkFavorites } = require("../../../controllers/favoritesController");
 
 var favoritesRouter = express.Router();
 
 favoritesRouter.post(
-  "/:userTypeMapId/save",
+  "/save",
   checkAuthorization,
   function (req, res) {
     saveFavorites(req, res);
@@ -14,10 +14,17 @@ favoritesRouter.post(
 );
 
 favoritesRouter.post(
-  "/:userTypeMapId/clear",
+  "/clear",
   checkAuthorization,
   function (req, res) {
     clearFavorites(req, res);
+  }
+);
+
+favoritesRouter.post(
+  "/checkSaloons",
+  function (req, res) {
+    checkFavorites(req, res);
   }
 );
 

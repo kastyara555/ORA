@@ -93,11 +93,11 @@ const getProcedureDataByCity = async (req, res) => {
       total === 0 || offset >= total
         ? [[]]
         : await connection.query(
-            `SELECT DISTINCT si.idUserTypeMap as id, si.name as name, si.description as description, uim.url as mainImage
+          `SELECT DISTINCT si.idUserTypeMap as id, si.name as name, si.description as description, uim.url as mainImage, s.id as idService
       ${queryBody}
       LIMIT ${pageSize}
       OFFSET ${offset}`
-          );
+        );
 
     res.send({
       cityName: existCity.dataValues.name,

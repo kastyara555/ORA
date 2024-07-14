@@ -15,10 +15,12 @@ import { commonSetBookingModalData } from "@/store/common/actions";
 import styles from "./style.module.scss";
 
 interface ProcedureSaloonProps {
+  isFavorite: boolean;
   saloonInfo: ProcedureSaloonSaloonModel;
+  handleFavoritesClick(): void;
 }
 
-const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo }) => {
+const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo, isFavorite, handleFavoritesClick }) => {
   const pathname = usePathname();
   const dispatch = useDispatch();
 
@@ -61,6 +63,15 @@ const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo }) => {
           Выбрать дату
         </Button>
       </section>
+      <Button
+        className={styles.favoriteButton}
+        icon={`pi ${isFavorite ? 'pi-heart-fill' : 'pi-heart'}`}
+        severity="secondary"
+        aria-label="Favorite"
+        onClick={handleFavoritesClick}
+        rounded
+        text
+      />
     </Card>
   );
 };

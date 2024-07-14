@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import ProfileLink from "@/components/Profile/ProfileLink";
 import { PROFILE_SALOON_LINKS } from "@/consts/profile";
-import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
 

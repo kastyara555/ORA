@@ -6,14 +6,21 @@ import ProcedureSaloon from "./ProcedureSaloon";
 
 interface ProcedureSaloonsListProps {
   saloonsData: ProcedureSaloonSaloonModel[];
+  favorites: Record<string, boolean>;
+  handleFavoritesClick(idService: number): void;
 }
 
 const ProcedureSaloonsList: FC<ProcedureSaloonsListProps> = ({
-  saloonsData,
+  saloonsData, favorites, handleFavoritesClick
 }) => (
   <div>
     {saloonsData.map((saloonData) => (
-      <ProcedureSaloon key={saloonData.id} saloonInfo={saloonData} />
+      <ProcedureSaloon
+        isFavorite={favorites.hasOwnProperty(saloonData.idService)}
+        handleFavoritesClick={() => handleFavoritesClick(saloonData.idService)}
+        key={saloonData.id}
+        saloonInfo={saloonData}
+      />
     ))}
   </div>
 );

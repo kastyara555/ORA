@@ -9,6 +9,7 @@ export interface ProcedureDataModel {
 
 export interface ProcedureSaloonSaloonModel {
   id: number;
+  idService: number;
   name: string;
   description: string;
   mainImage: string | null;

@@ -1,9 +1,12 @@
+const { Op } = require("sequelize");
+
 const { connection } = require("../../db/connection");
 const { roles } = require("../../db/consts/roles");
 const UserType = require("../../db/models/UserType");
 const Favorites = require("../../db/models/Favorites");
 const UserTypeMap = require("../../db/models/UserTypeMap");
 const { favoritesSchema } = require("../../schemas/favoritesSchema");
+const { checkFavoritesSchema } = require("../../schemas/checkFavoritesSchema");
 
 const saveFavorites = async (req, res) => {
   try {
@@ -22,7 +25,7 @@ const saveFavorites = async (req, res) => {
       FROM \`${UserTypeMapModel.tableName}\` utm
       JOIN \`${UserTypeModel.tableName}\` ut
       ON utm.idUserType = ut.id
-      WHERE utm.id = ${req.params.userTypeMapId}
+      WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
     );
 
@@ -32,7 +35,7 @@ const saveFavorites = async (req, res) => {
 
     const favoritesOfClient = (await FavoritesModel.findAll({
       where: {
-        idClient: req.params.userTypeMapId,
+        idClient: value.idClient,
       },
     })).map(({ dataValues }) => ({
       idClient: dataValues.idClient,
@@ -43,12 +46,12 @@ const saveFavorites = async (req, res) => {
       return res.status(400).send("Доступно 16 слотов для избранных услуг");
     }
 
-    if (favoritesOfClient.find(({ idClient, idService }) => idClient === +req.params.userTypeMapId && idService === value.idService)) {
+    if (favoritesOfClient.find(({ idClient, idService }) => idClient === value.idClient && idService === value.idService)) {
       return res.status(400).send("Избранное уже существует");
     }
 
     await FavoritesModel.create({
-      idClient: req.params.userTypeMapId,
+      idClient: value.idClient,
       idService: value.idService,
     });
 
@@ -75,7 +78,7 @@ const clearFavorites = async (req, res) => {
       FROM \`${UserTypeMapModel.tableName}\` utm
       JOIN \`${UserTypeModel.tableName}\` ut
       ON utm.idUserType = ut.id
-      WHERE utm.id = ${req.params.userTypeMapId}
+      WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
     );
 
@@ -85,7 +88,7 @@ const clearFavorites = async (req, res) => {
 
     const favoritesOfClient = await FavoritesModel.findOne({
       where: {
-        idClient: req.params.userTypeMapId,
+        idClient: value.idClient,
         idService: value.idService,
       },
     });
@@ -106,7 +109,37 @@ const clearFavorites = async (req, res) => {
   }
 };
 
+const checkFavorites = async (req, res) => {
+  try {
+    const { value, error } = checkFavoritesSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    if (!value.idServices.length) {
+      return res.send([]);
+    }
+
+    const FavoritesModel = await Favorites(connection);
+
+    const favorites = (await FavoritesModel.findAll({
+      where: {
+        idClient: value.idClient,
+        idService: {
+          [Op.in]: value.idServices,
+        },
+      }
+    })).map(({ dataValues }) => dataValues.idService);
+
+    return res.send(favorites);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
 module.exports = {
   saveFavorites,
   clearFavorites,
+  checkFavorites,
 };

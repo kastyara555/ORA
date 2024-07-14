@@ -9,6 +9,8 @@
     :global(div.p-card-content) {
         padding: 0;
     }
+
+    position: relative;
 }
 
 .content {
@@ -33,6 +35,13 @@
     }
 }
 
+.favoriteButton {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    color: $pink-500 !important;
+}
+
 @media (max-width: 896px) {
     .content {
         display: block;
@@ -41,5 +50,10 @@
             margin-top: 2rem;
             width: 100%;
         }
+    }
+
+    .favoriteButton {
+        right: 4px;
+        left: unset;
     }
 }

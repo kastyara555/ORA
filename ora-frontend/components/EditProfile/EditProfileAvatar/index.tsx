@@ -3,7 +3,6 @@ import { Dispatch, FC, SetStateAction } from "react";
 import classNames from "classnames";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { Message } from "primereact/message";
-import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
 import Button from "@/components/Button";

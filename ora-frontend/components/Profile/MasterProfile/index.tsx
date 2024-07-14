@@ -1,7 +1,6 @@
 "use client";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
-import { Image } from "primereact/image";
 
 import { PROFILE_MASTER_LINKS } from "@/consts/profile";
 import { profileUserDataSelector } from "@/store/profile/selectors";
