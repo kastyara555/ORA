@@ -20,3 +20,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+@mixin avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    pointer-events: none;
+}

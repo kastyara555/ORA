@@ -1,7 +1,8 @@
 @import "../../../../styles/variables";
+@import "../../../../styles/mixins";
 
 .saloonAvatar {
-    border-radius: 50%;
+    @include avatar;
 }
 
 .card {

@@ -5,18 +5,15 @@ const ProcedureGroup = require("../models/ProcedureGroup");
 const Procedure = require("../models/Procedure");
 const City = require("../models/City");
 const UserStatus = require("../models/UserStatus");
-const ReviewStatus = require("../models/ReviewStatus");
 const ServiceInstanceStatus = require("../models/ServiceInstanceStatus");
 const User = require("../models/User");
-const Review = require("../models/Review");
 const Service = require("../models/Service");
 const ServiceMasterMap = require("../models/ServiceMasterMap");
 const ServiceInstance = require("../models/ServiceInstance");
-const UserCityMap = require("../models/UserCityMap");
 const GroupProcedureMap = require("../models/GroupProcedureMap");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
-const UserRating = require("../models/UserRating");
+const Favorites = require("../models/Favorites");
 const SaloonInfo = require("../models/SaloonInfo");
 const ClientInfo = require("../models/ClientInfo");
 const UserTypeMap = require("../models/UserTypeMap");
@@ -37,7 +34,6 @@ const migration = async () => {
     await City(connection).sync();
     await UserStatus(connection).sync();
     await PasswordRestorationStatus(connection).sync();
-    await ReviewStatus(connection).sync();
     await ServiceInstanceStatus(connection).sync();
     await ProcedureGroup(connection).sync();
     await UserType(connection).sync();
@@ -56,17 +52,13 @@ const migration = async () => {
     await SaloonMasterMap(connection).sync();
 
     await Service(connection).sync();
-    await UserRating(connection).sync();
-    await UserCityMap(connection).sync();
     await GroupProcedureMap(connection).sync();
     await UserImage(connection).sync();
 
     await ServiceMasterMapStatus(connection).sync();
     await ServiceMasterMap(connection).sync();
-
     await ServiceInstance(connection).sync();
-
-    await Review(connection).sync();
+    await Favorites(connection).sync();
 
     await connection.close();
   } catch (error) {

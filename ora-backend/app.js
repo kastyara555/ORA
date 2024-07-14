@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
+const { connection } = require("./db/connection");
 var indexRouter = require("./routes/index");
 var apiRouter = require("./routes/api/index");
 
@@ -43,5 +44,20 @@ app.use(function (err, req, res) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+function gracefulshutdown() {
+  console.log("Shutting down");
+  app.close(() => {
+    console.log("HTTP server closed.");
+
+    connection.close();
+
+    // When server has stopped accepting connections  
+    // exit the process with exit status 0 
+    process.exit(0);
+  });
+}
+
+process.on("SIGTERM", gracefulshutdown);
 
 module.exports = app;

@@ -25,11 +25,15 @@ const ClientProfile = () => {
         )}
       >
         <div className={classNames("flex", "gap-3")}>
-          <Image
-            className={styles.profileImage}
-            height="64"
-            width="64"
+          <img
             src={profileInfo.mainImage}
+            alt="Главное изображение клиента"
+            className={classNames(
+              styles.clientAvatar,
+              "h-4rem",
+              "w-4rem",
+              "shadow-2",
+            )}
           />
           <div>
             <h2>

@@ -1,18 +1,18 @@
 const { DataTypes } = require("sequelize");
 
-const City = require("./City");
+const Service = require("./Service");
 const UserTypeMap = require("./UserTypeMap");
 
-const UserCityMap = (sequelize) =>
+const Favorites = (sequelize) =>
   sequelize.define(
-    "user_city_map",
+    "favorites",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idUser: {
+      idClient: {
         type: DataTypes.INTEGER,
         references: {
           model: UserTypeMap(sequelize),
@@ -20,18 +20,18 @@ const UserCityMap = (sequelize) =>
         },
         allowNull: false,
       },
-      idCity: {
+      idService: {
         type: DataTypes.INTEGER,
         references: {
-          model: City(sequelize),
+          model: Service(sequelize),
           key: "id",
         },
         allowNull: false,
       },
     },
     {
-      tableName: "user_city_map",
+      tableName: "favorites",
     }
   );
 
-module.exports = UserCityMap;
+module.exports = Favorites;
