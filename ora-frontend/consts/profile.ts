@@ -25,6 +25,11 @@ export const PROFILE_CLIENT_LINKS: ProfileLinkModel[] = [
     description: "Просматривайте и управляйте своими прошлыми и предстоящими бронированиями",
   },
   {
+    href: "/profile/favorites",
+    title: "Избранное",
+    description: "Пользуйтесь удобством при записи на процедуры",
+  },
+  {
     href: "/profile/edit",
     title: "Настройки учетной записи",
     description: "Редактируйте ваш профиль и контактную информаци",
@@ -116,6 +121,10 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
     url: "/profile/timetable",
     availableUserTypes: [USER_TYPES.master],
     noStrict: true,
+  },
+  {
+    url: "/profile/favorites",
+    availableUserTypes: [USER_TYPES.client],
   },
   {
     url: "/profile/history",

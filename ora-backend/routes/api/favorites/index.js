@@ -1,7 +1,12 @@
 var express = require("express");
 
 const { checkAuthorization } = require("../../../middlewares/auth");
-const { saveFavorites, clearFavorites, checkFavorites } = require("../../../controllers/favoritesController");
+const {
+  saveFavorites,
+  clearFavorites,
+  checkFavorites,
+  getFavorites,
+} = require("../../../controllers/favoritesController");
 
 var favoritesRouter = express.Router();
 
@@ -18,6 +23,14 @@ favoritesRouter.post(
   checkAuthorization,
   function (req, res) {
     clearFavorites(req, res);
+  }
+);
+
+favoritesRouter.post(
+  "/get",
+  checkAuthorization,
+  function (req, res) {
+    getFavorites(req, res);
   }
 );
 

@@ -69,7 +69,7 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
       } else {
         const toastToBeShown = {
           severity: TOAST_SEVERITIES.INFO,
-          summary: "Избранные",
+          summary: "Избранное",
           detail: "Функционал доступен только авторизированным клиентам",
           life: TOAST_DEFAULT_LIFE,
         };
