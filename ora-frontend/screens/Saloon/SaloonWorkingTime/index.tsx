@@ -8,6 +8,8 @@ import WorkTableModel, {
 import { DAY_NAMES_MAPPING } from "@/consts/saloon";
 import { prepareTime } from "@/utils";
 
+import styles from './style.module.scss';
+
 interface SaloonWorkingTimeProps {
   timeTable: WorkTableModel;
 }
@@ -15,12 +17,12 @@ interface SaloonWorkingTimeProps {
 const SaloonWorkingTime: FC<SaloonWorkingTimeProps> = ({ timeTable }) => (
   <div className="mt-2">
     {Object.entries(timeTable).map(
-      ([dayName, dayInfo]: [string, WorkDayModel]) => (
+      ([dayName, dayInfo]: [string, WorkDayModel], i: number) => (
         <div
           key={dayName}
-          className={classNames("flex", "justify-content-between")}
+          className={classNames("flex", "justify-content-between", "align-items-center", "p-1", "gap-2", i % 2 ? styles.oddDay : styles.evenDay)}
         >
-          <h3 className="mt-1">
+          <h3>
             {DAY_NAMES_MAPPING[dayName as WorkTableDays]}:&nbsp;
           </h3>
           <h3>

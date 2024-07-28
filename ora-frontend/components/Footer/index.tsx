@@ -3,7 +3,6 @@ import Link from "next/link";
 import classNames from "classnames";
 
 import styles from "./style.module.scss";
-import { Image } from "primereact/image";
 
 const Footer: FC = () => (
   <footer

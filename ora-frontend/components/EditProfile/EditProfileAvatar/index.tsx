@@ -3,7 +3,6 @@ import { Dispatch, FC, SetStateAction } from "react";
 import classNames from "classnames";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { Message } from "primereact/message";
-import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
 import Button from "@/components/Button";
@@ -65,11 +64,15 @@ const EditProfileAvatar: FC<EditProfileAvatarProps> = ({
               )}
             </div>
           )}
-          <Image
-            className={styles.profileImage}
-            height="128"
-            width="128"
+          <img
             src={imageList[0] ? imageList[0]["data_url"] : defaultImage}
+            alt="Главное изображение профиля"
+            className={classNames(
+              styles.profileAvatar,
+              "h-8rem",
+              "w-8rem",
+              "shadow-2",
+            )}
           />
           <div className={classNames("flex", "flex-column", "row-gap-1")}>
             <Button

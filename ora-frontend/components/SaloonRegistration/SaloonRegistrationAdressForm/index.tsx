@@ -91,11 +91,12 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
   };
 
   const disabledButton = useMemo<boolean>(() => {
-    if (!state.city || !state.streetType) return true;
+    if (!state.city) return true;
 
     if (
       hasAdress &&
-      (!state.street.trim().length ||
+      (!state.streetType ||
+        !state.street.trim().length ||
         !isNumeric(state.building.trim()) ||
         !isNumeric(state.stage.trim()) ||
         !isNumeric(state.office.trim()))

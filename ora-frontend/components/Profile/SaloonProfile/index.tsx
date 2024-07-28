@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import ProfileLink from "@/components/Profile/ProfileLink";
 import { PROFILE_SALOON_LINKS } from "@/consts/profile";
-import { Image } from "primereact/image";
 
 import styles from "./style.module.scss";
 
@@ -25,11 +24,15 @@ const SaloonProfile = () => {
         )}
       >
         <div className={classNames("flex", "gap-3")}>
-          <Image
-            className={styles.profileImage}
-            height="64"
-            width="64"
+          <img
             src={profileInfo.mainImage}
+            alt="Главное изображение клиента"
+            className={classNames(
+              styles.saloonAvatar,
+              "h-4rem",
+              "w-4rem",
+              "shadow-2",
+            )}
           />
           <div>
             <h2>{profileInfo.saloonName}</h2>
@@ -37,7 +40,7 @@ const SaloonProfile = () => {
           </div>
         </div>
       </div>
-      <div className={classNames("grid", "gap-2", "mt-4")}>
+      <div className={classNames("grid", "gap-2", "m-0", "mt-4")}>
         {PROFILE_SALOON_LINKS.map(
           ({ href, title, description, disabled = false }, index) => (
             <ProfileLink

@@ -1,3 +1,5 @@
+@import "../../../../styles/mixins";
+
 .masterAvatar {
-    border-radius: 50%;
+    @include avatar;
 }

@@ -18,6 +18,7 @@ const saloonRouter = require("./saloon");
 const masterRouter = require("./master");
 const passwordRouter = require("./password");
 const procedureRouter = require("./procedure");
+const favoritesRouter = require("./favorites");
 const registrationRouter = require("./registration");
 const serviceInstanceRouter = require("./serviceInstance");
 const { cache } = require("../../middlewares/cache");
@@ -29,6 +30,7 @@ router.use("/saloon", saloonRouter);
 router.use("/master", masterRouter);
 router.use("/password", passwordRouter);
 router.use("/procedure", procedureRouter);
+router.use("/favorites", favoritesRouter);
 router.use("/registration", registrationRouter);
 router.use("/serviceInstance", serviceInstanceRouter);
 

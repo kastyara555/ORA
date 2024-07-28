@@ -1,11 +1,14 @@
+"use client"
 import { FC } from "react";
 import classNames from "classnames";
+import { Divider } from "primereact/divider";
 
 import { SaloonBaseDataModel } from "@/models/saloon";
 import { BASE_URL } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 
 import SaloonWorkingTime from "./SaloonWorkingTime";
+import SaloonServices from "./SaloonServices";
 import styles from "./style.module.scss";
 
 interface SaloonScreenProps {
@@ -24,8 +27,8 @@ const SaloonScreen: FC<SaloonScreenProps> = ({ saloonData }) => (
         alt={saloonData.mainImage ?? "Главное изображение салона"}
         className={classNames(
           styles.saloonAvatar,
-          "h-8rem",
-          "w-8rem",
+          "h-6rem",
+          "w-6rem",
           "shadow-2",
           "mr-2"
         )}
@@ -35,29 +38,29 @@ const SaloonScreen: FC<SaloonScreenProps> = ({ saloonData }) => (
         <p dangerouslySetInnerHTML={{ __html: saloonData.description }} />
       </div>
     </div>
-    <div className={classNames("mt-4", "grid", "w-full")}>
-      <div className={classNames("col-12", "md:col-6", "lg:col-4", "xl:col-4")}>
-        <h2>Город:&nbsp;{saloonData.cityName}</h2>
-      </div>
-      <div className={classNames("col-12", "md:col-6", "lg:col-8", "xl:col-8")}>
-        <h2>
-          Адрес:&nbsp;
-          {saloonData.street && saloonData.building
-            ? `${saloonData.streetType} ${saloonData.street} ${
-                saloonData.building
-              }${saloonData.office ? `, оф. ${saloonData.office}` : ""}${
-                saloonData.stage ? `, эт. ${saloonData.stage}` : ""
-              }`
-            : "По выезду"}
-        </h2>
-      </div>
-      <div className={classNames("col-12", "md:col-6", "lg:col-4", "xl:col-4")}>
-        <h2>График работы:</h2>
-        <SaloonWorkingTime timeTable={JSON.parse(saloonData.workingTime)} />
-      </div>
-      <div className={classNames("col-12", "md:col-6", "lg:col-8", "xl:col-8")}>
-        <h2>Услуги:</h2>
-      </div>
+
+    <h2 className="mt-6">
+      Адрес:&nbsp;
+      г.{saloonData.cityName},&nbsp;
+      {saloonData.street && saloonData.building
+        ? `${saloonData.streetType?.toLowerCase()} ${saloonData.street} ${saloonData.building
+        }${saloonData.office ? `, оф. ${saloonData.office}` : ""}${saloonData.stage ? `, эт. ${saloonData.stage}` : ""
+        }`
+        : "По выезду"}
+    </h2>
+
+    <Divider />
+
+    <div>
+      <h2>Время работы:</h2>
+      <SaloonWorkingTime timeTable={JSON.parse(saloonData.workingTime)} />
+    </div>
+
+    <Divider />
+
+    <h2>Услуги:</h2>
+    <div className={classNames("w-full", "mt-2")}>
+      <SaloonServices idSaloon={saloonData.id} />
     </div>
   </div>
 );

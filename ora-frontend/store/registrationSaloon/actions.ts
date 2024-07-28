@@ -11,7 +11,6 @@ import {
   RegistrationSaloonAboutFormModel,
   RegistrationSaloonAdressFormModel,
   RegistrationSaloonAdressTypeFormModel,
-  RegistrationSaloonCategoriesFormModel,
   RegistrationSaloonEmailFormModel,
   RegistrationSaloonPasswordFormModel,
   RegistrationSaloonPicturesFormModel,
@@ -93,11 +92,6 @@ export const registrationSaloonSetAboutForm =
 export const registrationSaloonSetPasswordForm =
   createAction<RegistrationSaloonPasswordFormModel>(
     "registrationSaloon/registrationSaloonSetPasswordForm"
-  );
-
-export const registrationSaloonSetCategoriesForm =
-  createAction<RegistrationSaloonCategoriesFormModel>(
-    "registrationSaloon/registrationSaloonSetCategoriesForm"
   );
 
 export const registrationSaloonSetAdressTypeForm =

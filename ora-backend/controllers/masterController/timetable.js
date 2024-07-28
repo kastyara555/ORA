@@ -1,6 +1,8 @@
 const moment = require("moment");
 
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
+const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const ServiceInstance = require("../../db/models/ServiceInstance");
@@ -12,13 +14,25 @@ const { connection } = require("../../db/connection");
 const {
   SERVICE_INSTANCE_STATUSES,
 } = require("../../db/consts/serviceInstanceStatuses");
+const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 
 const timetableAvailability = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
 
+    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+      where: {
+        name: SERVICES_MASTER_MAP_STATUSES.active.name,
+      },
+    });
+
     const existsServices = await ServiceMasterMapModel.findOne({
-      where: { idMaster: req.params.userTypeMapId },
+      where: {
+        idMaster: req.params.userTypeMapId,
+        idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
+      },
     });
 
     return res.send({
@@ -31,7 +45,9 @@ const timetableAvailability = async (req, res) => {
 
 const timetableInformation = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
     const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceModel = await ServiceInstance(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
@@ -56,8 +72,17 @@ const timetableInformation = async (req, res) => {
         .send("Получить расписание можно только для сегодня и будущих дней.");
     }
 
+    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+      where: {
+        name: SERVICES_MASTER_MAP_STATUSES.active.name,
+      },
+    });
+
     const existsServices = await ServiceMasterMapModel.findOne({
-      where: { idMaster: req.params.userTypeMapId },
+      where: { 
+        idMaster: req.params.userTypeMapId,
+        idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
+      },
     });
 
     if (!existsServices) {
@@ -69,13 +94,16 @@ const timetableInformation = async (req, res) => {
       FROM \`${SaloonMasterMapModel.tableName}\` smm
       JOIN \`${SaloonInfoModel.tableName}\` si
       ON smm.idSaloon = si.idUserTypeMap
+      JOIN \`${SaloonMasterMapStatusModel.tableName}\` smms
+      ON smm.idSaloonMasterMapStatus = smms.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
         FROM \`${UserImageModel.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = smm.idSaloon
-      WHERE smm.idMaster = ${req.params.userTypeMapId}`
+      WHERE smm.idMaster = ${req.params.userTypeMapId}
+      AND smms.name = '${SALOON_MASTER_MAP_STATUSES.active.name}'`
     );
 
     const [tmpTimetable] = await connection.query(
@@ -83,6 +111,8 @@ const timetableInformation = async (req, res) => {
       FROM \`${ServiceInstanceModel.tableName}\` si
       JOIN \`${ServiceMasterMapModel.tableName}\` smm
       ON si.idServiceMasterMap = smm.id
+      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      ON smm.idServiceMasterMapStatus = smms.id
       JOIN \`${ServiceModel.tableName}\` s
       ON smm.idService = s.id
       JOIN \`${ProcedureModel.tableName}\` p
@@ -92,6 +122,7 @@ const timetableInformation = async (req, res) => {
       WHERE smm.idMaster = ${req.params.userTypeMapId}
       AND si.time LIKE '${date.format("YYYY-MM-DD")}%'
       AND sis.name != '${SERVICE_INSTANCE_STATUSES.removed.name}'
+      AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
       ORDER BY si.time`
     );
 
@@ -100,7 +131,7 @@ const timetableInformation = async (req, res) => {
         ...accum,
         [saloon.id]: saloon,
       }),
-      {}
+      {},
     );
 
     const timetable = tmpTimetable.map(({ saloonId, ...record }) => ({

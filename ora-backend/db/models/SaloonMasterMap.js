@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 
+const SaloonMasterMapStatus = require("./SaloonMasterMapStatus");
 const UserTypeMap = require("./UserTypeMap");
 
 const SaloonMasterMap = (sequelize) =>
@@ -23,6 +24,14 @@ const SaloonMasterMap = (sequelize) =>
         type: DataTypes.INTEGER,
         references: {
           model: UserTypeMap(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
+      idSaloonMasterMapStatus: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: SaloonMasterMapStatus(sequelize),
           key: "id",
         },
         allowNull: false,

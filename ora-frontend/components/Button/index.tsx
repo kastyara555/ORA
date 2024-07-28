@@ -16,6 +16,7 @@ export interface IButtonProps {
   loading?: boolean;
   icon?: string;
   text?: boolean;
+  raised?: boolean;
   onClick?(): void;
 }
 
@@ -40,6 +41,7 @@ const Button: FC<IButtonProps> = ({
   outlined = false,
   rounded = false,
   loading = false,
+  raised = false,
   icon,
   text,
   onClick = () => {},
@@ -58,6 +60,7 @@ const Button: FC<IButtonProps> = ({
     loading={loading}
     icon={icon}
     text={text}
+    raised={raised}
   >
     {!loading && children}
   </ButtonComponent>

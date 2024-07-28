@@ -6,9 +6,9 @@ import classNames from "classnames";
 import axiosInstance from "@/api";
 import { clientHistoryUrl } from "@/api/client";
 import Button from "@/components/Button";
-import { HISTORY_ITEMS_PAGE_SIZE } from "@/consts/profile";
+import { HISTORY_ITEMS_PAGE_SIZE, INITIAL_CLIENT_HISTORY } from "@/consts/profile";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
-import { ClientProfileModel, INITIAL_CLIENT_HISTORY, ProfileClientHistoryDataModel } from "@/models/profile";
+import { ClientProfileModel, ProfileClientHistoryDataModel } from "@/models/profile";
 import { commonSetUiToast } from "@/store/common/actions";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 

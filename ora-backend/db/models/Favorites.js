@@ -1,18 +1,18 @@
 const { DataTypes } = require("sequelize");
 
-const ProcedureGroup = require("./ProcedureGroup");
+const Service = require("./Service");
 const UserTypeMap = require("./UserTypeMap");
 
-const SaloonGroupProcedureMap = (sequelize) =>
+const Favorites = (sequelize) =>
   sequelize.define(
-    "saloon_group_procedure_map",
+    "favorites",
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      idUserTypeMap: {
+      idClient: {
         type: DataTypes.INTEGER,
         references: {
           model: UserTypeMap(sequelize),
@@ -20,18 +20,18 @@ const SaloonGroupProcedureMap = (sequelize) =>
         },
         allowNull: false,
       },
-      idProcedureGroup: {
+      idService: {
         type: DataTypes.INTEGER,
         references: {
-          model: ProcedureGroup(sequelize),
+          model: Service(sequelize),
           key: "id",
         },
         allowNull: false,
       },
     },
     {
-      tableName: "saloon_group_procedure_map",
+      tableName: "favorites",
     }
   );
 
-module.exports = SaloonGroupProcedureMap;
+module.exports = Favorites;

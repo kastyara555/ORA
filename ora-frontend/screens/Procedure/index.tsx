@@ -1,6 +1,6 @@
 "use client";
-import { FC, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { FC, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
 import { usePathname } from "next/navigation";
 
@@ -12,6 +12,9 @@ import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { ProcedureDataModel } from "@/models/procedure";
 import ProcedureSaloonsList from "@/screens/Procedure/ProcedureSaloonsList";
 import { commonSetUiToast } from "@/store/common/actions";
+import { profileUserDataSelector } from "@/store/profile/selectors";
+import { clientClearFavoriteUrl, clientCheckFavoriteServicesUrl, clientSaveFavoriteUrl } from "@/api/favorites";
+import { USER_TYPES } from "@/consts/profile";
 
 interface ProcedureProps {
   initialProcedure: ProcedureDataModel;
@@ -22,6 +25,8 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
     useState<ProcedureDataModel>(initialProcedure);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [favoritesMap, setFavoritesMap] = useState<Record<string, boolean>>({});
+  const userData = useSelector(profileUserDataSelector);
   const pathname = usePathname();
   const dispatch = useDispatch();
 
@@ -29,6 +34,52 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
     () => !(currentPage * SALOONS_PAGE_SIZE >= procedureData.saloons.total),
     [currentPage, procedureData.saloons.total]
   );
+
+  const fetchFavorites = async () => {
+    try {
+      if (userData && procedureData.saloons.data.length) {
+        const { data } = await axiosInstance.post(clientCheckFavoriteServicesUrl, {
+          idClient: userData.userTypeMapId,
+          idServices: procedureData.saloons.data.map(({ idService }) => idService),
+        });
+
+        setFavoritesMap(data.reduce((acc: Record<string, boolean>, id: number) => ({ ...acc, [id]: true }), {}));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const toggleFavorites = async (idService: number) => {
+    try {
+      if (userData && userData.userType === USER_TYPES.client) {
+        const isFavorite = favoritesMap.hasOwnProperty(idService);
+        await axiosInstance.post(isFavorite ? clientClearFavoriteUrl : clientSaveFavoriteUrl, {
+          idClient: userData.userTypeMapId,
+          idService,
+        });
+
+        if (isFavorite) {
+          const { [idService]: elementToBeRemoved, ...rest } = favoritesMap;
+
+          setFavoritesMap(rest);
+        } else {
+          setFavoritesMap({ ...favoritesMap, [idService]: true });
+        }
+      } else {
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.INFO,
+          summary: "Избранное",
+          detail: "Функционал доступен только авторизированным клиентам",
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleLoadMore = async () => {
     try {
@@ -65,9 +116,17 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
     }
   };
 
+  useEffect(() => {
+    fetchFavorites();
+  }, [procedureData.saloons.data.length]);
+
   return (
     <div>
-      <ProcedureSaloonsList saloonsData={procedureData.saloons.data} />
+      <ProcedureSaloonsList
+        saloonsData={procedureData.saloons.data}
+        handleFavoritesClick={toggleFavorites}
+        favorites={favoritesMap}
+      />
       {shouldShowMoreButton && (
         <Button
           onClick={handleLoadMore}

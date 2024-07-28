@@ -12,6 +12,7 @@ const UserTypeMap = require("../../db/models/UserTypeMap");
 const ServiceInstance = require("../../db/models/ServiceInstance");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const {
   procedureAvailableDatesBySaloonSchema,
 } = require("../../schemas/procedureAvailableDatesBySaloonSchema");
@@ -21,6 +22,7 @@ const {
 const {
   SERVICE_INSTANCE_STATUSES,
 } = require("../../db/consts/serviceInstanceStatuses");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const {
   procedureAvailableRecordsBySaloonDateAndMasterSchema,
 } = require("../../schemas/procedureAvailableRecordsBySaloonDateAndMasterSchema");
@@ -43,25 +45,29 @@ const getAvailableDatesForProcedureBySaloon = async (req, res) => {
     const ServiceInstanceModel = await ServiceInstance(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
 
     const { year, month } = value;
     const formatedMonth = month < 10 ? `0${month}` : month.toString();
 
     const [availableDates] = await connection.query(
       `SELECT DISTINCT SUBSTRING(si.time, 1, 10) as date
-          FROM \`${ServiceInstanceModel.tableName}\` si
-          JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
-          ON si.idServiceInstanceStatus = sis.id
-          JOIN \`${ServiceMasterMapModel.tableName}\` smm
-          ON si.idServiceMasterMap = smm.id
-          JOIN \`${ServiceModel.tableName}\` s
-          ON smm.idService = s.id
-          WHERE s.idSaloon = ${req.params.saloonId}
-          AND s.idProcedure = ${req.params.procedureId}
-          AND si.time LIKE '${year}-${formatedMonth}-%'
-          AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
-          AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
-          ORDER BY date ASC`
+      FROM \`${ServiceInstanceModel.tableName}\` si
+      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      ON si.idServiceInstanceStatus = sis.id
+      JOIN \`${ServiceMasterMapModel.tableName}\` smm
+      ON si.idServiceMasterMap = smm.id
+      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      ON smm.idServiceMasterMapStatus = smms.id
+      JOIN \`${ServiceModel.tableName}\` s
+      ON smm.idService = s.id
+      WHERE s.idSaloon = ${req.params.saloonId}
+      AND s.idProcedure = ${req.params.procedureId}
+      AND si.time LIKE '${year}-${formatedMonth}-%'
+      AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
+      AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
+      AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
+      ORDER BY date ASC`
     );
 
     res.send(availableDates.map(({ date }) => date));
@@ -92,14 +98,17 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
     const ServiceInstanceModel = await ServiceInstance(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
 
     const [availableMasters] = await connection.query(
-      `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage
+      `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage, smm.price as price
           FROM \`${ServiceInstanceModel.tableName}\` si
           JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id
           JOIN \`${ServiceMasterMapModel.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
+          JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+          ON smm.idServiceMasterMapStatus = smms.id
           JOIN \`${ServiceModel.tableName}\` s
           ON smm.idService = s.id
           JOIN \`${UserTypeMapModel.tableName}\` utm
@@ -117,6 +126,7 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
           AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
           AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
           AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
+          AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
           ORDER BY name`
     );
 
@@ -149,6 +159,7 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
     const ServiceInstanceModel = await ServiceInstance(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
 
     const [availableRecords] = await connection.query(
       `SELECT si.id as id, SUBSTRING(si.time, 12, 5) as time
@@ -157,6 +168,8 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
           ON si.idServiceInstanceStatus = sis.id
           JOIN \`${ServiceMasterMapModel.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
+          JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+          ON smm.idServiceMasterMapStatus = smms.id
           JOIN \`${ServiceModel.tableName}\` s
           ON smm.idService = s.id
           JOIN \`${UserTypeMapModel.tableName}\` utm
@@ -167,6 +180,7 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
           AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
           AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
           AND utm.id = ${value.masterId}
+          AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
           ORDER BY time`
     );
 

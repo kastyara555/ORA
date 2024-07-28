@@ -2,7 +2,6 @@ import {
   RegistrationSaloonEmailFormModel,
   RegistrationSaloonAboutFormModel,
   RegistrationSaloonPasswordFormModel,
-  RegistrationSaloonCategoriesFormModel,
   RegistrationSaloonAdressTypeFormModel,
   RegistrationSaloonAdressFormModel,
   RegistrationSaloonStuffCountFormModel,
@@ -16,7 +15,6 @@ export interface RegistrationFormSelectedValuesModel {
   emailForm: RegistrationSaloonEmailFormModel;
   aboutForm: RegistrationSaloonAboutFormModel;
   passwordForm: RegistrationSaloonPasswordFormModel;
-  categoriesForm: RegistrationSaloonCategoriesFormModel;
   adressTypeForm: RegistrationSaloonAdressTypeFormModel;
   adressForm: RegistrationSaloonAdressFormModel;
   stuffCountForm: RegistrationSaloonStuffCountFormModel;

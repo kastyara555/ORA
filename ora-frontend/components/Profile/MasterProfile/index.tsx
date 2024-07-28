@@ -1,7 +1,6 @@
 "use client";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
-import { Image } from "primereact/image";
 
 import { PROFILE_MASTER_LINKS } from "@/consts/profile";
 import { profileUserDataSelector } from "@/store/profile/selectors";
@@ -25,11 +24,15 @@ const MasterProfile = () => {
         )}
       >
         <div className={classNames("flex", "gap-3")}>
-          <Image
-            className={styles.profileImage}
-            height="64"
-            width="64"
+          <img
             src={profileInfo.mainImage}
+            alt="Главное изображение клиента"
+            className={classNames(
+              styles.masterAvatar,
+              "h-4rem",
+              "w-4rem",
+              "shadow-2",
+            )}
           />
           <div>
             <h2>
@@ -42,7 +45,7 @@ const MasterProfile = () => {
           </div>
         </div>
       </div>
-      <div className={classNames("grid", "gap-2", "mt-4")}>
+      <div className={classNames("grid", "gap-2", "m-0", "mt-4")}>
         {PROFILE_MASTER_LINKS.map(
           ({ href, title, description, disabled = false }, index) => (
             <ProfileLink

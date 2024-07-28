@@ -8,7 +8,6 @@ const {
   deleteSaloonMasters,
   addSaloonMaster,
   getSaloonServices,
-  deleteSaloonServices,
   addSaloonServices,
   updateSaloon,
   getSaloonServiceInfo,
@@ -16,6 +15,7 @@ const {
   addServiceMasters,
   removeServiceMasters,
   updateServiceMaster,
+  getSaloonBaseServices,
 } = require("../../../controllers/saloonController");
 const { roles } = require("../../../db/consts/roles");
 
@@ -26,6 +26,13 @@ const isValidSaloon = isValidUserByType(roles.saloon.name);
 saloonRouter.get("/:userTypeMapId", function (req, res) {
   getSaloonBaseInfo(req, res);
 });
+
+saloonRouter.post(
+  "/:userTypeMapId/services",
+  function (req, res) {
+    getSaloonBaseServices(req, res);
+  }
+);
 
 saloonRouter.post(
   "/:userTypeMapId/update",
@@ -69,15 +76,6 @@ saloonRouter.post(
   isValidSaloon,
   function (req, res) {
     getSaloonServices(req, res);
-  }
-);
-
-saloonRouter.post(
-  "/:userTypeMapId/services/delete",
-  checkAuthorization,
-  isValidSaloon,
-  function (req, res) {
-    deleteSaloonServices(req, res);
   }
 );
 

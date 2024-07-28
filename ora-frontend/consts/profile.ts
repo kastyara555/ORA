@@ -1,5 +1,6 @@
 import { BASE_ASSETS_URL } from "@/api";
 import { ProfileLinkModel } from "@/components/Profile/ProfileLink";
+import { ProfileClientHistoryDataModel } from "@/models/profile";
 
 export const USER_TYPES = {
   client: "Клиент",
@@ -23,6 +24,11 @@ export const PROFILE_CLIENT_LINKS: ProfileLinkModel[] = [
     href: "/profile/history",
     title: "История бронирования",
     description: "Просматривайте и управляйте своими прошлыми и предстоящими бронированиями",
+  },
+  {
+    href: "/profile/favorites",
+    title: "Избранное",
+    description: "Пользуйтесь удобством при записи на процедуры",
   },
   {
     href: "/profile/edit",
@@ -118,8 +124,17 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
     noStrict: true,
   },
   {
+    url: "/profile/favorites",
+    availableUserTypes: [USER_TYPES.client],
+  },
+  {
     url: "/profile/history",
   },
 ];
 
 export const HISTORY_ITEMS_PAGE_SIZE = 8;
+
+export const INITIAL_CLIENT_HISTORY: ProfileClientHistoryDataModel = {
+  data: [],
+  total: 0,
+}

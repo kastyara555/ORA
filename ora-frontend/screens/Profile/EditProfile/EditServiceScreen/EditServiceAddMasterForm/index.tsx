@@ -123,15 +123,14 @@ const EditServiceAddMasterForm: FC<EditServiceAddMasterFormProps> = ({
       </div>
       <div className={classNames("col-12", "xl:col-6", "lg:col-6", "py-4")}>
         <label htmlFor="price">Стоимость</label>
-        <div className="mt-2">
-          <InputNumber
-            min={0}
-            id="price"
-            value={formik.values.price}
-            onChange={handlePriceChange}
-            disabled={!serviceInfo.availableMasters.length}
-          />
-        </div>
+        <InputNumber
+          min={0}
+          id="price"
+          className={classNames("w-full", "mt-2")}
+          value={formik.values.price}
+          onChange={handlePriceChange}
+          disabled={!serviceInfo.availableMasters.length}
+        />
       </div>
       <div className={classNames("col-12", "xl:col-6", "lg:col-6")}>
         <Button

@@ -1,6 +1,8 @@
 const moment = require("moment");
 
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
+const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const ServiceInstance = require("../../db/models/ServiceInstance");
@@ -14,19 +16,30 @@ const {
 const {
   SERVICE_INSTANCE_STATUSES,
 } = require("../../db/consts/serviceInstanceStatuses");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
+const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
 const { timetableInformation } = require("./timetable");
 
 const getServicesBySaloon = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
     const ProcedureModel = await Procedure(connection);
     const ServiceModel = await Service(connection);
 
+    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+      where: {
+        name: SALOON_MASTER_MAP_STATUSES.active.name,
+      },
+    });
+
     const existsSaloonMasterMap = await SaloonMasterMapModel.findOne({
       where: {
         idMaster: req.params.userTypeMapId,
         idSaloon: req.params.idSaloon,
+        idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
       },
     });
 
@@ -39,10 +52,13 @@ const getServicesBySaloon = async (req, res) => {
       FROM \`${ServiceModel.tableName}\` s
       JOIN \`${ServiceMasterMapModel.tableName}\` smm
       ON s.id = smm.idService
+      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      ON smm.idServiceMasterMapStatus = smms.id
       JOIN \`${ProcedureModel.tableName}\` p
       ON s.idProcedure = p.id
       WHERE smm.idMaster = ${req.params.userTypeMapId}
-      AND s.idSaloon = ${req.params.idSaloon}`
+      AND s.idSaloon = ${req.params.idSaloon}
+      AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'`
     );
 
     return res.send({ services });
@@ -53,6 +69,7 @@ const getServicesBySaloon = async (req, res) => {
 
 const createServiceInstance = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceModel = await ServiceInstance(connection);
     const ServiceModel = await Service(connection);
@@ -67,10 +84,17 @@ const createServiceInstance = async (req, res) => {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
+    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+      where: {
+        name: SERVICES_MASTER_MAP_STATUSES.active.name,
+      },
+    });
+
     const existsServiceMasterMap = await ServiceMasterMapModel.findOne({
       where: {
         id: value.id,
         idMaster: req.params.userTypeMapId,
+        idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
       },
     });
 
@@ -119,8 +143,7 @@ const createServiceInstance = async (req, res) => {
       time: date
         .format("YYYY-MM-DD")
         .concat(
-          `:${value.hours < 10 ? "0".concat(value.hours) : value.hours}-${
-            value.minutes < 10 ? "0".concat(value.minutes) : value.minutes
+          `:${value.hours < 10 ? "0".concat(value.hours) : value.hours}-${value.minutes < 10 ? "0".concat(value.minutes) : value.minutes
           }`
         ),
       idClient: null,
@@ -137,9 +160,10 @@ const createServiceInstance = async (req, res) => {
 // TODO: пересмотреть удаление после завершения первой итерации разработки
 const cancelServiceInstance = async (req, res) => {
   try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
 
     const { userTypeMapId, serviceInstanceId } = req.params;
 
@@ -153,10 +177,17 @@ const cancelServiceInstance = async (req, res) => {
       return res.status(400).send("Нельзя отменить несуществующую услугу");
     }
 
+    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+      where: {
+        name: SERVICES_MASTER_MAP_STATUSES.active.name,
+      },
+    });
+
     const existsServiceMasterMap = await ServiceMasterMapModel.findOne({
       where: {
         id: serviceInstanceToBeCanceled.dataValues.idServiceMasterMap,
         idMaster: userTypeMapId,
+        idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
       },
     });
 

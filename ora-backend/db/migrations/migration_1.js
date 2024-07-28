@@ -9,6 +9,8 @@ const {
   PASSWORD_RESTORATION_STATUSES,
 } = require("../consts/passwordRestorationStatuses");
 const { SERVICE_INSTANCE_STATUSES } = require("../consts/serviceInstanceStatuses");
+const { SALOON_MASTER_MAP_STATUSES } = require("../consts/saloonMasterMapStatuses");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../consts/serviceMasterMapStatuses");
 const City = require("../models/City");
 const Sex = require("../models/Sex");
 const UserType = require("../models/UserType");
@@ -17,6 +19,8 @@ const ProcedureGroup = require("../models/ProcedureGroup");
 const StreetType = require("../models/StreetType");
 const PasswordRestorationStatus = require("../models/PasswordRestorationStatus");
 const ServiceInstanceStatus = require("../models/ServiceInstanceStatus");
+const SaloonMasterMapStatus = require("../models/SaloonMasterMapStatus");
+const ServiceMasterMapStatus = require("../models/ServiceMasterMapStatus");
 
 const sequelize = connection;
 
@@ -36,6 +40,12 @@ const migration = async () => {
     );
     await ServiceInstanceStatus(connection).bulkCreate(
       Object.values(SERVICE_INSTANCE_STATUSES)
+    );
+    await SaloonMasterMapStatus(connection).bulkCreate(
+      Object.values(SALOON_MASTER_MAP_STATUSES)
+    );
+    await ServiceMasterMapStatus(connection).bulkCreate(
+      Object.values(SERVICES_MASTER_MAP_STATUSES)
     );
 
     await sequelize.close();

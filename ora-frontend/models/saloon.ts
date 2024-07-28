@@ -11,3 +11,14 @@ export interface SaloonBaseDataModel {
   stage: string | null;
   office: string | null;
 }
+
+export interface SaloonServiceDataModel {
+  data: SaloonServiceModel[];
+  total: number;
+}
+
+export interface SaloonServiceModel {
+  id: number;
+  procedureId: number;
+  procedureName: string;
+}

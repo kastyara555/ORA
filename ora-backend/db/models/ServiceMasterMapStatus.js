@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 
-const ReviewStatus = (sequelize) =>
+const ServiceMasterMapStatus = (sequelize) =>
   sequelize.define(
-    "review_status",
+    "service_master_map_status",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,8 +19,8 @@ const ReviewStatus = (sequelize) =>
       },
     },
     {
-      tableName: "review_status",
+      tableName: "service_master_map_status",
     }
   );
 
-module.exports = ReviewStatus;
+module.exports = ServiceMasterMapStatus;

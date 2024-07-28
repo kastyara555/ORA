@@ -10,7 +10,7 @@ import EditServicesTable from "@/screens/Profile/EditProfile/EditServicesScreen/
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { commonSetUiToast } from "@/store/common/actions";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
-import { deleteSaloonServicesUrl, getSaloonServicesUrl } from "@/api/saloon";
+import { getSaloonServicesUrl } from "@/api/saloon";
 import axiosInstance from "@/api";
 
 import styles from "./style.module.scss";
@@ -52,40 +52,6 @@ const EditServicesScreen = () => {
     }
   }, []);
 
-  const deleteService = useCallback(
-    async (serviceId: number) => {
-      try {
-        setLoading(true);
-        const { data } = await axiosInstance.post(
-          deleteSaloonServicesUrl(userTypeMapId),
-          { codes: [serviceId] }
-        );
-        setServices(data);
-
-        const toastToBeShown = {
-          severity: TOAST_SEVERITIES.SUCCESS,
-          summary: "Профиль",
-          detail: "Услуга успешно удалена",
-          life: TOAST_DEFAULT_LIFE,
-        };
-
-        dispatch(commonSetUiToast(toastToBeShown));
-      } catch (e) {
-        const toastToBeShown = {
-          severity: TOAST_SEVERITIES.ERROR,
-          summary: "Профиль",
-          detail: "Ошибка удаления услуги",
-          life: TOAST_DEFAULT_LIFE,
-        };
-
-        dispatch(commonSetUiToast(toastToBeShown));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [userTypeMapId]
-  );
-
   return (
     <div className={classNames(styles.container, "py-4")}>
       <TabView className={classNames("w-full", "mt-4")}>
@@ -93,7 +59,6 @@ const EditServicesScreen = () => {
           <EditServicesTable
             services={services}
             loading={loading}
-            deleteService={deleteService}
           />
         </TabPanel>
         <TabPanel header="Добавление услуг">

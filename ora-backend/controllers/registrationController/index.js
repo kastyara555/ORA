@@ -15,7 +15,10 @@ const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
 const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
-const SaloonGroupProcedureMap = require("../../db/models/SaloonGroupProcedureMap");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
+const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
+const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
 const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
 const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
 const UserTypeMap = require("../../db/models/UserTypeMap");
@@ -50,40 +53,39 @@ const registrationSaloon = async (req, res) => {
       adressForm,
       visitPaymentForm,
       timeForm,
-      categoriesForm,
       stuffCountForm,
       servicesForm,
       picturesForm,
     } = value;
 
-    const UserModel = await User(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const SaloonGroupProcedureMapModel = await SaloonGroupProcedureMap(
-      connection
-    );
-    const ServiceModel = await Service(connection);
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const ServiceMasterMapModel = await ServiceMasterMap(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserImageModel = await UserImage(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const SaloonInfoModel = await SaloonInfo(connection);
+    const MasterInfoModel = await MasterInfo(connection);
+    const UserStatusModel = await UserStatus(connection);
     const StreetTypeModel = await StreetType(connection);
+    const UserImageModel = await UserImage(connection);
+    const UserTypeModel = await UserType(connection);
+    const ServiceModel = await Service(connection);
+    const UserModel = await User(connection);
 
-    const suspectPicture = picturesForm.pictures.find(
-      ({ data, fileName, fileType }) =>
-        data.indexOf(",") === -1 ||
-        fileType.indexOf("image/") !== 0 ||
-        fileName.indexOf(".") < 1 ||
-        !IMAGE_EXTENSIONS.includes(fileName.split(".")[1])
-    );
+    const suspectPicture =
+      !!picturesForm.mainImage &&
+      (
+        picturesForm.mainImage.data.indexOf(",") === -1 ||
+        picturesForm.mainImage.fileType.indexOf("image/") !== 0 ||
+        picturesForm.mainImage.fileName.indexOf(".") < 1 ||
+        !IMAGE_EXTENSIONS.includes(picturesForm.mainImage.fileName.split(".")[1])
+      );
 
     if (suspectPicture) {
       return res.status(400).send("Неверный формат/размер изображения.");
     }
 
-    const existsUsers = await UserModel.findAll({
+    const existsUsers = await UserModel.findOne({
       where: {
         [Sequelize.Op.or]: [
           {
@@ -96,7 +98,7 @@ const registrationSaloon = async (req, res) => {
       },
     });
 
-    if (existsUsers.length) {
+    if (existsUsers) {
       return res
         .status(400)
         .send(
@@ -161,14 +163,6 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
-    await SaloonGroupProcedureMapModel.bulkCreate(
-      categoriesForm.categories.map((categoryId) => ({
-        idProcedureGroup: categoryId,
-        idUserTypeMap: addedUserSaloonType.id,
-      })),
-      { transaction }
-    );
-
     if (isSelfEmployed) {
       const { dataValues: masterType } = await UserTypeModel.findOne({
         where: {
@@ -195,10 +189,17 @@ const registrationSaloon = async (req, res) => {
         { transaction }
       );
 
+      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+        where: {
+          name: SALOON_MASTER_MAP_STATUSES.active.name,
+        },
+      });
+
       await SaloonMasterMapModel.create(
         {
           idMaster: addedUserMasterType.id,
           idSaloon: addedUserSaloonType.id,
+          idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
         },
         { transaction }
       );
@@ -215,35 +216,42 @@ const registrationSaloon = async (req, res) => {
           { returning: true, transaction }
         );
 
+        const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+          where: {
+            name: SERVICES_MASTER_MAP_STATUSES.active.name,
+          },
+        });
+
         await ServiceMasterMapModel.bulkCreate(
           addedServices.map(({ dataValues }, index) => ({
             idService: dataValues.id,
             idMaster: addedUserMasterType.id,
             price: servicesForm.services[index].price,
+            idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
           })),
           { transaction }
         );
       }
     }
 
-    for (const { data, fileName } of picturesForm.pictures) {
+    if (picturesForm.mainImage) {
       const dirName = "/userUploads/" + addedUserSaloonType.id + "/images/";
       const fullDirName = "public" + dirName;
-      const imageName = dirName + fileName;
+      const imageName = dirName + picturesForm.mainImage.fileName;
       const fullImageName = "public" + imageName;
 
       if (!fs.existsSync(fullDirName)) {
         fs.mkdirSync(fullDirName, { recursive: true });
       }
 
-      let buff = new Buffer.from(data.split(",")[1], "base64");
+      let buff = new Buffer.from(picturesForm.mainImage.data.split(",")[1], "base64");
       fs.writeFileSync(fullImageName, buff);
 
       await UserImageModel.create(
         {
           idUserTypeMap: addedUserSaloonType.id,
           url: imageName,
-          isMain: false,
+          isMain: true,
         },
         { transaction }
       );
@@ -365,12 +373,13 @@ const registrationMaster = async (req, res) => {
     const { name, email, phone, password, description, relatedSaloonMapId } =
       value;
 
-    const UserModel = await User(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
+    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
     const SaloonMasterMapModel = await SaloonMasterMap(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const MasterInfoModel = await MasterInfo(connection);
+    const UserStatusModel = await UserStatus(connection);
+    const UserTypeModel = await UserType(connection);
+    const UserModel = await User(connection);
 
     const existsUsers = await UserModel.findAll({
       where: {
@@ -454,10 +463,17 @@ const registrationMaster = async (req, res) => {
     );
 
     if (relatedSaloonMapId) {
+      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+        where: {
+          name: SALOON_MASTER_MAP_STATUSES.active.name,
+        },
+      });
+
       await SaloonMasterMapModel.create(
         {
           idMaster: addedMasterType.id,
           idSaloon: relatedSaloonMapId,
+          idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
         },
         { transaction }
       );

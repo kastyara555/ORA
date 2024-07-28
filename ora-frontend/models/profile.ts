@@ -78,8 +78,3 @@ export interface ProfileClientHistoryModel {
   masterName: string;
   masterImage: string | null;
 }
-
-export const INITIAL_CLIENT_HISTORY: ProfileClientHistoryDataModel = {
-  data: [],
-  total: 0,
-}

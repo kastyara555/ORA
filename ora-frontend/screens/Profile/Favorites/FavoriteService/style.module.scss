@@ -1,0 +1,54 @@
+@import "../../../../styles/mixins";
+@import "../../../../styles/variables";
+
+.saloonAvatar {
+    @include avatar;
+}
+
+.saloon {
+    border-radius: 16px;
+    border: 1px solid $gray-200;
+
+    &:hover {
+        background-color: $gray-100;
+        cursor: pointer;
+    }
+}
+
+.saloonDesktop {
+    height: 92px;
+}
+
+.favoriteButton {
+    color: $pink-500 !important;
+}
+
+.link {
+    display: flex;
+
+    * {
+        transition: 0.1s all;
+    }
+
+    &:hover {
+        * {
+            color: $pink-500;
+        }
+
+        img {
+            filter: brightness(0.975);
+        }
+    }
+}
+
+@media (max-width: 896px) {
+    .saloonDesktop {
+        display: none !important;
+    }
+}
+
+@media (min-width: 897px) {
+    .saloonMobile {
+        display: none !important;
+    }
+}

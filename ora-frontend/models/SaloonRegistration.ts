@@ -15,10 +15,6 @@ export interface RegistrationSaloonPasswordFormModel {
   password: string;
 }
 
-export interface RegistrationSaloonCategoriesFormModel {
-  categories: any[];
-}
-
 export interface RegistrationSaloonAdressTypeFormModel {
   hasAdress: boolean;
 }
