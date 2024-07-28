@@ -15,6 +15,7 @@ const {
   addServiceMasters,
   removeServiceMasters,
   updateServiceMaster,
+  getSaloonBaseServices,
 } = require("../../../controllers/saloonController");
 const { roles } = require("../../../db/consts/roles");
 
@@ -25,6 +26,13 @@ const isValidSaloon = isValidUserByType(roles.saloon.name);
 saloonRouter.get("/:userTypeMapId", function (req, res) {
   getSaloonBaseInfo(req, res);
 });
+
+saloonRouter.post(
+  "/:userTypeMapId/services",
+  function (req, res) {
+    getSaloonBaseServices(req, res);
+  }
+);
 
 saloonRouter.post(
   "/:userTypeMapId/update",

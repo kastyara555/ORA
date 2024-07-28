@@ -35,7 +35,7 @@ favoritesRouter.post(
 );
 
 favoritesRouter.post(
-  "/checkSaloons",
+  "/checkServices",
   function (req, res) {
     checkFavorites(req, res);
   }

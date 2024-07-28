@@ -1,6 +1,6 @@
 import { BASE_API_URL } from "@/api/index";
 
-export const clientFavoriteSaloonsUrl = BASE_API_URL.concat('/favorites/checkSaloons');
+export const clientCheckFavoriteServicesUrl = BASE_API_URL.concat('/favorites/checkServices');
 
 export const clientSaveFavoriteUrl = BASE_API_URL.concat('/favorites/save');
 

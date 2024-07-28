@@ -75,13 +75,17 @@ const BookingMasterStep: FC<BookingMasterStepProps> = ({
   };
 
   const availableMasterTemplate = (option: BookingMaster) => (
-    <div className={classNames("flex", "align-items-center")}>
-      <img
-        src={option.mainImage}
-        alt={option.mainImage}
-        className={classNames(styles.masterAvatar, "h-3rem", "shadow-2")}
-      />
-      <p className="ml-2">{option.name}</p>
+    <div className={classNames("flex", "flex-wrap", "justify-content-between", "align-items-center", "gap-3")}>
+      <div className={classNames("flex", "align-items-center")}>
+        <img
+          src={option.mainImage}
+          alt={option.mainImage}
+          className={classNames(styles.masterAvatar, "h-3rem", "shadow-2")}
+        />
+        <p className="ml-2">{option.name}</p>
+      </div>
+
+      <p>{option.price} BYN</p>
     </div>
   );
 

@@ -1,0 +1,10 @@
+@import "../../../styles/variables";
+
+.service {
+    border: 1px solid $gray-200;
+    border-radius: 8px;
+}
+
+.favoriteButton {
+    color: $pink-500 !important;
+}

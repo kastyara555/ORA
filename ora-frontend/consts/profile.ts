@@ -1,5 +1,6 @@
 import { BASE_ASSETS_URL } from "@/api";
 import { ProfileLinkModel } from "@/components/Profile/ProfileLink";
+import { ProfileClientHistoryDataModel } from "@/models/profile";
 
 export const USER_TYPES = {
   client: "Клиент",
@@ -132,3 +133,8 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
 ];
 
 export const HISTORY_ITEMS_PAGE_SIZE = 8;
+
+export const INITIAL_CLIENT_HISTORY: ProfileClientHistoryDataModel = {
+  data: [],
+  total: 0,
+}

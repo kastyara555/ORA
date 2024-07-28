@@ -13,7 +13,7 @@ import { ProcedureDataModel } from "@/models/procedure";
 import ProcedureSaloonsList from "@/screens/Procedure/ProcedureSaloonsList";
 import { commonSetUiToast } from "@/store/common/actions";
 import { profileUserDataSelector } from "@/store/profile/selectors";
-import { clientClearFavoriteUrl, clientFavoriteSaloonsUrl, clientSaveFavoriteUrl } from "@/api/favorites";
+import { clientClearFavoriteUrl, clientCheckFavoriteServicesUrl, clientSaveFavoriteUrl } from "@/api/favorites";
 import { USER_TYPES } from "@/consts/profile";
 
 interface ProcedureProps {
@@ -37,8 +37,8 @@ const Procedure: FC<ProcedureProps> = ({ initialProcedure }) => {
 
   const fetchFavorites = async () => {
     try {
-      if (userData) {
-        const { data } = await axiosInstance.post(clientFavoriteSaloonsUrl, {
+      if (userData && procedureData.saloons.data.length) {
+        const { data } = await axiosInstance.post(clientCheckFavoriteServicesUrl, {
           idClient: userData.userTypeMapId,
           idServices: procedureData.saloons.data.map(({ idService }) => idService),
         });

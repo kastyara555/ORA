@@ -1,11 +1,14 @@
 const fs = require("fs");
 
+const { saloonBaseServicesSchema } = require("../../schemas/saloonBaseServicesSchema");
 const { saloonUpdatingSchema } = require("../../schemas/saloonUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
-const UserImage = require("../../db/models/UserImage");
 const SaloonInfo = require("../../db/models/SaloonInfo");
 const StreetType = require("../../db/models/StreetType");
+const UserImage = require("../../db/models/UserImage");
+const Procedure = require("../../db/models/Procedure");
+const Service = require("../../db/models/Service");
 const City = require("../../db/models/City");
 const { getUserData } = require("../userController");
 
@@ -126,4 +129,41 @@ const getSaloonBaseInfo = async (req, res) => {
   }
 };
 
-module.exports = { updateSaloon, getSaloonBaseInfo };
+const getSaloonBaseServices = async (req, res) => {
+  try {
+    const ServiceModel = await Service(connection);
+    const ProcedureModel = await Procedure(connection);
+
+    const { value, error } = saloonBaseServicesSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).send("Проверьте правильность введённых данных");
+    }
+
+    const { pageNumber, pageSize } = value;
+    const offset = pageSize * (pageNumber - 1);
+
+    const total = await ServiceModel.count({ where: { idSaloon: req.params.userTypeMapId } });
+
+    const [services] = total === 0 || offset >= total
+      ? [[]]
+      : await connection.query(
+        `SELECT s.id as id, p.id as procedureId, p.name as procedureName
+        FROM \`${ServiceModel.tableName}\` s
+        JOIN \`${ProcedureModel.tableName}\` p
+        ON s.idProcedure = p.id
+        WHERE s.idSaloon = ${req.params.userTypeMapId}
+        LIMIT ${pageSize}
+        OFFSET ${offset}`
+      );
+
+    res.send({
+      data: services,
+      total,
+    });
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+module.exports = { updateSaloon, getSaloonBaseInfo, getSaloonBaseServices };

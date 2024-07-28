@@ -101,7 +101,7 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
     const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
 
     const [availableMasters] = await connection.query(
-      `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage
+      `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage, smm.price as price
           FROM \`${ServiceInstanceModel.tableName}\` si
           JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id

@@ -50,7 +50,7 @@ const ClientProfile = () => {
           </h3>
         </div>
       </div>
-      <div className={classNames("grid", "gap-2", "mt-4")}>
+      <div className={classNames("grid", "gap-2", "m-0", "mt-4")}>
         {PROFILE_CLIENT_LINKS.map(({ href, title, description, disabled = false }, index) => (
           <ProfileLink
             key={index}

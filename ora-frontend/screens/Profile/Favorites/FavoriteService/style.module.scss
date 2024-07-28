@@ -1,5 +1,5 @@
-@import "../../../styles/mixins";
-@import "../../../styles/variables";
+@import "../../../../styles/mixins";
+@import "../../../../styles/variables";
 
 .saloonAvatar {
     @include avatar;
@@ -21,6 +21,24 @@
 
 .favoriteButton {
     color: $pink-500 !important;
+}
+
+.link {
+    display: flex;
+
+    * {
+        transition: 0.1s all;
+    }
+
+    &:hover {
+        * {
+            color: $pink-500;
+        }
+
+        img {
+            filter: brightness(0.975);
+        }
+    }
 }
 
 @media (max-width: 896px) {
