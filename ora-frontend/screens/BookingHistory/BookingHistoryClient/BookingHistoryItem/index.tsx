@@ -33,6 +33,7 @@ const InfoBlock: FC<InfoBlockProps> = ({ title, image, label }) => (
                 className={classNames(
                     styles.avatar,
                     "h-2rem",
+                    "w-2rem",
                     "shadow-2",
                     "mr-2"
                 )}

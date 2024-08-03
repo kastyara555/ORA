@@ -33,7 +33,7 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
         <img
           src={master.mainImage}
           alt={master.mainImage}
-          className={classNames(styles.masterAvatar, "h-3rem", "shadow-2")}
+          className={classNames(styles.masterAvatar, "h-3rem", "w-3rem", "shadow-2")}
         />
         <p className="ml-2">{master.name}</p>
       </div>
