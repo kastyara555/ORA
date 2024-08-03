@@ -1,11 +1,11 @@
 import { memo } from "react";
 
 import ContentWrapper from "@/components/ContentWrapper";
-import EditMasterTimetableScreen from "@/screens/Profile/EditProfile/EditMasterTimetableScreen";
+import ProfileTimeTableSelectDateScreen from "@/screens/Profile/ProfileTimeTableSelectDateScreen";
 
 const TeamPage = () => (
   <ContentWrapper backHref="/profile" title="Выбор даты записи">
-    <EditMasterTimetableScreen />
+    <ProfileTimeTableSelectDateScreen />
   </ContentWrapper>
 );
 

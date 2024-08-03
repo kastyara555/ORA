@@ -11,9 +11,9 @@ const getCities = async (req, res) => {
       ],
     });
 
-    res.send(Object.values(cities));
+    return res.send(Object.values(cities));
   } catch (e) {
-    res.status(500).send();
+    return res.status(500).send();
   }
 };
 
@@ -21,7 +21,7 @@ const getStreetTypes = async (req, res) => {
   try {
     const streetTypes = await StreetType(connection).findAll();
 
-    res.send(Object.values(streetTypes));
+    return res.send(Object.values(streetTypes));
   } catch (e) {
     res.status(500).send();
   }

@@ -99,7 +99,7 @@ const getProcedureDataByCity = async (req, res) => {
       OFFSET ${offset}`
         );
 
-    res.send({
+    return res.send({
       cityName: existCity.dataValues.name,
       procedureName: existProcedure.dataValues.name,
       saloons: { data: saloonsData, total },
@@ -134,7 +134,7 @@ const getProcedureCities = async (req, res) => {
       WHERE s.idProcedure = ${req.params.procedureId}`
     );
 
-    res.send({ name: existProcedure.dataValues.name, cities });
+    return res.send({ name: existProcedure.dataValues.name, cities });
   } catch (e) {
     res.status(500).send();
   }

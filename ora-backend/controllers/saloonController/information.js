@@ -123,7 +123,7 @@ const getSaloonBaseInfo = async (req, res) => {
       return res.status(404).send();
     }
 
-    res.send(saloonInfo[0]);
+    return res.send(saloonInfo[0]);
   } catch (e) {
     res.status(500).send();
   }
@@ -157,7 +157,7 @@ const getSaloonBaseServices = async (req, res) => {
         OFFSET ${offset}`
       );
 
-    res.send({
+    return res.send({
       data: services,
       total,
     });

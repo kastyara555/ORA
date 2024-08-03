@@ -17,32 +17,6 @@ const {
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 
-const timetableAvailability = async (req, res) => {
-  try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-
-    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
-      where: {
-        name: SERVICES_MASTER_MAP_STATUSES.active.name,
-      },
-    });
-
-    const existsServices = await ServiceMasterMapModel.findOne({
-      where: {
-        idMaster: req.params.userTypeMapId,
-        idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
-      },
-    });
-
-    return res.send({
-      isTimetableAvailable: !!existsServices,
-    });
-  } catch (e) {
-    res.status(500).send();
-  }
-};
-
 const timetableInformation = async (req, res) => {
   try {
     const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
@@ -86,7 +60,7 @@ const timetableInformation = async (req, res) => {
     });
 
     if (!existsServices) {
-      res.send(null);
+      return res.send(null);
     }
 
     const [saloons] = await connection.query(
@@ -150,4 +124,4 @@ const timetableInformation = async (req, res) => {
   }
 };
 
-module.exports = { timetableAvailability, timetableInformation };
+module.exports = { timetableInformation };

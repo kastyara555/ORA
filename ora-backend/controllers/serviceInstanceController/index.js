@@ -70,7 +70,7 @@ const getAvailableDatesForProcedureBySaloon = async (req, res) => {
       ORDER BY date ASC`
     );
 
-    res.send(availableDates.map(({ date }) => date));
+    return res.send(availableDates.map(({ date }) => date));
   } catch (e) {
     res.status(500).send();
   }
@@ -130,7 +130,7 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
           ORDER BY name`
     );
 
-    res.send(availableMasters);
+    return res.send(availableMasters);
   } catch (e) {
     res.status(500).send();
   }
@@ -184,7 +184,7 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
           ORDER BY time`
     );
 
-    res.send(
+    return res.send(
       availableRecords.map((record) => ({
         ...record,
         time: record.time.replace("-", ":"),
@@ -257,7 +257,7 @@ const bookServiceInstance = async (
       }
     );
 
-    res.send({});
+    return res.send({});
   } catch (e) {
     res.status(500).send();
   }
@@ -333,7 +333,7 @@ const loginBookServiceInstance = async (
       }
     );
 
-    res.send({ token: createToken(clientsInfo[0].id) });
+    return res.send({ token: createToken(clientsInfo[0].id) });
   } catch (e) {
     res.status(500).send();
   }

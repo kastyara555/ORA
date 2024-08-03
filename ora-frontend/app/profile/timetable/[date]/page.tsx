@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import moment from "moment";
 
 import ContentWrapper from "@/components/ContentWrapper";
-import EditMasterTimetableDetails from "@/screens/Profile/EditProfile/EditMasterTimetableScreen/EditMasterTimetableDetails";
+import ProfileTimeTableScreen from "@/screens/Profile/ProfileTimeTableScreen";
 
 const TeamPage = () => {
   const pathname = usePathname();
@@ -18,7 +18,7 @@ const TeamPage = () => {
       backHref="/profile/timetable"
       title="Редактирование времени записи"
     >
-      <EditMasterTimetableDetails date={date} />
+      <ProfileTimeTableScreen date={date} />
     </ContentWrapper>
   );
 };

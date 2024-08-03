@@ -258,7 +258,7 @@ const registrationSaloon = async (req, res) => {
     }
 
     await transaction.commit();
-    res.send(addedUser);
+    return res.send(addedUser);
   } catch (e) {
     await transaction.rollback();
     res.status(500).send();
@@ -353,7 +353,7 @@ const registrationUser = async (req, res) => {
     });
 
     await transaction.commit();
-    res.send(addedUser);
+    return res.send(addedUser);
   } catch (e) {
     await transaction.rollback();
     res.status(500).send();
@@ -485,7 +485,7 @@ const registrationMaster = async (req, res) => {
     });
 
     await transaction.commit();
-    res.send(addedUser);
+    return res.send(addedUser);
   } catch (e) {
     await transaction.rollback();
     res.status(500).send();
@@ -524,7 +524,7 @@ const checkCredentialsAvailability = async (req, res) => {
       },
     });
 
-    res.send({ available: !existsUsers.length });
+    return res.send({ available: !existsUsers.length });
   } catch (e) {
     res.status(500).send();
   }

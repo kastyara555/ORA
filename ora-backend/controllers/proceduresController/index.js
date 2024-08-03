@@ -10,7 +10,7 @@ const { DEFAULT_SEARCH_PROCEDURES_LIMIT } = require("../../const");
 const getProcedureGroups = async (req, res) => {
   const categories = await ProcedureGroup(connection).findAll();
 
-  res.send(Object.values(categories));
+  return res.send(Object.values(categories));
 };
 
 const getProceduresTree = async (req, res) => {
@@ -59,7 +59,7 @@ const getProceduresTree = async (req, res) => {
       }
     });
 
-    res.send(Object.values(result));
+    return res.send(Object.values(result));
   } catch (e) {
     res.status(500).send();
   }
@@ -78,7 +78,7 @@ const getProceduresByGroupId = async (req, res) => {
       WHERE map.idProcedureGroup = ${req.params.categoryId}`
     );
 
-    res.send(procedures);
+    return res.send(procedures);
   } catch (e) {
     res.status(500).send();
   }
@@ -115,7 +115,7 @@ const getProceduresByName = async (req, res) => {
       LIMIT ${pageSize ? pageSize : DEFAULT_SEARCH_PROCEDURES_LIMIT}`
     );
 
-    res.send(procedures[0]);
+    return res.send(procedures[0]);
   } catch (e) {
     res.status(500).send();
   }

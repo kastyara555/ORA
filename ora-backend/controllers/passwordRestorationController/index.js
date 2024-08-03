@@ -63,7 +63,7 @@ const startPasswordRestoration = async (req, res) => {
       href: `${config.hosts.frontEnd}/restore/update?token=${token}`,
     });
 
-    res.send();
+    return res.send();
   } catch (e) {
     res.status(500).send();
   }
@@ -138,7 +138,7 @@ const updatePassword = async (req, res) => {
       { where: { token } }
     );
 
-    res.send();
+    return res.send();
   } catch (e) {
     if (e instanceof jwt.TokenExpiredError) {
       res

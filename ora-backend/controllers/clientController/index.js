@@ -186,7 +186,7 @@ const clientHistory = async (req, res) => {
           OFFSET ${offset}`
         );
 
-    res.send({
+    return res.send({
       data,
       total,
     });

@@ -241,7 +241,7 @@ const addSaloonMaster = async (req, res) => {
       idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
     });
 
-    res.send({});
+    return res.send({});
   } catch (e) {
     res.status(500).send();
   }

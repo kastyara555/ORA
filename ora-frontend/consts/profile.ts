@@ -120,7 +120,7 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
   },
   {
     url: "/profile/timetable",
-    availableUserTypes: [USER_TYPES.master],
+    availableUserTypes: [USER_TYPES.master, USER_TYPES.saloon],
     noStrict: true,
   },
   {
