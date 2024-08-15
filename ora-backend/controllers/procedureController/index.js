@@ -54,7 +54,7 @@ const getProcedureDataByCity = async (req, res) => {
       return res.status(404).send("Города не существует.");
     }
 
-    const thisTimeFormatted = moment().format("YYYY-MM-DD:HH-MM");
+    const thisTimeFormatted = moment().format("YYYY-MM-DD:HH-mm");
 
     const subQueryAvailableServices = `SELECT smm.idService as availableServiceId
     FROM \`${ServiceMasterMapModel.tableName}\` smm

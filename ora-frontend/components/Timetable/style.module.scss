@@ -1,0 +1,71 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+$cell-width: 96;
+
+:export {
+  cell-width: $cell-width;
+}
+
+@mixin base-cell {
+  width: #{$cell-width}px;
+}
+
+.content {
+  overflow-y: auto;
+
+  .grid {
+    overflow-x: auto;
+
+    &>div {
+      width: fit-content;
+    }
+  }
+
+  .masterAvatar {
+    @include avatar;
+  }
+
+  .timeLineCell {
+    @include base-cell;
+  }
+
+  .master {
+    border-radius: 4px;
+
+    &:hover {
+      background-color: $gray-100;
+    }
+
+    &.marked {
+      background-color: $gray-100;
+    }
+  }
+
+  .cell {
+    @include base-cell;
+
+    &:hover {
+      background-color: $gray-100;
+    }
+
+    &:not(:last-child) {
+      border-right: 1px solid $gray-200;
+    }
+  }
+
+  .serviceInstance {
+    cursor: pointer;
+    position: absolute;
+    border-radius: 4px;
+    background-color: $gray-200;
+    border: 1px solid $gray-400;
+    opacity: 0.5;
+
+    &:hover {
+      z-index: 1;
+      background-color: $pink-100;
+      border-color: $pink-500;
+    }
+  }
+}

@@ -1,16 +1,25 @@
 const fs = require("fs");
+const moment = require("moment");
 
 const { saloonBaseServicesSchema } = require("../../schemas/saloonBaseServicesSchema");
 const { saloonUpdatingSchema } = require("../../schemas/saloonUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
+const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
+const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
+const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
+const ServiceInstance = require("../../db/models/ServiceInstance");
+const UserTypeMap = require("../../db/models/UserTypeMap");
 const SaloonInfo = require("../../db/models/SaloonInfo");
 const StreetType = require("../../db/models/StreetType");
 const UserImage = require("../../db/models/UserImage");
 const Procedure = require("../../db/models/Procedure");
 const Service = require("../../db/models/Service");
 const City = require("../../db/models/City");
+const User = require("../../db/models/User");
 const { getUserData } = require("../userController");
+const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
+const { SERVICE_INSTANCE_STATUSES } = require("../../db/consts/serviceInstanceStatuses");
 
 const updateSaloon = async (req, res) => {
   try {
@@ -131,8 +140,8 @@ const getSaloonBaseInfo = async (req, res) => {
 
 const getSaloonBaseServices = async (req, res) => {
   try {
-    const ServiceModel = await Service(connection);
     const ProcedureModel = await Procedure(connection);
+    const ServiceModel = await Service(connection);
 
     const { value, error } = saloonBaseServicesSchema.validate(req.body);
 
@@ -166,4 +175,102 @@ const getSaloonBaseServices = async (req, res) => {
   }
 };
 
-module.exports = { updateSaloon, getSaloonBaseInfo, getSaloonBaseServices };
+const getSaloonTimetable = async (req, res) => {
+  try {
+    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const ServiceMasterMapModel = await ServiceMasterMap(connection);
+    const ServiceInstanceModel = await ServiceInstance(connection);
+    const UserTypeMapModel = await UserTypeMap(connection);
+    const ProcedureModel = await Procedure(connection);
+    const UserImageModel = await UserImage(connection);
+    const ServiceModel = await Service(connection);
+    const UserModel = await User(connection);
+
+    const date = moment(req.params.date, "DD-MM-YYYY", true);
+
+    if (!date.isValid()) {
+      return res.status(400).send("Неверный формат даты.");
+    }
+
+    // TODO: не фильтровал по связке салон-мастер. Думаю.
+    const [serviceInstancesList] = await connection.query(
+      `SELECT si.id as id, p.name as procedureName, si.time as start, s.time as time, smm.idMaster as idMaster
+        FROM \`${ServiceInstanceModel.tableName}\` si
+        JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+        ON si.idServiceInstanceStatus = sis.id
+        JOIN \`${ServiceMasterMapModel.tableName}\` smm
+        ON si.idServiceMasterMap = smm.id
+        JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+        ON smm.idServiceMasterMapStatus = smms.id
+        JOIN \`${ServiceModel.tableName}\` s
+        ON smm.idService = s.id
+        JOIN \`${ProcedureModel.tableName}\` p
+        ON s.idProcedure = p.id
+        WHERE s.idSaloon = ${req.params.userTypeMapId}
+        AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
+        AND sis.name = '${SERVICE_INSTANCE_STATUSES.applied.name}'
+        AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'`
+    );
+
+    if (!serviceInstancesList.length) {
+      return res.send({
+        data: [],
+      });
+    }
+
+    const mastersIds = [...new Set(serviceInstancesList.map(({ idMaster }) => idMaster))];
+
+    const [masters] = await connection.query(
+      `SELECT utm.id as id, u.name as name, uim.url as mainImage
+      FROM \`${UserModel.tableName}\` u
+      JOIN \`${UserTypeMapModel.tableName}\` utm
+      ON u.id = utm.idUser
+      LEFT JOIN (
+        SELECT idUserTypeMap, url
+        FROM \`${UserImageModel.tableName}\`
+        WHERE isMain = 1
+      ) uim
+      ON uim.idUserTypeMap = utm.id
+      WHERE utm.id IN (${mastersIds.join(',')})`
+    );
+
+    const result = masters.reduce((accum, master) => {
+      const serviceInstances = serviceInstancesList
+        .filter(({ idMaster }) => idMaster === master.id)
+        .map(({ id, procedureName, start, time }) => {
+          const startTime = moment(start, "YYYY-MM-DD:HH-mm", true).toISOString();
+
+          const [hours, minutes] = time.split(':');
+
+          const finishTime = moment(start, "YYYY-MM-DD:HH-mm", true).add(+hours, "hours").add(+minutes, "minutes").toISOString();
+
+          return {
+            id,
+            procedureName,
+            start: startTime,
+            finish: finishTime,
+          };
+        });
+
+      return [
+        ...accum,
+        {
+          ...master,
+          serviceInstances,
+        },
+      ];
+    }, []);
+
+    return res.send(result);
+  } catch (e) {
+    res.status(500).send();
+  }
+};
+
+module.exports = {
+  updateSaloon,
+  getSaloonBaseInfo,
+  getSaloonBaseServices,
+  getSaloonTimetable,
+};

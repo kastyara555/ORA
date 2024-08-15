@@ -16,6 +16,7 @@ const {
   removeServiceMasters,
   updateServiceMaster,
   getSaloonBaseServices,
+  getSaloonTimetable,
 } = require("../../../controllers/saloonController");
 const { roles } = require("../../../db/consts/roles");
 
@@ -40,6 +41,15 @@ saloonRouter.post(
   isValidSaloon,
   function (req, res) {
     updateSaloon(req, res);
+  }
+);
+
+saloonRouter.get(
+  "/:userTypeMapId/timetable/:date",
+  checkAuthorization,
+  isValidSaloon,
+  function (req, res) {
+    getSaloonTimetable(req, res);
   }
 );
 

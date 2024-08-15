@@ -64,7 +64,7 @@ const getAvailableDatesForProcedureBySaloon = async (req, res) => {
       WHERE s.idSaloon = ${req.params.saloonId}
       AND s.idProcedure = ${req.params.procedureId}
       AND si.time LIKE '${year}-${formatedMonth}-%'
-      AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
+      AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-mm")}'
       AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
       AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
       ORDER BY date ASC`
@@ -124,7 +124,7 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
           WHERE s.idSaloon = ${req.params.saloonId}
           AND s.idProcedure = ${req.params.procedureId}
           AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
-          AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
+          AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-mm")}'
           AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
           AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
           ORDER BY name`
@@ -177,7 +177,7 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
           WHERE s.idSaloon = ${req.params.saloonId}
           AND s.idProcedure = ${req.params.procedureId}
           AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
-          AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-MM")}'
+          AND si.time > '${moment().add(2, "hours").format("YYYY-MM-DD:HH-mm")}'
           AND sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
           AND utm.id = ${value.masterId}
           AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'

@@ -16,7 +16,7 @@ const TeamPage = () => {
   return (
     <ContentWrapper
       backHref="/profile/timetable"
-      title="Редактирование времени записи"
+      title="Расписание"
     >
       <ProfileTimeTableScreen date={date} />
     </ContentWrapper>

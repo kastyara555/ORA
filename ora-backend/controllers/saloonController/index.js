@@ -18,6 +18,7 @@ const {
   updateSaloon,
   getSaloonBaseInfo,
   getSaloonBaseServices,
+  getSaloonTimetable,
 } = require("./information");
 
 module.exports = {
@@ -34,4 +35,5 @@ module.exports = {
   removeServiceMasters,
   updateServiceMaster,
   getSaloonBaseServices,
+  getSaloonTimetable,
 };
