@@ -1,21 +1,18 @@
 const { Op } = require("sequelize");
 
 const { connection } = require("../../db/connection");
-const Procedure = require("../../db/models/Procedure");
-const Service = require("../../db/models/Service");
 const {
   saloonAddServicesSchema,
 } = require("../../schemas/saloonAddServicesSchema");
 
 const getSaloonServices = async (req, res) => {
   try {
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
+    const { procedure, service } = connection.models;
 
     const [procedureData] = await connection.query(
       `SELECT s.id as id, p.name as name
-      FROM \`${ServiceModel.tableName}\` s
-      JOIN \`${ProcedureModel.tableName}\` p
+      FROM ${service.tableName} s
+      JOIN ${procedure.tableName} p
       ON s.idProcedure = p.id
       WHERE s.idSaloon = ${req.params.userTypeMapId}`
     );
@@ -28,9 +25,6 @@ const getSaloonServices = async (req, res) => {
 
 const addSaloonServices = async (req, res) => {
   try {
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = saloonAddServicesSchema.validate(req.body);
 
     if (error) {
@@ -38,8 +32,9 @@ const addSaloonServices = async (req, res) => {
     }
 
     const { services } = value;
+    const { procedure, service } = connection.models;
 
-    const validProcedures = await ProcedureModel.findAll({
+    const validProcedures = await procedure.findAll({
       where: {
         id: {
           [Op.in]: services.map(({ procedureId }) => procedureId),
@@ -53,7 +48,7 @@ const addSaloonServices = async (req, res) => {
         .send("Среди отправленных процедур имеются невалидные");
     }
 
-    const duplicateProcedures = await ServiceModel.findAll({
+    const duplicateProcedures = await service.findAll({
       where: {
         idSaloon: req.params.userTypeMapId,
         idProcedure: {
@@ -68,7 +63,7 @@ const addSaloonServices = async (req, res) => {
         .send("Добавляемая(-ые) процедура(-ы) уже есть в списке услуг");
     }
 
-    await ServiceModel.bulkCreate(
+    await service.bulkCreate(
       services.map(({ procedureId, description, hours, minutes }) => ({
         idSaloon: req.params.userTypeMapId,
         idProcedure: procedureId,

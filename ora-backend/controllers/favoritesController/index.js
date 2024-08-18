@@ -2,14 +2,6 @@ const { Op } = require("sequelize");
 
 const { connection } = require("../../db/connection");
 const { roles } = require("../../db/consts/roles");
-const City = require("../../db/models/City");
-const Service = require("../../db/models/Service");
-const UserType = require("../../db/models/UserType");
-const UserImage = require("../../db/models/UserImage");
-const Procedure = require("../../db/models/Procedure");
-const Favorites = require("../../db/models/Favorites");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const UserTypeMap = require("../../db/models/UserTypeMap");
 const { favoritesSchema } = require("../../schemas/favoritesSchema");
 const { getFavoritesSchema } = require("../../schemas/getFavoritesSchema");
 const { checkFavoritesSchema } = require("../../schemas/checkFavoritesSchema");
@@ -22,14 +14,16 @@ const saveFavorites = async (req, res) => {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
-    const UserTypeModel = await UserType(connection);
-    const FavoritesModel = await Favorites(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
+    const {
+      user_type_map,
+      user_type,
+      favorites,
+    } = connection.models;
 
     const [clientInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM \`${UserTypeMapModel.tableName}\` utm
-      JOIN \`${UserTypeModel.tableName}\` ut
+      FROM ${user_type_map.tableName} utm
+      JOIN ${user_type.tableName} ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
@@ -39,7 +33,7 @@ const saveFavorites = async (req, res) => {
       return res.status(400).send("Отсутствует информация о клиенте");
     }
 
-    const favoritesOfClient = (await FavoritesModel.findAll({
+    const favoritesOfClient = (await favorites.findAll({
       where: {
         idClient: value.idClient,
       },
@@ -56,7 +50,7 @@ const saveFavorites = async (req, res) => {
       return res.status(400).send("Избранное уже существует");
     }
 
-    await FavoritesModel.create({
+    await favorites.create({
       idClient: value.idClient,
       idService: value.idService,
     });
@@ -75,14 +69,16 @@ const clearFavorites = async (req, res) => {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
-    const UserTypeModel = await UserType(connection);
-    const FavoritesModel = await Favorites(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
+    const {
+      user_type_map,
+      user_type,
+      favorites,
+    } = connection.models;
 
     const [clientInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM \`${UserTypeMapModel.tableName}\` utm
-      JOIN \`${UserTypeModel.tableName}\` ut
+      FROM ${user_type_map.tableName} utm
+      JOIN ${user_type.tableName} ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
@@ -92,7 +88,7 @@ const clearFavorites = async (req, res) => {
       return res.status(400).send("Отсутствует информация о клиенте");
     }
 
-    const favoritesOfClient = await FavoritesModel.findOne({
+    const favoritesOfClient = await favorites.findOne({
       where: {
         idClient: value.idClient,
         idService: value.idService,
@@ -103,7 +99,7 @@ const clearFavorites = async (req, res) => {
       return res.status(400).send("Отсутствует информация о данной услуге в избранном");
     }
 
-    await FavoritesModel.destroy({
+    await favorites.destroy({
       where: {
         id: favoritesOfClient.dataValues.id,
       },
@@ -127,9 +123,11 @@ const checkFavorites = async (req, res) => {
       return res.send([]);
     }
 
-    const FavoritesModel = await Favorites(connection);
+    const {
+      favorites,
+    } = connection.models;
 
-    const favorites = (await FavoritesModel.findAll({
+    const favoritesList = (await favorites.findAll({
       where: {
         idClient: value.idClient,
         idService: {
@@ -138,7 +136,7 @@ const checkFavorites = async (req, res) => {
       }
     })).map(({ dataValues }) => dataValues.idService);
 
-    return res.send(favorites);
+    return res.send(favoritesList);
   } catch (e) {
     res.status(500).send();
   }
@@ -152,34 +150,36 @@ const getFavorites = async (req, res) => {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
-    const CityModel = await City(connection);
-    const ServiceModel = await Service(connection);
-    const ProcedureModel = await Procedure(connection);
-    const FavoritesModel = await Favorites(connection);
-    const UserImageModel = await UserImage(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
+    const {
+      procedure,
+      service,
+      favorites,
+      saloon_info,
+      city,
+      user_image,
+    } = connection.models;
 
     const subQueryMainImages = `SELECT idUserTypeMap, url
-      FROM \`${UserImageModel.tableName}\`
+      FROM ${user_image.tableName}
       WHERE isMain = 1`;
 
-    const [favorites] = await connection.query(
+    const [favoritesList] = await connection.query(
       `SELECT s.id as id, si.idUserTypeMap as saloonId, si.name as saloonName, uim.url as mainImage, p.id as procedureId, p.name as procedureName, c.name as cityName
-      FROM \`${FavoritesModel.tableName}\` f
-      JOIN \`${ServiceModel.tableName}\` s
+      FROM ${favorites.tableName} f
+      JOIN ${service.tableName} s
       ON f.idService = s.id
-      JOIN \`${SaloonInfoModel.tableName}\` si
+      JOIN ${saloon_info.tableName} si
       ON s.idSaloon = si.idUserTypeMap
-      JOIN \`${ProcedureModel.tableName}\` p
+      JOIN ${procedure.tableName} p
       ON s.idProcedure = p.id
-      JOIN \`${CityModel.tableName}\` c
+      JOIN ${city.tableName} c
       ON si.idCity = c.id
       LEFT JOIN (${subQueryMainImages}) uim
       ON uim.idUserTypeMap = si.idUserTypeMap
       WHERE f.idClient = ${value.idClient}`
     );
 
-    return res.send(favorites);
+    return res.send(favoritesList);
   } catch (e) {
     res.status(500).send();
   }

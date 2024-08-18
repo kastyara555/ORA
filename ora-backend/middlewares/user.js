@@ -1,19 +1,15 @@
 const { connection } = require("../db/connection");
-const UserType = require("../db/models/UserType");
-const UserTypeMap = require("../db/models/UserTypeMap");
 
 const isValidUserByType = (userTypeName) => async (req, res, next) => {
   try {
-    const UserTypeModel = await UserType(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
 
-    const { dataValues: userTypeData } = await UserTypeModel.findOne({
+    const { dataValues: userTypeData } = await connection.models.user_type.findOne({
       where: {
         name: userTypeName,
       },
     });
 
-    const userTypeMap = await UserTypeMapModel.findOne({
+    const userTypeMap = await connection.models.user_type_map.findOne({
       where: {
         id: req.params.userTypeMapId,
         idUserType: userTypeData.id,

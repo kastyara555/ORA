@@ -1,40 +1,38 @@
 const { connection } = require("../../db/connection");
-const GroupProcedureMap = require("../../db/models/GroupProcedureMap");
-const Procedure = require("../../db/models/Procedure");
-const ProcedureGroup = require("../../db/models/ProcedureGroup");
 const {
   searchProceduresByNameSchema,
 } = require("../../schemas/searchProceduresByNameSchema");
 const { DEFAULT_SEARCH_PROCEDURES_LIMIT } = require("../../const");
 
 const getProcedureGroups = async (req, res) => {
-  const categories = await ProcedureGroup(connection).findAll();
+  const categories = await connection.models.procedure_group.findAll();
 
   return res.send(Object.values(categories));
 };
 
 const getProceduresTree = async (req, res) => {
   try {
-    const ProcedureGroupModel = ProcedureGroup(connection);
-    const GroupProcedureMapModel = GroupProcedureMap(connection);
-    const ProcedureModel = Procedure(connection);
+    const {
+      group_procedure_map,
+      procedure_group,
+      procedure,
+    } = connection.models;
 
     const tmp = await connection.query(
       `SELECT pg.id as groupId, pg.name as groupName, p.id as procedureId, p.name as procedureName
-      FROM \`${ProcedureGroupModel.tableName}\` pg
-      JOIN \`${GroupProcedureMapModel.tableName}\` gpm
+      FROM ${procedure_group.tableName} pg
+      JOIN ${group_procedure_map.tableName} gpm
       ON gpm.idProcedureGroup = pg.id
-      JOIN \`${ProcedureModel.tableName}\` p
+      JOIN ${procedure.tableName} p
       ON gpm.idProcedure = p.id
       WHERE gpm.id IN (
         SELECT id FROM (
           SELECT id
-          FROM \`group_procedure_map\` gpm
+          FROM ${group_procedure_map.tableName} gpm
           WHERE gpm.idProcedureGroup = pg.id
           LIMIT 3
-        )
-        tmp)
-        ORDER BY groupId`
+        ) tmp)
+      ORDER BY groupId`
     );
 
     const result = {};
@@ -67,13 +65,15 @@ const getProceduresTree = async (req, res) => {
 
 const getProceduresByGroupId = async (req, res) => {
   try {
-    const GroupProcedureMapModel = GroupProcedureMap(connection);
-    const ProcedureModel = Procedure(connection);
+    const {
+      group_procedure_map,
+      procedure,
+    } = connection.models;
 
     const procedures = await connection.query(
       `SELECT *
-      FROM \`${GroupProcedureMapModel.tableName}\` map
-      JOIN \`${ProcedureModel.tableName}\` p
+      FROM ${group_procedure_map.tableName} map
+      JOIN ${procedure.tableName} p
       ON map.idProcedure = p.id
       WHERE map.idProcedureGroup = ${req.params.categoryId}`
     );
@@ -94,23 +94,24 @@ const getProceduresByName = async (req, res) => {
 
     const { pageSize } = value;
 
-    const GroupProcedureMapModel = GroupProcedureMap(connection);
-    const ProcedureModel = Procedure(connection);
+    const {
+      group_procedure_map,
+      procedure,
+    } = connection.models;
 
     const procedures = await connection.query(
       `SELECT gpm.idProcedureGroup as procedureGroupId, p.id as procedureId, p.name as procedureName
-      FROM  \`${GroupProcedureMapModel.tableName}\` gpm
-      JOIN \`${ProcedureModel.tableName}\` p
+      FROM  ${group_procedure_map.tableName} gpm
+      JOIN ${procedure.tableName} p
       ON gpm.idProcedure = p.id
       WHERE gpm.id IN (
         SELECT id FROM (
           SELECT id
-            FROM \`${GroupProcedureMapModel.tableName}\` gpm
+            FROM ${group_procedure_map.tableName} gpm
             WHERE gpm.idProcedure = p.id
             AND LOWER(p.name) LIKE '%${req.params.search.toLowerCase()}%'
             LIMIT 1
-          )
-        tmp)
+        ) tmp)
       ORDER BY procedureName
       LIMIT ${pageSize ? pageSize : DEFAULT_SEARCH_PROCEDURES_LIMIT}`
     );

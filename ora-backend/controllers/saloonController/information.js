@@ -5,36 +5,26 @@ const { saloonBaseServicesSchema } = require("../../schemas/saloonBaseServicesSc
 const { saloonUpdatingSchema } = require("../../schemas/saloonUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const StreetType = require("../../db/models/StreetType");
-const UserImage = require("../../db/models/UserImage");
-const Procedure = require("../../db/models/Procedure");
-const Service = require("../../db/models/Service");
-const City = require("../../db/models/City");
-const User = require("../../db/models/User");
 const { getUserData } = require("../userController");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const { SERVICE_INSTANCE_STATUSES } = require("../../db/consts/serviceInstanceStatuses");
 
 const updateSaloon = async (req, res) => {
   try {
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const UserImageModel = await UserImage(connection);
-
     const { value, error } = saloonUpdatingSchema.validate(req.body);
 
     if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
+    const {
+      saloon_info,
+      user_image,
+    } = connection.models;
+
     const { description, mainImage } = value;
 
-    await SaloonInfoModel.update(
+    await saloon_info.update(
       { description },
       {
         where: {
@@ -55,7 +45,7 @@ const updateSaloon = async (req, res) => {
         return res.status(400).send("Неверный формат/размер изображения.");
       }
 
-      const saloonMainImageInfo = await UserImageModel.findOne({
+      const saloonMainImageInfo = await user_image.findOne({
         where: { idUserTypeMap: +req.params.userTypeMapId, isMain: true },
       });
 
@@ -80,7 +70,7 @@ const updateSaloon = async (req, res) => {
       fs.writeFileSync(fullImageName, buff);
 
       if (saloonMainImageInfo && saloonMainImageInfo.dataValues) {
-        await UserImageModel.update(
+        await user_image.update(
           {
             url: imageName,
           },
@@ -91,7 +81,7 @@ const updateSaloon = async (req, res) => {
           }
         );
       } else {
-        await UserImageModel.create({
+        await user_image.create({
           idUserTypeMap: +req.params.userTypeMapId,
           url: imageName,
           isMain: true,
@@ -107,21 +97,23 @@ const updateSaloon = async (req, res) => {
 
 const getSaloonBaseInfo = async (req, res) => {
   try {
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const StreetTypeModel = await StreetType(connection);
-    const UserImageModel = await UserImage(connection);
-    const CityModel = await City(connection);
+    const {
+      saloon_info,
+      street_type,
+      user_image,
+      city,
+    } = connection.models;
 
     const [saloonInfo] = await connection.query(
       `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, st.shortName as streetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
-      FROM \`${SaloonInfoModel.tableName}\` si
-      JOIN \`${CityModel.tableName}\` c
+      FROM ${saloon_info.tableName} si
+      JOIN ${city.tableName} c
       ON si.idCity = c.id
-      JOIN \`${StreetTypeModel.tableName}\` st
+      JOIN ${street_type.tableName} st
       ON si.idStreetType = st.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM ${user_image.tableName}
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = si.idUserTypeMap
@@ -140,26 +132,28 @@ const getSaloonBaseInfo = async (req, res) => {
 
 const getSaloonBaseServices = async (req, res) => {
   try {
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = saloonBaseServicesSchema.validate(req.body);
 
     if (error) {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
+    const {
+      procedure,
+      service,
+    } = connection.models;
+
     const { pageNumber, pageSize } = value;
     const offset = pageSize * (pageNumber - 1);
 
-    const total = await ServiceModel.count({ where: { idSaloon: req.params.userTypeMapId } });
+    const total = await service.count({ where: { idSaloon: req.params.userTypeMapId } });
 
     const [services] = total === 0 || offset >= total
       ? [[]]
       : await connection.query(
         `SELECT s.id as id, p.id as procedureId, p.name as procedureName
-        FROM \`${ServiceModel.tableName}\` s
-        JOIN \`${ProcedureModel.tableName}\` p
+        FROM ${service.tableName} s
+        JOIN ${procedure.tableName} p
         ON s.idProcedure = p.id
         WHERE s.idSaloon = ${req.params.userTypeMapId}
         LIMIT ${pageSize}
@@ -177,35 +171,37 @@ const getSaloonBaseServices = async (req, res) => {
 
 const getSaloonTimetable = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const ProcedureModel = await Procedure(connection);
-    const UserImageModel = await UserImage(connection);
-    const ServiceModel = await Service(connection);
-    const UserModel = await User(connection);
-
     const date = moment(req.params.date, "DD-MM-YYYY", true);
 
     if (!date.isValid()) {
       return res.status(400).send("Неверный формат даты.");
     }
 
+    const {
+      service_master_map_status,
+      service_instance_status,
+      service_master_map,
+      service_instance,
+      user_type_map,
+      user_image,
+      procedure,
+      service,
+      user,
+    } = connection.models;
+
     // TODO: не фильтровал по связке салон-мастер. Думаю.
     const [serviceInstancesList] = await connection.query(
       `SELECT si.id as id, p.name as procedureName, si.time as start, s.time as time, smm.idMaster as idMaster
-        FROM \`${ServiceInstanceModel.tableName}\` si
-        JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+        FROM ${service_instance.tableName} si
+        JOIN ${service_instance_status.tableName} sis
         ON si.idServiceInstanceStatus = sis.id
-        JOIN \`${ServiceMasterMapModel.tableName}\` smm
+        JOIN ${service_master_map.tableName} smm
         ON si.idServiceMasterMap = smm.id
-        JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+        JOIN ${service_master_map_status.tableName} smms
         ON smm.idServiceMasterMapStatus = smms.id
-        JOIN \`${ServiceModel.tableName}\` s
+        JOIN ${service.tableName} s
         ON smm.idService = s.id
-        JOIN \`${ProcedureModel.tableName}\` p
+        JOIN ${procedure.tableName} p
         ON s.idProcedure = p.id
         WHERE s.idSaloon = ${req.params.userTypeMapId}
         AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
@@ -223,12 +219,12 @@ const getSaloonTimetable = async (req, res) => {
 
     const [masters] = await connection.query(
       `SELECT utm.id as id, u.name as name, uim.url as mainImage
-      FROM \`${UserModel.tableName}\` u
-      JOIN \`${UserTypeMapModel.tableName}\` utm
+      FROM ${user.tableName} u
+      JOIN ${user_type_map.tableName} utm
       ON u.id = utm.idUser
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM ${user_image.tableName}
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = utm.id

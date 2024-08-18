@@ -3,16 +3,6 @@ const moment = require("moment");
 const { connection } = require("../../db/connection");
 const { roles } = require("../../db/consts/roles");
 const { userStatuses } = require("../../db/consts/userStatuses");
-const User = require("../../db/models/User");
-const Service = require("../../db/models/Service");
-const UserType = require("../../db/models/UserType");
-const UserImage = require("../../db/models/UserImage");
-const UserStatus = require("../../db/models/UserStatus");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
 const {
   procedureAvailableDatesBySaloonSchema,
 } = require("../../schemas/procedureAvailableDatesBySaloonSchema");
@@ -41,25 +31,28 @@ const getAvailableDatesForProcedureBySaloon = async (req, res) => {
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
-    const ServiceModel = await Service(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    
+    const {
+      service_master_map_status,
+      service_instance_status,
+      service_master_map,
+      service_instance,
+      service,
+    } = connection.models;
 
     const { year, month } = value;
     const formatedMonth = month < 10 ? `0${month}` : month.toString();
 
     const [availableDates] = await connection.query(
       `SELECT DISTINCT SUBSTRING(si.time, 1, 10) as date
-      FROM \`${ServiceInstanceModel.tableName}\` si
-      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      FROM ${service_instance.tableName} si
+      JOIN ${service_instance_status.tableName} sis
       ON si.idServiceInstanceStatus = sis.id
-      JOIN \`${ServiceMasterMapModel.tableName}\` smm
+      JOIN ${service_master_map.tableName} smm
       ON si.idServiceMasterMap = smm.id
-      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      JOIN ${service_master_map_status.tableName} smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN \`${ServiceModel.tableName}\` s
+      JOIN ${service.tableName} s
       ON smm.idService = s.id
       WHERE s.idSaloon = ${req.params.saloonId}
       AND s.idProcedure = ${req.params.procedureId}
@@ -91,33 +84,35 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
       return res.status(400).send("Неверный формат даты.");
     }
 
-    const UserModel = await User(connection);
-    const ServiceModel = await Service(connection);
-    const UserImageModel = await UserImage(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const {
+      service_master_map_status,
+      service_instance_status,
+      service_master_map,
+      service_instance,
+      user_type_map,
+      user_image,
+      service,
+      user,
+    } = connection.models;
 
     const [availableMasters] = await connection.query(
       `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage, smm.price as price
-          FROM \`${ServiceInstanceModel.tableName}\` si
-          JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+          FROM ${service_instance.tableName} si
+          JOIN ${service_instance_status.tableName} sis
           ON si.idServiceInstanceStatus = sis.id
-          JOIN \`${ServiceMasterMapModel.tableName}\` smm
+          JOIN ${service_master_map.tableName} smm
           ON si.idServiceMasterMap = smm.id
-          JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+          JOIN ${service_master_map_status.tableName} smms
           ON smm.idServiceMasterMapStatus = smms.id
-          JOIN \`${ServiceModel.tableName}\` s
+          JOIN ${service.tableName} s
           ON smm.idService = s.id
-          JOIN \`${UserTypeMapModel.tableName}\` utm
+          JOIN ${user_type_map.tableName} utm
           ON smm.idMaster = utm.id
-          JOIN \`${UserModel.tableName}\` u
+          JOIN ${user.tableName} u
           ON utm.idUser = u.id
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM \`${UserImageModel.tableName}\`
+            FROM ${user_image.tableName}
             WHERE isMain = 1
           ) uim
           ON uim.idUserTypeMap = utm.id
@@ -154,25 +149,27 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
       return res.status(400).send("Неверный формат даты.");
     }
 
-    const ServiceModel = await Service(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
+    const {
+      service_master_map_status,
+      service_instance_status,
+      service_master_map,
+      service_instance,
+      user_type_map,
+      service,
+    } = connection.models;
 
     const [availableRecords] = await connection.query(
       `SELECT si.id as id, SUBSTRING(si.time, 12, 5) as time
-          FROM \`${ServiceInstanceModel.tableName}\` si
-          JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+          FROM ${service_instance.tableName} si
+          JOIN ${service_instance_status.tableName} sis
           ON si.idServiceInstanceStatus = sis.id
-          JOIN \`${ServiceMasterMapModel.tableName}\` smm
+          JOIN ${service_master_map.tableName} smm
           ON si.idServiceMasterMap = smm.id
-          JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+          JOIN ${service_master_map_status.tableName} smms
           ON smm.idServiceMasterMapStatus = smms.id
-          JOIN \`${ServiceModel.tableName}\` s
+          JOIN ${service.tableName} s
           ON smm.idService = s.id
-          JOIN \`${UserTypeMapModel.tableName}\` utm
+          JOIN ${user_type_map.tableName} utm
           ON smm.idMaster = utm.id
           WHERE s.idSaloon = ${req.params.saloonId}
           AND s.idProcedure = ${req.params.procedureId}
@@ -208,15 +205,17 @@ const bookServiceInstance = async (
 
     const { serviceInstanceId, clientUserTypeMapId, comment } = value;
 
-    const UserTypeModel = await UserType(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const {
+      service_instance_status,
+      service_instance,
+      user_type_map,
+      user_type,
+    } = connection.models;
 
     const [clientsInfo] = await connection.query(
       `SELECT *
-      FROM \`${UserTypeMapModel.tableName}\` utm
-      JOIN \`${UserTypeModel.tableName}\` ut
+      FROM ${user_type_map.tableName} utm
+      JOIN ${user_type.tableName} ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${clientUserTypeMapId}
       AND ut.name = '${roles.client.name}'`
@@ -228,8 +227,8 @@ const bookServiceInstance = async (
 
     const [serviceInstancesInfo] = await connection.query(
       `SELECT sis.name as statusName
-      FROM \`${ServiceInstanceModel.tableName}\` si
-      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      FROM ${service_instance.tableName} si
+      JOIN ${service_instance_status.tableName} sis
       ON si.idServiceInstanceStatus = sis.id
       WHERE si.id = ${serviceInstanceId}`
     );
@@ -242,9 +241,9 @@ const bookServiceInstance = async (
       return res.status(400).send("Услуга не доступна для записи.")
     }
 
-    const appliedServiceInstanceStatus = await ServiceInstanceStatusModel.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
+    const appliedServiceInstanceStatus = await service_instance_status.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
 
-    await ServiceInstanceModel.update(
+    await service_instance.update(
       {
         idServiceInstanceStatus: appliedServiceInstanceStatus.dataValues.id,
         idClient: clientUserTypeMapId,
@@ -276,21 +275,23 @@ const loginBookServiceInstance = async (
 
     const { serviceInstanceId, comment, email, password } = value;
 
-    const UserModel = await User(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+    const {
+      service_instance_status,
+      service_instance,
+      user_type_map,
+      user_status,
+      user_type,
+      user,
+    } = connection.models;
 
     const [clientsInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM \`${UserModel.tableName}\` u
-      JOIN \`${UserTypeMapModel.tableName}\` utm
+      FROM ${user.tableName} u
+      JOIN ${user_type_map.tableName} utm
       ON u.id = utm.idUser
-      JOIN \`${UserTypeModel.tableName}\` ut
+      JOIN ${user_type.tableName} ut
       ON utm.idUserType = ut.id
-      JOIN \`${UserStatusModel.tableName}\` us
+      JOIN ${user_status.tableName} us
       ON utm.idUserStatus = us.id
       WHERE u.email = '${email}'
       AND u.password = '${generateHash(password)}'
@@ -304,8 +305,8 @@ const loginBookServiceInstance = async (
 
     const [serviceInstancesInfo] = await connection.query(
       `SELECT sis.name as statusName
-      FROM \`${ServiceInstanceModel.tableName}\` si
-      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      FROM ${service_instance.tableName} si
+      JOIN ${service_instance_status.tableName} sis
       ON si.idServiceInstanceStatus = sis.id
       WHERE si.id = ${serviceInstanceId}`
     );
@@ -318,9 +319,9 @@ const loginBookServiceInstance = async (
       return res.status(400).send("Услуга не доступна для записи.")
     }
 
-    const appliedServiceInstanceStatus = await ServiceInstanceStatusModel.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
+    const appliedServiceInstanceStatus = await service_instance_status.findOne({ where: { name: SERVICE_INSTANCE_STATUSES.applied.name } })
 
-    await ServiceInstanceModel.update(
+    await service_instance.update(
       {
         idServiceInstanceStatus: appliedServiceInstanceStatus.dataValues.id,
         idClient: clientsInfo[0].id,

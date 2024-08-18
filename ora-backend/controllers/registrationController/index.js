@@ -17,20 +17,6 @@ const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const StreetType = require("../../db/models/StreetType");
-const ClientInfo = require("../../db/models/ClientInfo");
-const MasterInfo = require("../../db/models/MasterInfo");
-const UserStatus = require("../../db/models/UserStatus");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const UserImage = require("../../db/models/UserImage");
-const UserType = require("../../db/models/UserType");
-const Service = require("../../db/models/Service");
-const User = require("../../db/models/User");
 const { generateHash } = require("../../utils/hash");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { sendRegistrationMail } = require("../../email");
@@ -58,19 +44,21 @@ const registrationSaloon = async (req, res) => {
       picturesForm,
     } = value;
 
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const StreetTypeModel = await StreetType(connection);
-    const UserImageModel = await UserImage(connection);
-    const UserTypeModel = await UserType(connection);
-    const ServiceModel = await Service(connection);
-    const UserModel = await User(connection);
+    const {
+      service_master_map_status,
+      saloon_master_map_status,
+      service_master_map,
+      saloon_master_map,
+      user_type_map,
+      saloon_info,
+      master_info,
+      user_status,
+      street_type,
+      user_image,
+      user_type,
+      service,
+      user,
+    } = connection.models;
 
     const suspectPicture =
       !!picturesForm.mainImage &&
@@ -85,7 +73,7 @@ const registrationSaloon = async (req, res) => {
       return res.status(400).send("Неверный формат/размер изображения.");
     }
 
-    const existsUsers = await UserModel.findOne({
+    const existsUsers = await user.findOne({
       where: {
         [Sequelize.Op.or]: [
           {
@@ -106,7 +94,7 @@ const registrationSaloon = async (req, res) => {
         );
     }
 
-    const addedUser = await UserModel.create(
+    const addedUser = await user.create(
       {
         name: aboutForm.name,
         email: emailForm.email,
@@ -119,17 +107,17 @@ const registrationSaloon = async (req, res) => {
     const isSelfEmployed = stuffCountForm.count === 1;
     const { hasAdress } = adressTypeForm;
 
-    const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+    const { dataValues: activeUserStatus } = await user_status.findOne({
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: saloonType } = await UserTypeModel.findOne({
+    const { dataValues: saloonType } = await user_type.findOne({
       where: {
         name: roles.saloon.name,
       },
     });
 
-    const { dataValues: addedUserSaloonType } = await UserTypeMapModel.create(
+    const { dataValues: addedUserSaloonType } = await user_type_map.create(
       {
         idUser: addedUser.id,
         idUserType: saloonType.id,
@@ -140,13 +128,13 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
-    const { dataValues: defaultStreetType } = await StreetTypeModel.findOne({
+    const { dataValues: defaultStreetType } = await street_type.findOne({
       where: {
         name: STREET_TYPES.STREET.name,
       },
     });
 
-    await SaloonInfoModel.create(
+    await saloon_info.create(
       {
         idCity: adressForm.city,
         idStreetType: hasAdress ? adressForm.streetType : defaultStreetType.id,
@@ -164,13 +152,13 @@ const registrationSaloon = async (req, res) => {
     );
 
     if (isSelfEmployed) {
-      const { dataValues: masterType } = await UserTypeModel.findOne({
+      const { dataValues: masterType } = await user_type.findOne({
         where: {
           name: roles.master.name,
         },
       });
 
-      const { dataValues: addedUserMasterType } = await UserTypeMapModel.create(
+      const { dataValues: addedUserMasterType } = await user_type_map.create(
         {
           idUser: addedUser.id,
           idUserType: masterType.id,
@@ -181,7 +169,7 @@ const registrationSaloon = async (req, res) => {
         { transaction }
       );
 
-      await MasterInfoModel.create(
+      await master_info.create(
         {
           idUserTypeMap: addedUserMasterType.id,
           description: "",
@@ -189,13 +177,13 @@ const registrationSaloon = async (req, res) => {
         { transaction }
       );
 
-      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+      const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne({
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name,
         },
       });
 
-      await SaloonMasterMapModel.create(
+      await saloon_master_map.create(
         {
           idMaster: addedUserMasterType.id,
           idSaloon: addedUserSaloonType.id,
@@ -205,7 +193,7 @@ const registrationSaloon = async (req, res) => {
       );
 
       if (servicesForm.services.length) {
-        const addedServices = await ServiceModel.bulkCreate(
+        const addedServices = await service.bulkCreate(
           servicesForm.services.map(({ procedureId, time }) => ({
             idSaloon: addedUserSaloonType.id,
             idProcedure: procedureId,
@@ -216,13 +204,13 @@ const registrationSaloon = async (req, res) => {
           { returning: true, transaction }
         );
 
-        const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+        const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
           where: {
             name: SERVICES_MASTER_MAP_STATUSES.active.name,
           },
         });
 
-        await ServiceMasterMapModel.bulkCreate(
+        await service_master_map.bulkCreate(
           addedServices.map(({ dataValues }, index) => ({
             idService: dataValues.id,
             idMaster: addedUserMasterType.id,
@@ -247,7 +235,7 @@ const registrationSaloon = async (req, res) => {
       let buff = new Buffer.from(picturesForm.mainImage.data.split(",")[1], "base64");
       fs.writeFileSync(fullImageName, buff);
 
-      await UserImageModel.create(
+      await user_image.create(
         {
           idUserTypeMap: addedUserSaloonType.id,
           url: imageName,
@@ -278,13 +266,15 @@ const registrationUser = async (req, res) => {
     const { email, phone, name, lastName, password, birthday, sex, agree } =
       value;
 
-    const UserModel = await User(connection);
-    const ClientInfoModel = await ClientInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
+    const {
+      user_type_map,
+      client_info,
+      user_status,
+      user_type,
+      user,
+    } = connection.models;
 
-    const existsUsers = await UserModel.findAll({
+    const existsUsers = await user.findAll({
       where: {
         [Sequelize.Op.or]: [
           {
@@ -305,7 +295,7 @@ const registrationUser = async (req, res) => {
         );
     }
 
-    const addedUser = await UserModel.create(
+    const addedUser = await user.create(
       {
         name,
         email,
@@ -315,17 +305,17 @@ const registrationUser = async (req, res) => {
       { transaction }
     );
 
-    const { dataValues: userTypesToBeCreated } = await UserTypeModel.findOne({
+    const { dataValues: userTypesToBeCreated } = await user_type.findOne({
       where: {
         name: roles.client.name,
       },
     });
 
-    const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+    const { dataValues: activeUserStatus } = await user_status.findOne({
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: addedUserClientType } = await UserTypeMapModel.create(
+    const { dataValues: addedUserClientType } = await user_type_map.create(
       {
         idUser: addedUser.id,
         idUserType: userTypesToBeCreated.id,
@@ -336,7 +326,7 @@ const registrationUser = async (req, res) => {
       { transaction }
     );
 
-    await ClientInfoModel.create(
+    await client_info.create(
       {
         idUserTypeMap: addedUserClientType.id,
         idSex: sex,
@@ -373,15 +363,17 @@ const registrationMaster = async (req, res) => {
     const { name, email, phone, password, description, relatedSaloonMapId } =
       value;
 
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserModel = await User(connection);
+    const {
+      saloon_master_map_status,
+      saloon_master_map,
+      user_type_map,
+      master_info,
+      user_status,
+      user_type,
+      user,
+    } = connection.models;
 
-    const existsUsers = await UserModel.findAll({
+    const existsUsers = await user.findAll({
       where: {
         [Sequelize.Op.or]: [
           {
@@ -403,13 +395,13 @@ const registrationMaster = async (req, res) => {
     }
 
     if (relatedSaloonMapId) {
-      const { dataValues: saloonUserTypeData } = await UserTypeModel.findOne({
+      const { dataValues: saloonUserTypeData } = await user_type.findOne({
         where: {
           name: roles.saloon.name,
         },
       });
 
-      const saloonToBeRelated = await UserTypeMapModel.findOne({
+      const saloonToBeRelated = await user_type_map.findOne({
         where: {
           id: relatedSaloonMapId,
           idUserType: saloonUserTypeData.id,
@@ -423,7 +415,7 @@ const registrationMaster = async (req, res) => {
       }
     }
 
-    const addedUser = await UserModel.create(
+    const addedUser = await user.create(
       {
         name,
         email,
@@ -433,17 +425,17 @@ const registrationMaster = async (req, res) => {
       { transaction }
     );
 
-    const { dataValues: userTypesToBeCreated } = await UserTypeModel.findOne({
+    const { dataValues: userTypesToBeCreated } = await user_type.findOne({
       where: {
         name: roles.master.name,
       },
     });
 
-    const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+    const { dataValues: activeUserStatus } = await user_status.findOne({
       where: { name: userStatuses.active.name },
     });
 
-    const { dataValues: addedMasterType } = await UserTypeMapModel.create(
+    const { dataValues: addedMasterType } = await user_type_map.create(
       {
         idUser: addedUser.id,
         idUserType: userTypesToBeCreated.id,
@@ -454,7 +446,7 @@ const registrationMaster = async (req, res) => {
       { transaction }
     );
 
-    await MasterInfoModel.create(
+    await master_info.create(
       {
         idUserTypeMap: addedMasterType.id,
         description,
@@ -463,13 +455,13 @@ const registrationMaster = async (req, res) => {
     );
 
     if (relatedSaloonMapId) {
-      const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+      const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne({
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name,
         },
       });
 
-      await SaloonMasterMapModel.create(
+      await saloon_master_map.create(
         {
           idMaster: addedMasterType.id,
           idSaloon: relatedSaloonMapId,
@@ -502,8 +494,6 @@ const checkCredentialsAvailability = async (req, res) => {
 
     const { email, phone } = value;
 
-    const UserModel = await User(connection);
-
     let userConditions = [];
 
     if (email) {
@@ -518,7 +508,7 @@ const checkCredentialsAvailability = async (req, res) => {
       res.status(400).send('Должен быть указан как минимум один критерий проверки.');
     }
 
-    const existsUsers = await UserModel.findAll({
+    const existsUsers = await connection.models.user.findAll({
       where: {
         [Sequelize.Op.or]: userConditions,
       },

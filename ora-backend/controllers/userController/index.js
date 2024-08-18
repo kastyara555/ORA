@@ -1,17 +1,6 @@
 const { connection } = require("../../db/connection");
 const { roles } = require("../../db/consts/roles");
 const { verifyToken } = require("../../utils/jwt");
-const ClientInfo = require("../../db/models/ClientInfo");
-const Sex = require("../../db/models/Sex");
-const User = require("../../db/models/User");
-const UserImage = require("../../db/models/UserImage");
-const UserStatus = require("../../db/models/UserStatus");
-const UserType = require("../../db/models/UserType");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const City = require("../../db/models/City");
-const MasterInfo = require("../../db/models/MasterInfo");
-const StreetType = require("../../db/models/StreetType");
 
 const getUserData = async (req, res) => {
   try {
@@ -20,19 +9,21 @@ const getUserData = async (req, res) => {
 
     const { userTypeMapId } = verifiedToken;
 
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserModel = await User(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserImageModel = await UserImage(connection);
-    const ClientInfoModel = await ClientInfo(connection);
-    const SexModel = await Sex(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const CityModel = await City(connection);
-    const StreetTypeModel = await StreetType(connection);
+    const {
+      user_type_map,
+      user_status,
+      client_info,
+      saloon_info,
+      master_info,
+      street_type,
+      user_image,
+      user_type,
+      city,
+      user,
+      sex,
+    } = connection.models;
 
-    const userMapInfo = await UserTypeMapModel.findOne({
+    const userMapInfo = await user_type_map.findOne({
       where: { id: userTypeMapId },
     });
 
@@ -42,17 +33,17 @@ const getUserData = async (req, res) => {
 
     const userBaseInfo = await connection.query(
       `SELECT userTypeMap.hash as userHash, userTypeMap.bonusCount as bonusCount, userBase.name as name, userBase.email as email, userBase.phone as phone, userType.name as userType, userStatus.name as userStatus
-    FROM \`${UserTypeMapModel.tableName}\` userTypeMap
-    JOIN \`${UserModel.tableName}\` userBase
+    FROM ${user_type_map.tableName} userTypeMap
+    JOIN ${user.tableName} userBase
     ON userTypeMap.idUser = userBase.id
-    JOIN \`${UserTypeModel.tableName}\` userType
+    JOIN ${user_type.tableName} userType
     ON userTypeMap.idUserType = userType.id
-    JOIN \`${UserStatusModel.tableName}\` userStatus
+    JOIN ${user_status.tableName} userStatus
     ON userTypeMap.idUserStatus = userStatus.id
     WHERE userTypeMap.id = ${userTypeMapId}`
     );
 
-    const images = await UserImageModel.findAll({
+    const images = await user_image.findAll({
       where: { idUserTypeMap: userTypeMapId },
     });
 
@@ -86,11 +77,11 @@ const getUserData = async (req, res) => {
 
     // Данные клиента
     if (result.userType === roles.client.name) {
-      const clientInfo = await ClientInfoModel.findOne({
+      const clientInfo = await client_info.findOne({
         where: { idUserTypeMap: userTypeMapId },
       });
 
-      const clientSex = await SexModel.findOne({
+      const clientSex = await sex.findOne({
         where: { id: clientInfo.dataValues.idSex },
       });
 
@@ -101,7 +92,7 @@ const getUserData = async (req, res) => {
 
     // Данные салона
     if (result.userType === roles.saloon.name) {
-      const saloonInfo = await SaloonInfoModel.findOne({
+      const saloonInfo = await saloon_info.findOne({
         where: { idUserTypeMap: userTypeMapId },
       });
 
@@ -121,7 +112,7 @@ const getUserData = async (req, res) => {
       result.saloonName = name;
       result.saloonDescription = description;
 
-      const streetTypeInfo = await StreetTypeModel.findOne({
+      const streetTypeInfo = await street_type.findOne({
         where: { id: idStreetType },
       });
 
@@ -138,7 +129,7 @@ const getUserData = async (req, res) => {
       result.visitPayment = visitPayment;
       result.workingTime = workingTime;
 
-      const cityInfo = await CityModel.findOne({
+      const cityInfo = await city.findOne({
         where: { id: idCity },
       });
 
@@ -147,7 +138,7 @@ const getUserData = async (req, res) => {
 
     // Данные мастера
     if (result.userType === roles.master.name) {
-      const masterInfo = await MasterInfoModel.findOne({
+      const masterInfo = await master_info.findOne({
         where: { idUserTypeMap: userTypeMapId },
       });
 

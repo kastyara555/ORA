@@ -1,15 +1,5 @@
 const moment = require("moment");
 
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
-const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const UserImage = require("../../db/models/UserImage");
-const Procedure = require("../../db/models/Procedure");
-const Service = require("../../db/models/Service");
 const { connection } = require("../../db/connection");
 const {
   SERVICE_INSTANCE_STATUSES,
@@ -19,16 +9,18 @@ const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterM
 
 const timetableInformation = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const UserImageModel = await UserImage(connection);
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
+    const {
+      service_master_map_status,
+      service_instance_status,
+      saloon_master_map_status,
+      service_master_map,
+      saloon_master_map,
+      service_instance,
+      saloon_info,
+      user_image,
+      procedure,
+      service,
+    } = connection.models;
 
     if (req.params.date.length !== 10) {
       return res.status(400).send("Неверный формат даты.");
@@ -46,13 +38,13 @@ const timetableInformation = async (req, res) => {
         .send("Получить расписание можно только для сегодня и будущих дней.");
     }
 
-    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+    const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
       where: {
         name: SERVICES_MASTER_MAP_STATUSES.active.name,
       },
     });
 
-    const existsServices = await ServiceMasterMapModel.findOne({
+    const existsServices = await service_master_map.findOne({
       where: { 
         idMaster: req.params.userTypeMapId,
         idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
@@ -65,14 +57,14 @@ const timetableInformation = async (req, res) => {
 
     const [saloons] = await connection.query(
       `SELECT smm.idSaloon as id, si.name as name, uim.url as mainImage
-      FROM \`${SaloonMasterMapModel.tableName}\` smm
-      JOIN \`${SaloonInfoModel.tableName}\` si
+      FROM \`${saloon_master_map.tableName}\` smm
+      JOIN \`${saloon_info.tableName}\` si
       ON smm.idSaloon = si.idUserTypeMap
-      JOIN \`${SaloonMasterMapStatusModel.tableName}\` smms
+      JOIN \`${saloon_master_map_status.tableName}\` smms
       ON smm.idSaloonMasterMapStatus = smms.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = smm.idSaloon
@@ -82,16 +74,16 @@ const timetableInformation = async (req, res) => {
 
     const [tmpTimetable] = await connection.query(
       `SELECT si.id as id, p.name as name, si.time as time, s.idSaloon as saloonId, sis.name as statusName
-      FROM \`${ServiceInstanceModel.tableName}\` si
-      JOIN \`${ServiceMasterMapModel.tableName}\` smm
+      FROM \`${service_instance.tableName}\` si
+      JOIN \`${service_master_map.tableName}\` smm
       ON si.idServiceMasterMap = smm.id
-      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      JOIN \`${service_master_map_status.tableName}\` smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN \`${ServiceModel.tableName}\` s
+      JOIN \`${service.tableName}\` s
       ON smm.idService = s.id
-      JOIN \`${ProcedureModel.tableName}\` p
+      JOIN \`${procedure.tableName}\` p
       ON s.idProcedure = p.id
-      JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+      JOIN \`${service_instance_status.tableName}\` sis
       ON si.idServiceInstanceStatus = sis.id
       WHERE smm.idMaster = ${req.params.userTypeMapId}
       AND si.time LIKE '${date.format("YYYY-MM-DD")}%'
