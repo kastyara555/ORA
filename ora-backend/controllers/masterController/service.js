@@ -42,12 +42,12 @@ const getServicesBySaloon = async (req, res) => {
 
     const [services] = await connection.query(
       `SELECT smm.id as id, p.name as name
-      FROM ${service.tableName} s
-      JOIN ${service_master_map.tableName} smm
+      FROM \`${service.tableName}\` s
+      JOIN \`${service_master_map.tableName}\` smm
       ON s.id = smm.idService
-      JOIN ${service_master_map_status.tableName} smms
+      JOIN \`${service_master_map_status.tableName}\` smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN ${procedure.tableName} p
+      JOIN \`${procedure.tableName}\` p
       ON s.idProcedure = p.id
       WHERE smm.idMaster = ${req.params.userTypeMapId}
       AND s.idSaloon = ${req.params.idSaloon}
@@ -111,8 +111,8 @@ const createServiceInstance = async (req, res) => {
 
     const [[{ workingTime }]] = await connection.query(
       `SELECT si.workingTime
-      FROM ${service.tableName} s
-      JOIN ${saloon_info.tableName} si
+      FROM \`${service.tableName}\` s
+      JOIN \`${saloon_info.tableName}\` si
       ON s.idSaloon = si.idUserTypeMap
       WHERE s.id =  ${existsServiceMasterMap.idService}`
     );

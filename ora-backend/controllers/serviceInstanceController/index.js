@@ -45,14 +45,14 @@ const getAvailableDatesForProcedureBySaloon = async (req, res) => {
 
     const [availableDates] = await connection.query(
       `SELECT DISTINCT SUBSTRING(si.time, 1, 10) as date
-      FROM ${service_instance.tableName} si
-      JOIN ${service_instance_status.tableName} sis
+      FROM \`${service_instance.tableName}\` si
+      JOIN \`${service_instance_status.tableName}\` sis
       ON si.idServiceInstanceStatus = sis.id
-      JOIN ${service_master_map.tableName} smm
+      JOIN \`${service_master_map.tableName}\` smm
       ON si.idServiceMasterMap = smm.id
-      JOIN ${service_master_map_status.tableName} smms
+      JOIN \`${service_master_map_status.tableName}\` smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN ${service.tableName} s
+      JOIN \`${service.tableName}\` s
       ON smm.idService = s.id
       WHERE s.idSaloon = ${req.params.saloonId}
       AND s.idProcedure = ${req.params.procedureId}
@@ -97,22 +97,22 @@ const getAvailableMastersForProcedureBySaloonAndDate = async (req, res) => {
 
     const [availableMasters] = await connection.query(
       `SELECT DISTINCT utm.id as id, u.name as name, uim.url as mainImage, smm.price as price
-          FROM ${service_instance.tableName} si
-          JOIN ${service_instance_status.tableName} sis
+          FROM \`${service_instance.tableName}\` si
+          JOIN \`${service_instance_status.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id
-          JOIN ${service_master_map.tableName} smm
+          JOIN \`${service_master_map.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
-          JOIN ${service_master_map_status.tableName} smms
+          JOIN \`${service_master_map_status.tableName}\` smms
           ON smm.idServiceMasterMapStatus = smms.id
-          JOIN ${service.tableName} s
+          JOIN \`${service.tableName}\` s
           ON smm.idService = s.id
-          JOIN ${user_type_map.tableName} utm
+          JOIN \`${user_type_map.tableName}\` utm
           ON smm.idMaster = utm.id
-          JOIN ${user.tableName} u
+          JOIN \`${user.tableName}\` u
           ON utm.idUser = u.id
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM ${user_image.tableName}
+            FROM \`${user_image.tableName}\`
             WHERE isMain = 1
           ) uim
           ON uim.idUserTypeMap = utm.id
@@ -160,16 +160,16 @@ const getAvailableRecordsForProcedureBySaloonDateAndMaster = async (
 
     const [availableRecords] = await connection.query(
       `SELECT si.id as id, SUBSTRING(si.time, 12, 5) as time
-          FROM ${service_instance.tableName} si
-          JOIN ${service_instance_status.tableName} sis
+          FROM \`${service_instance.tableName}\` si
+          JOIN \`${service_instance_status.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id
-          JOIN ${service_master_map.tableName} smm
+          JOIN \`${service_master_map.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
-          JOIN ${service_master_map_status.tableName} smms
+          JOIN \`${service_master_map_status.tableName}\` smms
           ON smm.idServiceMasterMapStatus = smms.id
-          JOIN ${service.tableName} s
+          JOIN \`${service.tableName}\` s
           ON smm.idService = s.id
-          JOIN ${user_type_map.tableName} utm
+          JOIN \`${user_type_map.tableName}\` utm
           ON smm.idMaster = utm.id
           WHERE s.idSaloon = ${req.params.saloonId}
           AND s.idProcedure = ${req.params.procedureId}
@@ -214,8 +214,8 @@ const bookServiceInstance = async (
 
     const [clientsInfo] = await connection.query(
       `SELECT *
-      FROM ${user_type_map.tableName} utm
-      JOIN ${user_type.tableName} ut
+      FROM \`${user_type_map.tableName}\` utm
+      JOIN \`${user_type.tableName}\` ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${clientUserTypeMapId}
       AND ut.name = '${roles.client.name}'`
@@ -227,8 +227,8 @@ const bookServiceInstance = async (
 
     const [serviceInstancesInfo] = await connection.query(
       `SELECT sis.name as statusName
-      FROM ${service_instance.tableName} si
-      JOIN ${service_instance_status.tableName} sis
+      FROM \`${service_instance.tableName}\` si
+      JOIN \`${service_instance_status.tableName}\` sis
       ON si.idServiceInstanceStatus = sis.id
       WHERE si.id = ${serviceInstanceId}`
     );
@@ -286,12 +286,12 @@ const loginBookServiceInstance = async (
 
     const [clientsInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM ${user.tableName} u
-      JOIN ${user_type_map.tableName} utm
+      FROM \`${user.tableName}\` u
+      JOIN \`${user_type_map.tableName}\` utm
       ON u.id = utm.idUser
-      JOIN ${user_type.tableName} ut
+      JOIN \`${user_type.tableName}\` ut
       ON utm.idUserType = ut.id
-      JOIN ${user_status.tableName} us
+      JOIN \`${user_status.tableName}\` us
       ON utm.idUserStatus = us.id
       WHERE u.email = '${email}'
       AND u.password = '${generateHash(password)}'
@@ -305,8 +305,8 @@ const loginBookServiceInstance = async (
 
     const [serviceInstancesInfo] = await connection.query(
       `SELECT sis.name as statusName
-      FROM ${service_instance.tableName} si
-      JOIN ${service_instance_status.tableName} sis
+      FROM \`${service_instance.tableName}\` si
+      JOIN \`${service_instance_status.tableName}\` sis
       ON si.idServiceInstanceStatus = sis.id
       WHERE si.id = ${serviceInstanceId}`
     );

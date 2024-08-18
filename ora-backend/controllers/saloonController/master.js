@@ -43,14 +43,14 @@ const getSaloonMasters = async (req, res) => {
 
     const [mastersData] = await connection.query(
       `SELECT utm.id code, u.name name, u.email as email, u.phone as phone, uim.url as mainImage 
-      FROM ${master_info.tableName} m
-      JOIN ${user_type_map.tableName} utm
+      FROM \`${master_info.tableName}\` m
+      JOIN \`${user_type_map.tableName}\` utm
       ON utm.id = m.idUserTypeMap
-      JOIN ${user.tableName} u
+      JOIN \`${user.tableName}\` u
       ON u.id = utm.idUser
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM ${user_image.tableName}
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = m.idUserTypeMap
@@ -114,10 +114,10 @@ const deleteSaloonMasters = async (req, res) => {
 
     const serviceMasterMapElementsToBeRemoved = (await connection.query(
       `SELECT smm.id as id
-      FROM ${service_master_map.tableName} smm
-      JOIN ${service_master_map_status.tableName} smms
+      FROM \`${service_master_map.tableName}\` smm
+      JOIN \`${service_master_map_status.tableName}\` smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN ${service.tableName} s
+      JOIN \`${service.tableName}\` s
       ON smm.idService = s.id
       WHERE s.idSaloon = ${req.params.userTypeMapId}
       AND smm.idMaster IN (${codes.join(',')})
@@ -207,8 +207,8 @@ const addSaloonMaster = async (req, res) => {
 
     const [activeMasters] = await connection.query(
       `SELECT *
-      FROM ${saloon_master_map.tableName} smm
-      JOIN ${saloon_master_map_status.tableName} smms
+      FROM \`${saloon_master_map.tableName}\` smm
+      JOIN \`${saloon_master_map_status.tableName}\` smms
       ON smm.idSaloonMasterMapStatus = smms.id
       WHERE smm.idSaloon = ${req.params.userTypeMapId}
       AND smm.idMaster = ${code}

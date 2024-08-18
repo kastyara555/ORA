@@ -135,7 +135,7 @@ const clientHistory = async (req, res) => {
 
     const [[{ total }]] = await connection.query(
       `SELECT COUNT(DISTINCT si.id) as total
-      FROM ${service_instance.tableName} si
+      FROM \`${service_instance.tableName}\` si
       WHERE si.idClient = ${req.params.userTypeMapId}`
     );
 
@@ -146,30 +146,30 @@ const clientHistory = async (req, res) => {
         ? [[]]
         : await connection.query(
           `SELECT si.id as id, si.time as date, p.name as procedureName, saloon.name as saloonName, saloon_image.url as saloonImage, u.name as masterName, master_image.url as masterImage, sis.name as statusName
-          FROM ${service_instance.tableName} si
-          JOIN ${service_master_map.tableName} smm
+          FROM \`${service_instance.tableName}\` si
+          JOIN \`${service_master_map.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
-          JOIN ${service.tableName} s
+          JOIN \`${service.tableName}\` s
           ON smm.idService = s.id
-          JOIN ${procedure.tableName} p
+          JOIN \`${procedure.tableName}\` p
           ON s.idProcedure = p.id
-          JOIN ${saloon_info.tableName} saloon
+          JOIN \`${saloon_info.tableName}\` saloon
           ON s.idSaloon = saloon.idUserTypeMap
-          JOIN ${user_type_map.tableName} utm
+          JOIN \`${user_type_map.tableName}\` utm
           ON smm.idMaster = utm.id
-          JOIN ${user.tableName} u
+          JOIN \`${user.tableName}\` u
           ON utm.idUser = u.id
-          JOIN ${service_instance_status.tableName} sis
+          JOIN \`${service_instance_status.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM ${user_image.tableName}
+            FROM \`${user_image.tableName}\`
             WHERE isMain = 1
           ) master_image
           ON smm.idMaster = master_image.idUserTypeMap
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM ${user_image.tableName}
+            FROM \`${user_image.tableName}\`
             WHERE isMain = 1
           ) saloon_image
           ON s.idSaloon = saloon_image.idUserTypeMap

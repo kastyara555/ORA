@@ -22,8 +22,8 @@ const saveFavorites = async (req, res) => {
 
     const [clientInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM ${user_type_map.tableName} utm
-      JOIN ${user_type.tableName} ut
+      FROM \`${user_type_map.tableName}\` utm
+      JOIN \`${user_type.tableName}\` ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
@@ -77,8 +77,8 @@ const clearFavorites = async (req, res) => {
 
     const [clientInfo] = await connection.query(
       `SELECT utm.id as id
-      FROM ${user_type_map.tableName} utm
-      JOIN ${user_type.tableName} ut
+      FROM \`${user_type_map.tableName}\` utm
+      JOIN \`${user_type.tableName}\` ut
       ON utm.idUserType = ut.id
       WHERE utm.id = ${value.idClient}
       AND ut.name = '${roles.client.name}'`
@@ -160,19 +160,19 @@ const getFavorites = async (req, res) => {
     } = connection.models;
 
     const subQueryMainImages = `SELECT idUserTypeMap, url
-      FROM ${user_image.tableName}
+      FROM \`${user_image.tableName}\`
       WHERE isMain = 1`;
 
     const [favoritesList] = await connection.query(
       `SELECT s.id as id, si.idUserTypeMap as saloonId, si.name as saloonName, uim.url as mainImage, p.id as procedureId, p.name as procedureName, c.name as cityName
-      FROM ${favorites.tableName} f
-      JOIN ${service.tableName} s
+      FROM \`${favorites.tableName}\` f
+      JOIN \`${service.tableName}\` s
       ON f.idService = s.id
-      JOIN ${saloon_info.tableName} si
+      JOIN \`${saloon_info.tableName}\` si
       ON s.idSaloon = si.idUserTypeMap
-      JOIN ${procedure.tableName} p
+      JOIN \`${procedure.tableName}\` p
       ON s.idProcedure = p.id
-      JOIN ${city.tableName} c
+      JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
       LEFT JOIN (${subQueryMainImages}) uim
       ON uim.idUserTypeMap = si.idUserTypeMap

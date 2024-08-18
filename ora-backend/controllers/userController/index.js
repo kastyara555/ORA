@@ -33,12 +33,12 @@ const getUserData = async (req, res) => {
 
     const userBaseInfo = await connection.query(
       `SELECT userTypeMap.hash as userHash, userTypeMap.bonusCount as bonusCount, userBase.name as name, userBase.email as email, userBase.phone as phone, userType.name as userType, userStatus.name as userStatus
-    FROM ${user_type_map.tableName} userTypeMap
-    JOIN ${user.tableName} userBase
+    FROM \`${user_type_map.tableName}\` userTypeMap
+    JOIN \`${user.tableName}\` userBase
     ON userTypeMap.idUser = userBase.id
-    JOIN ${user_type.tableName} userType
+    JOIN \`${user_type.tableName}\` userType
     ON userTypeMap.idUserType = userType.id
-    JOIN ${user_status.tableName} userStatus
+    JOIN \`${user_status.tableName}\` userStatus
     ON userTypeMap.idUserStatus = userStatus.id
     WHERE userTypeMap.id = ${userTypeMapId}`
     );

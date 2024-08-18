@@ -11,8 +11,8 @@ const getSaloonServices = async (req, res) => {
 
     const [procedureData] = await connection.query(
       `SELECT s.id as id, p.name as name
-      FROM ${service.tableName} s
-      JOIN ${procedure.tableName} p
+      FROM \`${service.tableName}\` s
+      JOIN \`${procedure.tableName}\` p
       ON s.idProcedure = p.id
       WHERE s.idSaloon = ${req.params.userTypeMapId}`
     );

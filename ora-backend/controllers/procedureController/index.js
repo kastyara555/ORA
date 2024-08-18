@@ -50,23 +50,23 @@ const getProcedureDataByCity = async (req, res) => {
     const thisTimeFormatted = moment().format("YYYY-MM-DD:HH-mm");
 
     const subQueryAvailableServices = `SELECT smm.idService as availableServiceId
-    FROM ${service_master_map.tableName} smm
-    JOIN ${service_master_map_status.tableName} smms
+    FROM \`${service_master_map.tableName}\` smm
+    JOIN \`${service_master_map_status.tableName}\` smms
     ON smm.idServiceMasterMapStatus = smms.id
-    JOIN ${service_instance.tableName} si
+    JOIN \`${service_instance.tableName}\` si
     ON smm.id = si.idServiceMasterMap
-    JOIN ${service_instance_status.tableName} sis
+    JOIN \`${service_instance_status.tableName}\` sis
     ON si.idServiceInstanceStatus = sis.id
     WHERE sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
     AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
     AND si.time > '${thisTimeFormatted}'`;
 
     const subQueryMainImages = `SELECT idUserTypeMap, url
-    FROM ${user_image.tableName}
+    FROM \`${user_image.tableName}\`
     WHERE isMain = 1`;
 
-    const queryBody = `FROM ${saloon_info.tableName} si
-    JOIN ${service.tableName} s
+    const queryBody = `FROM \`${saloon_info.tableName}\` si
+    JOIN \`${service.tableName}\` s
     ON s.idSaloon = si.idUserTypeMap
     JOIN (${subQueryAvailableServices}) available
     ON s.id = available.availableServiceId
@@ -121,10 +121,10 @@ const getProcedureCities = async (req, res) => {
 
     const [cities] = await connection.query(
       `SELECT DISTINCT c.id as id, c.name as name
-      FROM ${service.tableName} s
-      JOIN ${saloon_info.tableName} si
+      FROM \`${service.tableName}\` s
+      JOIN \`${saloon_info.tableName}\` si
       ON s.idSaloon = si.idUserTypeMap
-      JOIN ${city.tableName} c
+      JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
       WHERE s.idProcedure = ${req.params.procedureId}`
     );

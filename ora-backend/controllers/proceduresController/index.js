@@ -20,15 +20,15 @@ const getProceduresTree = async (req, res) => {
 
     const tmp = await connection.query(
       `SELECT pg.id as groupId, pg.name as groupName, p.id as procedureId, p.name as procedureName
-      FROM ${procedure_group.tableName} pg
-      JOIN ${group_procedure_map.tableName} gpm
+      FROM \`${procedure_group.tableName}\` pg
+      JOIN \`${group_procedure_map.tableName}\` gpm
       ON gpm.idProcedureGroup = pg.id
-      JOIN ${procedure.tableName} p
+      JOIN \`${procedure.tableName}\` p
       ON gpm.idProcedure = p.id
       WHERE gpm.id IN (
         SELECT id FROM (
           SELECT id
-          FROM ${group_procedure_map.tableName} gpm
+          FROM \`${group_procedure_map.tableName}\` gpm
           WHERE gpm.idProcedureGroup = pg.id
           LIMIT 3
         ) tmp)
@@ -72,8 +72,8 @@ const getProceduresByGroupId = async (req, res) => {
 
     const procedures = await connection.query(
       `SELECT *
-      FROM ${group_procedure_map.tableName} map
-      JOIN ${procedure.tableName} p
+      FROM \`${group_procedure_map.tableName}\` map
+      JOIN \`${procedure.tableName}\` p
       ON map.idProcedure = p.id
       WHERE map.idProcedureGroup = ${req.params.categoryId}`
     );
@@ -101,20 +101,23 @@ const getProceduresByName = async (req, res) => {
 
     const procedures = await connection.query(
       `SELECT gpm.idProcedureGroup as procedureGroupId, p.id as procedureId, p.name as procedureName
-      FROM  ${group_procedure_map.tableName} gpm
-      JOIN ${procedure.tableName} p
+      FROM \`${group_procedure_map.tableName}\` gpm
+      JOIN \`${procedure.tableName}\` p
       ON gpm.idProcedure = p.id
       WHERE gpm.id IN (
         SELECT id FROM (
           SELECT id
-            FROM ${group_procedure_map.tableName} gpm
+            FROM \`${group_procedure_map.tableName}\` gpm
             WHERE gpm.idProcedure = p.id
             AND LOWER(p.name) LIKE '%${req.params.search.toLowerCase()}%'
             LIMIT 1
-        ) tmp)
+        ) tmp
+      )
       ORDER BY procedureName
       LIMIT ${pageSize ? pageSize : DEFAULT_SEARCH_PROCEDURES_LIMIT}`
     );
+
+
 
     return res.send(procedures[0]);
   } catch (e) {

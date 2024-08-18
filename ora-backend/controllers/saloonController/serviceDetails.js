@@ -71,20 +71,20 @@ const getSaloonServiceInfo = async (req, res) => {
 
       activeMasters = (await connection.query(
         `SELECT user_type_map.id as id, user.name as name, user.email as email, uim.url as mainImage, service_master_map.price as price
-      FROM ${user_type_map.tableName} user_type_map
-      JOIN ${user.tableName} user
+      FROM \`${user_type_map.tableName}\` user_type_map
+      JOIN \`${user.tableName}\` user
       ON user.id = user_type_map.idUser
-      JOIN ${service_master_map.tableName} service_master_map
+      JOIN \`${service_master_map.tableName}\` service_master_map
       ON service_master_map.idMaster = user_type_map.id
-      JOIN ${service_master_map_status.tableName} service_master_map_status
+      JOIN \`${service_master_map_status.tableName}\` service_master_map_status
       ON service_master_map.idServiceMasterMapStatus = service_master_map_status.id
-      JOIN ${saloon_master_map.tableName} saloon_master_map
+      JOIN \`${saloon_master_map.tableName}\` saloon_master_map
       ON user_type_map.id = saloon_master_map.idMaster
-      JOIN ${saloon_master_map_status.tableName} saloon_master_map_status
+      JOIN \`${saloon_master_map_status.tableName}\` saloon_master_map_status
       ON saloon_master_map.idSaloonMasterMapStatus = saloon_master_map_status.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM ${user_image.tableName}
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = user_type_map.id
@@ -97,16 +97,16 @@ const getSaloonServiceInfo = async (req, res) => {
 
       availableMasters = (await connection.query(
         `SELECT DISTINCT user_type_map.id as id, user.name as name, user.email as email, uim.url as mainImage
-      FROM ${user_type_map.tableName} user_type_map
-      JOIN ${user.tableName} user
+      FROM \`${user_type_map.tableName}\` user_type_map
+      JOIN \`${user.tableName}\` user
       ON user.id = user_type_map.idUser
-      JOIN ${saloon_master_map.tableName} saloon_master_map
+      JOIN \`${saloon_master_map.tableName}\` saloon_master_map
       ON user_type_map.id = saloon_master_map.idMaster
-      JOIN ${saloon_master_map_status.tableName} saloon_master_map_status
+      JOIN \`${saloon_master_map_status.tableName}\` saloon_master_map_status
       ON saloon_master_map.idSaloonMasterMapStatus = saloon_master_map_status.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM ${user_image.tableName}
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = user_type_map.id

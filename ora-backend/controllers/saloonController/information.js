@@ -106,14 +106,14 @@ const getSaloonBaseInfo = async (req, res) => {
 
     const [saloonInfo] = await connection.query(
       `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, st.shortName as streetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
-      FROM ${saloon_info.tableName} si
-      JOIN ${city.tableName} c
+      FROM \`${saloon_info.tableName}\` si
+      JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
-      JOIN ${street_type.tableName} st
+      JOIN \`${street_type.tableName}\` st
       ON si.idStreetType = st.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM ${user_image.tableName}
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = si.idUserTypeMap
@@ -152,8 +152,8 @@ const getSaloonBaseServices = async (req, res) => {
       ? [[]]
       : await connection.query(
         `SELECT s.id as id, p.id as procedureId, p.name as procedureName
-        FROM ${service.tableName} s
-        JOIN ${procedure.tableName} p
+        FROM \`${service.tableName}\` s
+        JOIN \`${procedure.tableName}\` p
         ON s.idProcedure = p.id
         WHERE s.idSaloon = ${req.params.userTypeMapId}
         LIMIT ${pageSize}
@@ -192,16 +192,16 @@ const getSaloonTimetable = async (req, res) => {
     // TODO: не фильтровал по связке салон-мастер. Думаю.
     const [serviceInstancesList] = await connection.query(
       `SELECT si.id as id, p.name as procedureName, si.time as start, s.time as time, smm.idMaster as idMaster
-        FROM ${service_instance.tableName} si
-        JOIN ${service_instance_status.tableName} sis
+        FROM \`${service_instance.tableName}\` si
+        JOIN \`${service_instance_status.tableName}\` sis
         ON si.idServiceInstanceStatus = sis.id
-        JOIN ${service_master_map.tableName} smm
+        JOIN \`${service_master_map.tableName}\` smm
         ON si.idServiceMasterMap = smm.id
-        JOIN ${service_master_map_status.tableName} smms
+        JOIN \`${service_master_map_status.tableName}\` smms
         ON smm.idServiceMasterMapStatus = smms.id
-        JOIN ${service.tableName} s
+        JOIN \`${service.tableName}\` s
         ON smm.idService = s.id
-        JOIN ${procedure.tableName} p
+        JOIN \`${procedure.tableName}\` p
         ON s.idProcedure = p.id
         WHERE s.idSaloon = ${req.params.userTypeMapId}
         AND si.time LIKE '${date.format("YYYY-MM-DD")}:%'
@@ -219,12 +219,12 @@ const getSaloonTimetable = async (req, res) => {
 
     const [masters] = await connection.query(
       `SELECT utm.id as id, u.name as name, uim.url as mainImage
-      FROM ${user.tableName} u
-      JOIN ${user_type_map.tableName} utm
+      FROM \`${user.tableName}\` u
+      JOIN \`${user_type_map.tableName}\` utm
       ON u.id = utm.idUser
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM ${user_image.tableName}
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = utm.id
