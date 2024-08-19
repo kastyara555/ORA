@@ -10,7 +10,6 @@ import { Skeleton } from "primereact/skeleton";
 import classNames from "classnames";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { Calendar, CalendarChangeEvent } from "primereact/calendar";
 import { Button as ButtonPrimeReact } from "primereact/button";
 
 import Button from "@/components/Button";
@@ -18,6 +17,7 @@ import axiosInstance, { BASE_URL } from "@/api";
 import { masterServices } from "@/api/master";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
+import { HOURS_PROCEDURE, MINUTES_PROCEDURE } from "@/consts/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 
@@ -28,16 +28,19 @@ import styles from "./style.module.scss";
 const INITIAL_CREATE_SERVICE_FORM: CreateServiceFormModel = {
   saloon: null,
   service: null,
-  time: null,
+  hours: null,
+  minutes: null,
 };
 
 interface CreateServiceFormProps {
   saloons: CreateServiceSaloonModel[];
+  disabled: boolean;
   onSubmit: (formData: CreateServiceFormModel) => void;
 }
 
 const CreateServiceForm: FC<CreateServiceFormProps> = ({
   saloons,
+  disabled,
   onSubmit,
 }) => {
   const dispatch = useDispatch();
@@ -80,19 +83,24 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
     formik.setFieldValue("service", e.value);
   };
 
-  const handleSetTime = (e: CalendarChangeEvent) => {
-    formik.setFieldValue("time", e.value);
+  const handleSetHours = (e: DropdownChangeEvent) => {
+    formik.setFieldValue("hours", e.value);
+  };
+
+  const handleSetMinutes = (e: DropdownChangeEvent) => {
+    formik.setFieldValue("minutes", e.value);
   };
 
   const clearTime = () => {
-    formik.setFieldValue("time", null);
+    formik.setFieldValue("hours", INITIAL_CREATE_SERVICE_FORM.hours);
+    formik.setFieldValue("minutes", INITIAL_CREATE_SERVICE_FORM.minutes);
   };
 
   const formik = useFormik<CreateServiceFormModel>({
     initialValues: INITIAL_CREATE_SERVICE_FORM,
     validateOnMount: true,
     validate: (data) => {
-      const errors: any = {};
+      const errors: Record<string, string> = {};
 
       if (!data.saloon) {
         errors.saloon = "Заполните поле салона.";
@@ -102,7 +110,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
         errors.service = "Заполните поле сервиса.";
       }
 
-      if (!data.time) {
+      if (!data.hours || !data.minutes) {
         errors.time = "Заполните поле времени.";
       }
 
@@ -110,7 +118,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
     },
     onSubmit: async (formData) => {
       await onSubmit(formData);
-      formik.resetForm();
+      clearTime();
     },
   });
 
@@ -143,14 +151,14 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
       fetchServicesBySaloon();
     } else {
       setServices([]);
-      formik.setFieldValue("service", null);
-      formik.setFieldValue("time", null);
+      formik.setFieldValue("service", INITIAL_CREATE_SERVICE_FORM.service);
+      clearTime();
     }
   }, [formik.values.saloon]);
 
   useEffect(() => {
     if (!formik.values.service) {
-      formik.setFieldValue("time", null);
+      clearTime();
     }
   }, [formik.values.service]);
 
@@ -177,6 +185,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
           options={saloons}
           valueTemplate={selectedSaloonTemplate}
           className={classNames("w-full", "mt-2")}
+          disabled={disabled}
           showClear
         />
       </div>
@@ -194,6 +203,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
               placeholder="Выберите сервис"
               options={services}
               className={classNames("w-full", "mt-2")}
+              disabled={disabled}
               showClear
             />
           </div>
@@ -203,16 +213,34 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
               <label htmlFor="serviceTime">Время</label>
               <br />
               <div className={classNames("mt-2", "w-full", "flex")}>
-                <Calendar
-                  id="serviceTime"
-                  className="w-full"
-                  value={formik.values.time}
-                  onChange={handleSetTime}
-                  timeOnly
-                />
+                <div className={classNames("flex", "flex-1", "gap-2")}>
+                  <div className={classNames("flex", "align-items-center")}>
+                    <Dropdown
+                      options={HOURS_PROCEDURE}
+                      value={formik.values.hours}
+                      onChange={handleSetHours}
+                      disabled={disabled}
+                      optionLabel="name"
+                    />
+                    &nbsp;<h3>ч.</h3>
+                  </div>
+                  <div
+                    className={classNames("flex", "align-items-center", "p-0")}
+                  >
+                    <Dropdown
+                      options={MINUTES_PROCEDURE}
+                      value={formik.values.minutes}
+                      onChange={handleSetMinutes}
+                      disabled={disabled}
+                      optionLabel="name"
+                    />
+                    &nbsp;<h3>мин.</h3>
+                  </div>
+                </div>
+
                 <ButtonPrimeReact
                   outlined
-                  disabled={!formik.values.time}
+                  disabled={!formik.values.hours || !formik.values.minutes || disabled}
                   onClick={clearTime}
                   icon="pi pi-times"
                   severity="danger"
@@ -228,7 +256,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
 
       <div className={classNames("col-12", "mt-4")}>
         <Button
-          disabled={!formik.dirty}
+          disabled={!formik.dirty || disabled}
           type="reset"
           className="w-full"
           severity="secondary"
@@ -239,7 +267,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
       </div>
       <div className="col-12">
         <Button
-          disabled={!formik.isValid || !formik.dirty}
+          disabled={!formik.isValid || !formik.dirty || disabled}
           type="submit"
           className="w-full"
         >

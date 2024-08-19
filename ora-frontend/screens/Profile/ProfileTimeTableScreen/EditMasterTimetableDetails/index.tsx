@@ -24,6 +24,7 @@ import {
   CreateServiceFormModel,
   CreateServiceSaloonModel,
   CreateServiceTimetableModel,
+  TimeServiceModel,
 } from "./types";
 import CreateServiceForm from "./CreateServiceForm";
 import RecordsList from "./RecordsList";
@@ -46,6 +47,7 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
   const [timetableDetails, setTimetableDetails] =
     useState<null | TimetableDetails>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingServiceInstances, setLoadingServiceInstances] = useState<boolean>(false);
 
   const dateIsValid = date.isValid();
   const isActual = date.isSameOrAfter(moment(), "day");
@@ -80,13 +82,13 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
 
   const postNewServiceInstance = async (formData: CreateServiceFormModel) => {
     try {
-      setLoading(true);
+      setLoadingServiceInstances(true);
       const { data } = await axiosInstance.post(
         createMasterServiceInstance(userTypeMapId),
         {
           id: formData.service?.id,
-          hours: formData.time?.getHours(),
-          minutes: formData.time?.getMinutes(),
+          hours: +(formData.hours as TimeServiceModel).code,
+          minutes: +(formData.minutes as TimeServiceModel).code,
           date: date.format("DD-MM-YYYY"),
         }
       );
@@ -102,13 +104,13 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
 
       dispatch(commonSetUiToast(toastToBeShown));
     } finally {
-      setLoading(false);
+      setLoadingServiceInstances(false);
     }
   };
 
   const cancelServiceInstance = async (id: number) => {
     try {
-      setLoading(true);
+      setLoadingServiceInstances(true);
       const { data } = await axiosInstance.post(
         cancelMasterServiceInstance(userTypeMapId, id)
       );
@@ -124,7 +126,7 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
 
       dispatch(commonSetUiToast(toastToBeShown));
     } finally {
-      setLoading(false);
+      setLoadingServiceInstances(false);
     }
   };
 
@@ -185,18 +187,25 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
       >
         <CreateServiceForm
           saloons={timetableDetails.saloons}
+          disabled={loadingServiceInstances}
           onSubmit={postNewServiceInstance}
         />
       </Panel>
       <div className={classNames("col-12", "pt-2", "lg:col-4", "xl:col-4")}>
         <ScrollPanel style={{ height: 512 }}>
-          <RecordsList
-            serviceInstances={timetableDetails.timetable ?? []}
-            onCancel={cancelServiceInstance}
-          />
+          {
+            loadingServiceInstances ? (
+              <Skeleton width="100%" height="256px" />
+            ) : (
+              <RecordsList
+                serviceInstances={timetableDetails.timetable ?? []}
+                onCancel={cancelServiceInstance}
+              />
+            )
+          }
         </ScrollPanel>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

@@ -19,9 +19,6 @@ const BookingBannerForm: FC<BookingBannerFormModel> = () => {
   // const [selectedCity, setSelectedCity] = useState(null);
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
-  console.log('filteredProcedures');
-  console.log(filteredProcedures);
-
   const searchButtonDisabled = useMemo(
     () =>
       !selectedProcedure?.procedureGroupId || !selectedProcedure?.procedureId,

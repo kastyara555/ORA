@@ -19,6 +19,7 @@ const SaloonRegistrationServicesList: FC<
     <div className={classNames("w-full", "flex-column")}>
       {services.map(({ procedure, time, price }, index) => (
         <div
+          key={index}
           className={classNames(
             styles.service,
             "grid",

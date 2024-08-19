@@ -189,7 +189,7 @@ const SaloonEditProfile = () => {
 
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
               <label className={styles.lightText} htmlFor="street">
-                Улица
+                Название улицы
               </label>
               <InputText
                 id="street"
