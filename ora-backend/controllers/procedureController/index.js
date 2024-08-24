@@ -102,6 +102,7 @@ const getProcedureDataByCity = async (req, res) => {
   }
 };
 
+// TODO: обдумать. Стоит ли добавлять фильтр по наличию сервис инстансов
 const getProcedureCities = async (req, res) => {
   try {
     const {
@@ -121,11 +122,11 @@ const getProcedureCities = async (req, res) => {
 
     const [cities] = await connection.query(
       `SELECT DISTINCT c.id as id, c.name as name
-      FROM \`${service.tableName}\` s
+      FROM \`${city.tableName}\` c
       JOIN \`${saloon_info.tableName}\` si
-      ON s.idSaloon = si.idUserTypeMap
-      JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
+      JOIN \`${service.tableName}\` s
+      ON s.idSaloon = si.idUserTypeMap
       WHERE s.idProcedure = ${req.params.procedureId}`
     );
 
