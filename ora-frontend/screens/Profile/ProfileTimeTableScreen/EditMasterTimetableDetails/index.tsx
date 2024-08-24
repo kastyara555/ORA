@@ -24,7 +24,6 @@ import {
   CreateServiceFormModel,
   CreateServiceSaloonModel,
   CreateServiceTimetableModel,
-  TimeServiceModel,
 } from "./types";
 import CreateServiceForm from "./CreateServiceForm";
 import RecordsList from "./RecordsList";
@@ -87,8 +86,8 @@ const EditMasterTimetableDetails: FC<EditMasterTimetableDetailsProps> = ({
         createMasterServiceInstance(userTypeMapId),
         {
           id: formData.service?.id,
-          hours: +(formData.hours as TimeServiceModel).code,
-          minutes: +(formData.minutes as TimeServiceModel).code,
+          hours: +formData.hours.code,
+          minutes: +formData.minutes.code,
           date: date.format("DD-MM-YYYY"),
         }
       );

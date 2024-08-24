@@ -28,8 +28,8 @@ import styles from "./style.module.scss";
 const INITIAL_CREATE_SERVICE_FORM: CreateServiceFormModel = {
   saloon: null,
   service: null,
-  hours: null,
-  minutes: null,
+  hours: HOURS_PROCEDURE[0],
+  minutes: MINUTES_PROCEDURE[0],
 };
 
 interface CreateServiceFormProps {
@@ -110,7 +110,10 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
         errors.service = "Заполните поле сервиса.";
       }
 
-      if (!data.hours || !data.minutes) {
+      if (
+        data.hours?.code === INITIAL_CREATE_SERVICE_FORM.hours?.code &&
+        data.minutes?.code === INITIAL_CREATE_SERVICE_FORM.minutes?.code
+      ) {
         errors.time = "Заполните поле времени.";
       }
 

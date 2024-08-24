@@ -26,6 +26,6 @@ export interface TimeServiceModel {
 export interface CreateServiceFormModel {
   saloon: null | CreateServiceSaloonModel;
   service: null | CreateServiceServiceModel;
-  hours: null | TimeServiceModel;
-  minutes: null | TimeServiceModel;
+  hours: TimeServiceModel;
+  minutes: TimeServiceModel;
 }
