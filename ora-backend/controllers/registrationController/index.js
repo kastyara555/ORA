@@ -13,7 +13,6 @@ const {
 const { credentialsAvailabilitySchema } = require("../../schemas/credentialsAvailabilitySchema");
 const { connection } = require("../../db/connection");
 const { userStatuses } = require("../../db/consts/userStatuses");
-const { STREET_TYPES } = require("../../db/consts/streetTypes");
 const { roles } = require("../../db/consts/roles");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
@@ -53,7 +52,6 @@ const registrationSaloon = async (req, res) => {
       saloon_info,
       master_info,
       user_status,
-      street_type,
       user_image,
       user_type,
       service,
@@ -128,16 +126,10 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
-    const { dataValues: defaultStreetType } = await street_type.findOne({
-      where: {
-        name: STREET_TYPES.STREET.name,
-      },
-    });
-
     await saloon_info.create(
       {
         idCity: adressForm.city,
-        idStreetType: hasAdress ? adressForm.streetType : defaultStreetType.id,
+        idStreetType: hasAdress ? adressForm.streetType : null,
         idUserTypeMap: addedUserSaloonType.id,
         street: hasAdress ? adressForm.street : "",
         building: hasAdress ? adressForm.building : "",

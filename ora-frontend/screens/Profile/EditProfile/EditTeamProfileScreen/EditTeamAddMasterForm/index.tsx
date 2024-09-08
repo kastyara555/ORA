@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import classNames from "classnames";
 import { AxiosError } from "axios";
+import { MessageSeverity } from "primereact/api";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import { Message } from "primereact/message";
@@ -97,7 +98,7 @@ const EditTeamAddMasterForm = () => {
             "flex",
             "justify-content-start"
           )}
-          severity="info"
+          severity={MessageSeverity.INFO}
           text="Код находится в личном кабинете мастера."
         />
       </Panel>
@@ -125,7 +126,7 @@ const EditTeamAddMasterForm = () => {
             "flex",
             "justify-content-start"
           )}
-          severity="info"
+          severity={MessageSeverity.INFO}
           text="Мастер будет автоматически добавлен в салон после того, как пройдёт регистрацию нового пользователя."
         />
       </Panel>

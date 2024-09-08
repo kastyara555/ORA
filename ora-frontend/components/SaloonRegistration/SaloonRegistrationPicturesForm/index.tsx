@@ -6,6 +6,7 @@ import { Message } from "primereact/message";
 import { useDispatch, useSelector } from "react-redux";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { MessageSeverity } from "primereact/api";
 
 import {
   registrationSaloonSelectedValuesSelector,
@@ -92,7 +93,7 @@ const SaloonRegistrationPicturesForm: FC<
                           "w-full",
                           "mb-1"
                         )}
-                        severity="error"
+                        severity={MessageSeverity.ERROR}
                         text="Можно добавлять не более трёх изображений"
                       />
                     )}
@@ -103,7 +104,7 @@ const SaloonRegistrationPicturesForm: FC<
                           "w-full",
                           "mb-1"
                         )}
-                        severity="error"
+                        severity={MessageSeverity.ERROR}
                         text="Можно добавлять только изображения"
                       />
                     )}
@@ -114,7 +115,7 @@ const SaloonRegistrationPicturesForm: FC<
                           "w-full",
                           "mb-1"
                         )}
-                        severity="error"
+                        severity={MessageSeverity.ERROR}
                         text="Превышен максимальный размер файла"
                       />
                     )}

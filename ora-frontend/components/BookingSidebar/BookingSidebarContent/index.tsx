@@ -1,11 +1,14 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import classNames from "classnames";
+import { Message } from "primereact/message";
 import { Skeleton } from "primereact/skeleton";
+import { MessageSeverity } from "primereact/api";
 import { ProgressBar } from "primereact/progressbar";
 import { useDispatch, useSelector } from "react-redux";
 import { AxiosError } from "axios";
 
 import axiosInstance from "@/api";
+import { saloonBaseInfoUrl } from "@/api/saloon";
 import { bookServiceInstanceUrl, loginBookServiceInstanceUrl } from "@/api/serviceInstance";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { BookingSidebarDataModel } from "@/store/common/model";
@@ -18,6 +21,7 @@ import {
 import { profileGetInfo } from "@/store/profile/actions";
 import { setCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
+import { SaloonBaseDataModel } from "@/models/saloon";
 
 import { SIDEBAR_PROGRESS_LIST, SIDEBAR_PROGRESS_MAPPING } from "./consts";
 import BookingMonthStep from "./BookingMonthStep";
@@ -32,6 +36,8 @@ interface BookingSidebarContentProps {
 }
 
 const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
+  const [saloonBaseInfo, setSaloonBaseInfo] = useState<null | SaloonBaseDataModel>(null);
+  const [saloonBaseInfoLoading, setSaloonBaseInfoLoading] = useState<boolean>(false);
   const [bookingStep, setBookingStep] = useState<number>(
     SIDEBAR_PROGRESS_MAPPING.monthForm.progress
   );
@@ -168,6 +174,32 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
     }
   };
 
+  const fetchSaloonBaseInfo = async () => {
+    try {
+      setSaloonBaseInfoLoading(true);
+
+      const response = await axiosInstance.get(saloonBaseInfoUrl(data.idSaloon));
+
+      setSaloonBaseInfo(response.data);
+    } catch (e) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Записи",
+        detail: "Ошибка загрузки информации о салоне",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+      dispatch(commonSetBookingModalData(null));
+    } finally {
+      setSaloonBaseInfoLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSaloonBaseInfo();
+  }, [data.idSaloon]);
+
   return (
     <div className={classNames("flex", "flex-column", "h-full")}>
       <div
@@ -195,59 +227,68 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
       <div className="flex-1">
         <h2 className="mt-4">{SIDEBAR_PROGRESS_LIST[bookingStep].title}</h2>
         <div className={classNames("py-4", "overflow-auto")}>
-          {bookingStep === SIDEBAR_PROGRESS_MAPPING.monthForm.step && (
-            <BookingMonthStep
-              initialState={monthForm}
-              handleApply={applyMonthForm}
+          {saloonBaseInfoLoading && <Skeleton width="100%" height="256px" />}
+          {saloonBaseInfo ? <>
+            {bookingStep === SIDEBAR_PROGRESS_MAPPING.monthForm.step && (
+              <BookingMonthStep
+                initialState={monthForm}
+                handleApply={applyMonthForm}
+              />
+            )}
+            {bookingStep === SIDEBAR_PROGRESS_MAPPING.dateForm.step &&
+              monthForm && (
+                <BookingDateStep
+                  initialState={dateForm}
+                  month={monthForm.getMonth() + 1}
+                  year={monthForm.getFullYear()}
+                  idSaloon={data.idSaloon}
+                  idProcedure={data.idProcedure}
+                  handleApply={applyDateForm}
+                />
+              )}
+            {bookingStep === SIDEBAR_PROGRESS_MAPPING.masterForm.step &&
+              dateForm && (
+                <BookingMasterStep
+                  initialState={masterForm}
+                  date={dateForm}
+                  idSaloon={data.idSaloon}
+                  idProcedure={data.idProcedure}
+                  handleApply={applyMasterForm}
+                />
+              )}
+            {bookingStep === SIDEBAR_PROGRESS_MAPPING.timeForm.step &&
+              dateForm &&
+              masterForm && (
+                <BookingTimeStep
+                  initialState={timeForm}
+                  date={dateForm}
+                  idMaster={masterForm.id}
+                  idSaloon={data.idSaloon}
+                  idProcedure={data.idProcedure}
+                  handleApply={applyTimeForm}
+                />
+              )}
+            {bookingStep === SIDEBAR_PROGRESS_MAPPING.checkoutForm.step &&
+              dateForm &&
+              masterForm &&
+              timeForm && (isLoading ? (
+                <Skeleton width="100%" height="256px" />
+              ) : (
+                <BookingCheckoutStep
+                  date={dateForm}
+                  master={masterForm}
+                  record={timeForm}
+                  hasAdress={!!saloonBaseInfo.street}
+                  handleApply={applyCheckoutForm}
+                  handleApplyLogin={applyLoginCheckoutForm}
+                />
+              ))}
+            <Message
+              severity={MessageSeverity.INFO}
+              className={classNames("w-full", "mt-2")}
+              text={`Салон оказывает услуги с выездом${saloonBaseInfo.visitPayment ? `, стоимость посещения - ${saloonBaseInfo.visitPayment}` : ''}`}
             />
-          )}
-          {bookingStep === SIDEBAR_PROGRESS_MAPPING.dateForm.step &&
-            monthForm && (
-              <BookingDateStep
-                initialState={dateForm}
-                month={monthForm.getMonth() + 1}
-                year={monthForm.getFullYear()}
-                idSaloon={data.idSaloon}
-                idProcedure={data.idProcedure}
-                handleApply={applyDateForm}
-              />
-            )}
-          {bookingStep === SIDEBAR_PROGRESS_MAPPING.masterForm.step &&
-            dateForm && (
-              <BookingMasterStep
-                initialState={masterForm}
-                date={dateForm}
-                idSaloon={data.idSaloon}
-                idProcedure={data.idProcedure}
-                handleApply={applyMasterForm}
-              />
-            )}
-          {bookingStep === SIDEBAR_PROGRESS_MAPPING.timeForm.step &&
-            dateForm &&
-            masterForm && (
-              <BookingTimeStep
-                initialState={timeForm}
-                date={dateForm}
-                idMaster={masterForm.id}
-                idSaloon={data.idSaloon}
-                idProcedure={data.idProcedure}
-                handleApply={applyTimeForm}
-              />
-            )}
-          {bookingStep === SIDEBAR_PROGRESS_MAPPING.checkoutForm.step &&
-            dateForm &&
-            masterForm &&
-            timeForm && (isLoading ? (
-              <Skeleton width="100%" height="256px" />
-            ) : (
-              <BookingCheckoutStep
-                date={dateForm}
-                master={masterForm}
-                record={timeForm}
-                handleApply={applyCheckoutForm}
-                handleApplyLogin={applyLoginCheckoutForm}
-              />
-            ))}
+          </> : null}
         </div>
       </div>
     </div>

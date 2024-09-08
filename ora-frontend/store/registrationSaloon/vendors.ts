@@ -22,7 +22,9 @@ export const prepareSaloonRegistrationForm = (
   result.adressForm = {
     ...adressForm,
     city: +adressForm.city.code,
-    streetType: +adressForm.streetType.code,
+    streetType: adressTypeForm.hasAdress
+      ? +adressForm.streetType.code
+      : null,
     street: adressTypeForm.hasAdress
       ? adressForm.street.trim()
       : "",

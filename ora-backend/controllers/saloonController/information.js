@@ -105,12 +105,10 @@ const getSaloonBaseInfo = async (req, res) => {
     } = connection.models;
 
     const [saloonInfo] = await connection.query(
-      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, c.name as cityName, st.shortName as streetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
+      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, si.visitPayment as visitPayment, c.name as cityName, si.idStreetType as idStreetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
       FROM \`${saloon_info.tableName}\` si
       JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
-      JOIN \`${street_type.tableName}\` st
-      ON si.idStreetType = st.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
         FROM \`${user_image.tableName}\`
@@ -124,7 +122,16 @@ const getSaloonBaseInfo = async (req, res) => {
       return res.status(404).send();
     }
 
-    return res.send(saloonInfo[0]);
+    const { idStreetType, ...rest } = saloonInfo[0];
+
+    let streetType = "";
+
+    if (idStreetType) {
+      const { dataValues } = await street_type.findOne({ where: { id: idStreetType } });
+      streetType = dataValues.shortName;
+    }
+
+    return res.send({ ...rest, streetType });
   } catch (e) {
     res.status(500).send();
   }

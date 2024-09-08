@@ -11,6 +11,7 @@ interface BookingCheckoutStepProps {
   date: Date;
   record: BookingRecord;
   master: BookingMaster;
+  hasAdress: boolean;
   handleApply(comment: string): void;
   handleApplyLogin(login: string, password: string, comment: string): void;
 }
@@ -19,6 +20,7 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
   date,
   record,
   master,
+  hasAdress,
   handleApply,
   handleApplyLogin,
 }) => {
@@ -45,7 +47,7 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
 
       <InputTextarea
         className={classNames("mt-2", "w-full")}
-        placeholder="Комментарий"
+        placeholder={hasAdress ? "Комментарий" : "Адрес проведения услуги"}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         maxLength={256}
@@ -56,6 +58,7 @@ const BookingCheckoutStep: FC<BookingCheckoutStepProps> = ({
       <BookingButton
         handleApply={() => handleApply(comment)}
         handleApplyLogin={(login: string, password: string) => handleApplyLogin(login, password, comment)}
+        disabled={!hasAdress && !comment}
       />
     </div>
   );

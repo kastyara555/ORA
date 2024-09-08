@@ -16,8 +16,8 @@ import Button from "@/components/Button";
 import axiosInstance, { BASE_URL } from "@/api";
 import { masterServices } from "@/api/master";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
+import { HOURS_SALOON, MINUTES_SALOON } from "@/consts/saloon";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
-import { HOURS_PROCEDURE, MINUTES_PROCEDURE } from "@/consts/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 
@@ -28,8 +28,8 @@ import styles from "./style.module.scss";
 const INITIAL_CREATE_SERVICE_FORM: CreateServiceFormModel = {
   saloon: null,
   service: null,
-  hours: HOURS_PROCEDURE[0],
-  minutes: MINUTES_PROCEDURE[0],
+  hours: HOURS_SALOON[0],
+  minutes: MINUTES_SALOON[0],
 };
 
 interface CreateServiceFormProps {
@@ -219,7 +219,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
                 <div className={classNames("flex", "flex-1", "gap-2")}>
                   <div className={classNames("flex", "align-items-center")}>
                     <Dropdown
-                      options={HOURS_PROCEDURE}
+                      options={HOURS_SALOON}
                       value={formik.values.hours}
                       onChange={handleSetHours}
                       disabled={disabled}
@@ -231,7 +231,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
                     className={classNames("flex", "align-items-center", "p-0")}
                   >
                     <Dropdown
-                      options={MINUTES_PROCEDURE}
+                      options={MINUTES_SALOON}
                       value={formik.values.minutes}
                       onChange={handleSetMinutes}
                       disabled={disabled}

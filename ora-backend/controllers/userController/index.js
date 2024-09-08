@@ -112,19 +112,19 @@ const getUserData = async (req, res) => {
       result.saloonName = name;
       result.saloonDescription = description;
 
-      const streetTypeInfo = await street_type.findOne({
+      const streetTypeInfo = idStreetType ? await street_type.findOne({
         where: { id: idStreetType },
-      });
+      }) : null;
 
       result.address =
         street && building && stage && office && streetTypeInfo
           ? {
-              street,
-              building,
-              stage,
-              office,
-              streetType: { id: streetTypeInfo.id, name: streetTypeInfo.name },
-            }
+            street,
+            building,
+            stage,
+            office,
+            streetType: streetTypeInfo ? { id: streetTypeInfo.dataValues.id, name: streetTypeInfo.dataValues.name } : null,
+          }
           : null;
       result.visitPayment = visitPayment;
       result.workingTime = workingTime;

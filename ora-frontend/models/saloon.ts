@@ -10,6 +10,7 @@ export interface SaloonBaseDataModel {
   building: string | null;
   stage: string | null;
   office: string | null;
+  visitPayment: number;
 }
 
 export interface SaloonServiceDataModel {
