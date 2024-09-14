@@ -36,7 +36,7 @@
 }
 
 .favoriteButton {
-    position: absolute;
+    position: absolute !important;
     top: 4px;
     left: 4px;
     color: $pink-500 !important;

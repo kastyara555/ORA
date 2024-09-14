@@ -3,7 +3,7 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { deleteCookie, getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
 
-const DEFAULT_BASE_URL = "http://localhost:3003";
+const DEFAULT_BASE_URL = "http://127.0.0.1:3003";
 
 export const BASE_URL = process.env.BASE_URL ?? DEFAULT_BASE_URL;
 

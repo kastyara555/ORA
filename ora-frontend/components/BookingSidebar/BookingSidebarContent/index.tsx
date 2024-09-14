@@ -181,6 +181,7 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
       const response = await axiosInstance.get(saloonBaseInfoUrl(data.idSaloon));
 
       setSaloonBaseInfo(response.data);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,

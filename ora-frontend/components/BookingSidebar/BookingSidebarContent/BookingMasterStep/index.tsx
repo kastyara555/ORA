@@ -54,6 +54,7 @@ const BookingMasterStep: FC<BookingMasterStepProps> = ({
             : DEFAULT_PROFILE_IMAGE,
         }))
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,

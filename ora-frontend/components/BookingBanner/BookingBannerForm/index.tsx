@@ -1,18 +1,18 @@
 "use client";
 import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/AutoComplete";
+import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/autocomplete";
 
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
 import Button from "@/components/Button";
 
-interface BookingBannerFormModel {
-  // cities: SelectItemOptionsType[];
-}
+// interface BookingBannerFormModel {
+//   cities: SelectItemOptionsType[];
+// }
 
 // TODO: Когда будет много салонов в городах, разблокировать выбор города для процедуры
-const BookingBannerForm: FC<BookingBannerFormModel> = () => {
+const BookingBannerForm: FC = () => {
   const router = useRouter();
 
   const [selectedProcedure, setSelectedProcedure] = useState<any>(null);
