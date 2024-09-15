@@ -7,6 +7,7 @@ const connection = new Sequelize(
   {
     host: "localhost",
     dialect: "mysql",
+	dialectModule: require("mysql2"),
   },
   {
     define: {
