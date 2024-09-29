@@ -18,8 +18,14 @@ export interface CreateServiceServiceModel {
   name: string;
 }
 
+export interface TimeServiceModel {
+  code: string;
+  name: string;
+}
+
 export interface CreateServiceFormModel {
   saloon: null | CreateServiceSaloonModel;
   service: null | CreateServiceServiceModel;
-  time: null | Date;
+  hours: TimeServiceModel;
+  minutes: TimeServiceModel;
 }

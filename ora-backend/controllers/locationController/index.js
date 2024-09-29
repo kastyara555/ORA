@@ -1,27 +1,25 @@
 const { connection } = require("../../db/connection");
-const City = require("../../db/models/City");
-const StreetType = require("../../db/models/StreetType");
 
 const getCities = async (req, res) => {
   try {
-    const cities = await City(connection).findAll({
+    const cities = await connection.models.city.findAll({
       order: [
         ["priority", "DESC"],
         ["name", "ASC"],
       ],
     });
 
-    res.send(Object.values(cities));
+    return res.send(Object.values(cities));
   } catch (e) {
-    res.status(500).send();
+    return res.status(500).send();
   }
 };
 
 const getStreetTypes = async (req, res) => {
   try {
-    const streetTypes = await StreetType(connection).findAll();
+    const streetTypes = await connection.models.street_type.findAll();
 
-    res.send(Object.values(streetTypes));
+    return res.send(Object.values(streetTypes));
   } catch (e) {
     res.status(500).send();
   }

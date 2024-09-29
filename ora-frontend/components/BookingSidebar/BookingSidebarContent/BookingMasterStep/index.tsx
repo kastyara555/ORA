@@ -54,6 +54,7 @@ const BookingMasterStep: FC<BookingMasterStepProps> = ({
             : DEFAULT_PROFILE_IMAGE,
         }))
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
@@ -80,7 +81,7 @@ const BookingMasterStep: FC<BookingMasterStepProps> = ({
         <img
           src={option.mainImage}
           alt={option.mainImage}
-          className={classNames(styles.masterAvatar, "h-3rem", "shadow-2")}
+          className={classNames(styles.masterAvatar, "h-3rem", "w-3rem", "shadow-2")}
         />
         <p className="ml-2">{option.name}</p>
       </div>

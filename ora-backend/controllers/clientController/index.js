@@ -6,32 +6,23 @@ const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { getUserData } = require("../userController");
 const { roles } = require("../../db/consts/roles");
 const { connection } = require("../../db/connection");
-const UserType = require("../../db/models/UserType");
-const UserImage = require("../../db/models/UserImage");
-const ClientInfo = require("../../db/models/ClientInfo");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const Service = require("../../db/models/Service");
-const Procedure = require("../../db/models/Procedure");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const User = require("../../db/models/User");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
 
 const updateClient = async (req, res) => {
   try {
-    const ClientInfoModel = await ClientInfo(connection);
-    const UserTypeModel = await UserType(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserImageModel = await UserImage(connection);
+    const {
+      client_info,
+      user_type,
+      user_type_map,
+      user_image,
+    } = connection.models;
 
-    const { dataValues: clientUserTypeData } = await UserTypeModel.findOne({
+    const { dataValues: clientUserTypeData } = await user_type.findOne({
       where: {
         name: roles.client.name,
       },
     });
 
-    const userTypeMap = await UserTypeMapModel.findOne({
+    const userTypeMap = await user_type_map.findOne({
       where: {
         id: req.params.userTypeMapId,
         idUserType: clientUserTypeData.id,
@@ -49,7 +40,7 @@ const updateClient = async (req, res) => {
 
     const { lastName, mainImage } = value;
 
-    await ClientInfoModel.update(
+    await client_info.update(
       { lastName },
       {
         where: {
@@ -70,7 +61,7 @@ const updateClient = async (req, res) => {
         return res.status(400).send("Неверный формат/размер изображения.");
       }
 
-      const clientMainImageInfo = await UserImageModel.findOne({
+      const clientMainImageInfo = await user_image.findOne({
         where: { idUserTypeMap: +req.params.userTypeMapId, isMain: true },
       });
 
@@ -95,7 +86,7 @@ const updateClient = async (req, res) => {
       fs.writeFileSync(fullImageName, buff);
 
       if (clientMainImageInfo && clientMainImageInfo.dataValues) {
-        await UserImageModel.update(
+        await user_image.update(
           {
             url: imageName,
           },
@@ -106,7 +97,7 @@ const updateClient = async (req, res) => {
           }
         );
       } else {
-        await UserImageModel.create({
+        await user_image.create({
           idUserTypeMap: +req.params.userTypeMapId,
           url: imageName,
           isMain: true,
@@ -121,15 +112,17 @@ const updateClient = async (req, res) => {
 };
 
 const clientHistory = async (req, res) => {
-  const UserModel = await User(connection);
-  const ServiceModel = await Service(connection);
-  const ProcedureModel = await Procedure(connection);
-  const UserImageModel = await UserImage(connection);
-  const SaloonInfoModel = await SaloonInfo(connection);
-  const UserTypeMapModel = await UserTypeMap(connection);
-  const ServiceInstanceModel = await ServiceInstance(connection);
-  const ServiceMasterMapModel = await ServiceMasterMap(connection);
-  const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
+  const {
+    service_instance,
+    service_master_map,
+    service,
+    procedure,
+    saloon_info,
+    user_type_map,
+    user,
+    service_instance_status,
+    user_image,
+  } = connection.models;
 
   try {
     const { value, error } = clientHistorySchema.validate(req.body);
@@ -142,7 +135,7 @@ const clientHistory = async (req, res) => {
 
     const [[{ total }]] = await connection.query(
       `SELECT COUNT(DISTINCT si.id) as total
-      FROM \`${ServiceInstanceModel.tableName}\` si
+      FROM \`${service_instance.tableName}\` si
       WHERE si.idClient = ${req.params.userTypeMapId}`
     );
 
@@ -153,30 +146,30 @@ const clientHistory = async (req, res) => {
         ? [[]]
         : await connection.query(
           `SELECT si.id as id, si.time as date, p.name as procedureName, saloon.name as saloonName, saloon_image.url as saloonImage, u.name as masterName, master_image.url as masterImage, sis.name as statusName
-          FROM \`${ServiceInstanceModel.tableName}\` si
-          JOIN \`${ServiceMasterMapModel.tableName}\` smm
+          FROM \`${service_instance.tableName}\` si
+          JOIN \`${service_master_map.tableName}\` smm
           ON si.idServiceMasterMap = smm.id
-          JOIN \`${ServiceModel.tableName}\` s
+          JOIN \`${service.tableName}\` s
           ON smm.idService = s.id
-          JOIN \`${ProcedureModel.tableName}\` p
+          JOIN \`${procedure.tableName}\` p
           ON s.idProcedure = p.id
-          JOIN \`${SaloonInfoModel.tableName}\` saloon
+          JOIN \`${saloon_info.tableName}\` saloon
           ON s.idSaloon = saloon.idUserTypeMap
-          JOIN \`${UserTypeMapModel.tableName}\` utm
+          JOIN \`${user_type_map.tableName}\` utm
           ON smm.idMaster = utm.id
-          JOIN \`${UserModel.tableName}\` u
+          JOIN \`${user.tableName}\` u
           ON utm.idUser = u.id
-          JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+          JOIN \`${service_instance_status.tableName}\` sis
           ON si.idServiceInstanceStatus = sis.id
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM \`${UserImageModel.tableName}\`
+            FROM \`${user_image.tableName}\`
             WHERE isMain = 1
           ) master_image
           ON smm.idMaster = master_image.idUserTypeMap
           LEFT JOIN (
             SELECT idUserTypeMap, url
-            FROM \`${UserImageModel.tableName}\`
+            FROM \`${user_image.tableName}\`
             WHERE isMain = 1
           ) saloon_image
           ON s.idSaloon = saloon_image.idUserTypeMap
@@ -186,7 +179,7 @@ const clientHistory = async (req, res) => {
           OFFSET ${offset}`
         );
 
-    res.send({
+    return res.send({
       data,
       total,
     });

@@ -2,6 +2,7 @@ import { ChangeEvent, FC, useCallback, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { InputText } from "primereact/inputtext";
+import { MessageSeverity } from "primereact/api";
 import { Password } from "primereact/password";
 import { Message } from "primereact/message";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import styles from './style.module.scss';
 interface BookingButtonProps {
     handleApply(): void;
     handleApplyLogin(login: string, password: string): void;
+    disabled?: boolean;
 }
 
 interface BookingButtonStateModel {
@@ -28,7 +30,7 @@ const LOGIN_INITIAL_STATE: BookingButtonStateModel = {
     password: "",
 };
 
-const BookingButton: FC<BookingButtonProps> = ({ handleApply, handleApplyLogin }) => {
+const BookingButton: FC<BookingButtonProps> = ({ handleApply, handleApplyLogin, disabled }) => {
     const [state, setState] = useState<BookingButtonStateModel>(LOGIN_INITIAL_STATE);
     const profileData = useSelector(profileUserDataSelector);
     const dispatch = useDispatch();
@@ -88,7 +90,7 @@ const BookingButton: FC<BookingButtonProps> = ({ handleApply, handleApplyLogin }
                     "align-items-center",
                     "justify-content-center"
                 )}
-                disabled={disabledLoginButton}
+                disabled={disabledLoginButton || disabled}
                 onClick={() => handleApplyLogin(state.login, state.password)}
             >
                 Войти и записаться
@@ -111,12 +113,13 @@ const BookingButton: FC<BookingButtonProps> = ({ handleApply, handleApplyLogin }
     }
 
     if (profileData.userType !== USER_TYPES.client) {
-        return <Message severity="warn" className={classNames("mt-2", "w-full")} text="Для записи необходимо авторизоваться как клиент" />
+        return <Message severity={MessageSeverity.WARN} className={classNames("mt-2", "w-full")} text="Для записи необходимо авторизоваться как клиент" />
     }
 
     return <Button
         className={classNames("w-full", "mt-4")}
         onClick={handleApply}
+        disabled={disabled}
     >
         Записаться
     </Button>

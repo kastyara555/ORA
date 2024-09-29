@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 
 const StreetType = (sequelize) =>
   sequelize.define(
-    "street_types",
+    "street_type",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,7 +19,7 @@ const StreetType = (sequelize) =>
       },
     },
     {
-      tableName: "street_types",
+      tableName: "street_type",
     }
   );
 

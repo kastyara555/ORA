@@ -3,14 +3,14 @@ const fs = require("fs");
 const { masterUpdatingSchema } = require("../../schemas/masterUpdatingSchema");
 const { IMAGE_EXTENSIONS } = require("../../const/registration");
 const { connection } = require("../../db/connection");
-const UserImage = require("../../db/models/UserImage");
-const MasterInfo = require("../../db/models/MasterInfo");
 const { getUserData } = require("../userController");
 
 const updateMaster = async (req, res) => {
   try {
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserImageModel = await UserImage(connection);
+    const {
+      master_info,
+      user_image,
+    } = connection.models;
 
     const { value, error } = masterUpdatingSchema.validate(req.body);
 
@@ -20,7 +20,7 @@ const updateMaster = async (req, res) => {
 
     const { description, mainImage } = value;
 
-    await MasterInfoModel.update(
+    await master_info.update(
       { description },
       {
         where: {
@@ -41,7 +41,7 @@ const updateMaster = async (req, res) => {
         return res.status(400).send("Неверный формат/размер изображения.");
       }
 
-      const masterMainImageInfo = await UserImageModel.findOne({
+      const masterMainImageInfo = await user_image.findOne({
         where: { idUserTypeMap: +req.params.userTypeMapId, isMain: true },
       });
 
@@ -66,7 +66,7 @@ const updateMaster = async (req, res) => {
       fs.writeFileSync(fullImageName, buff);
 
       if (masterMainImageInfo && masterMainImageInfo.dataValues) {
-        await UserImageModel.update(
+        await user_image.update(
           {
             url: imageName,
           },
@@ -77,7 +77,7 @@ const updateMaster = async (req, res) => {
           }
         );
       } else {
-        await UserImageModel.create({
+        await user_image.create({
           idUserTypeMap: +req.params.userTypeMapId,
           url: imageName,
           isMain: true,

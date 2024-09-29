@@ -1,10 +1,6 @@
 const { Op } = require("sequelize");
 
 const { connection } = require("../../db/connection");
-const User = require("../../db/models/User");
-const UserType = require("../../db/models/UserType");
-const UserStatus = require("../../db/models/UserStatus");
-const UserTypeMap = require("../../db/models/UserTypeMap");
 const { userStatuses } = require("../../db/consts/userStatuses");
 const { generateHash } = require("../../utils/hash");
 const { userLoginSchema } = require("../../schemas/userLoginSchema");
@@ -20,12 +16,14 @@ const loginUser = async (req, res) => {
 
     const { email, password, userType } = value;
 
-    const UserModel = await User(connection);
-    const UserStatusModel = await UserStatus(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
+    const {
+      user,
+      user_status,
+      user_type,
+      user_type_map,
+    } = connection.models;
 
-    const existsUser = await UserModel.findOne({
+    const existsUser = await user.findOne({
       where: { email, password: generateHash(password) },
     });
 
@@ -33,12 +31,12 @@ const loginUser = async (req, res) => {
       return res.status(400).send("Пользователь не найден.");
     }
 
-    const { dataValues: activeUserStatus } = await UserStatusModel.findOne({
+    const { dataValues: activeUserStatus } = await user_status.findOne({
       where: { name: userStatuses.active.name },
     });
 
     const userTypes = (
-      await UserTypeMapModel.findAll({
+      await user_type_map.findAll({
         where: {
           idUser: existsUser.dataValues.id,
           idUserStatus: activeUserStatus.id,
@@ -53,7 +51,7 @@ const loginUser = async (req, res) => {
     if (userTypes.length > 1) {
       if (!userType) {
         const availableUserTypes = (
-          await UserTypeModel.findAll({
+          await user_type.findAll({
             where: {
               id: {
                 [Op.in]: userTypes.map(({ idUserType }) => idUserType),

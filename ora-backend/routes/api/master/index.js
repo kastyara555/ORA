@@ -5,7 +5,6 @@ const { isValidUserByType } = require("../../../middlewares/user");
 const {
   updateMaster,
   timetableInformation,
-  timetableAvailability,
   getServicesBySaloon,
   createServiceInstance,
   cancelServiceInstance,
@@ -22,15 +21,6 @@ masterRouter.post(
   isValidMaster,
   function (req, res) {
     updateMaster(req, res);
-  }
-);
-
-masterRouter.get(
-  "/:userTypeMapId/check-timetable-availability",
-  checkAuthorization,
-  isValidMaster,
-  function (req, res) {
-    timetableAvailability(req, res);
   }
 );
 

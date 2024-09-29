@@ -102,7 +102,7 @@ const EditTeamMastersTable = () => {
       <img
         src={imageUrl}
         alt={imageUrl}
-        className={classNames(styles.masterAvatar, "h-4rem", "shadow-2")}
+        className={classNames(styles.masterAvatar, "h-4rem", "w-4rem", "shadow-2")}
       />
     );
   };

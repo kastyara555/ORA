@@ -4,12 +4,9 @@ const {
   startPasswordRestorationSchema,
 } = require("../../schemas/startPasswordRestorationSchema");
 const { connection } = require("../../db/connection");
-const PasswordRestoration = require("../../db/models/PasswordRestoration");
-const User = require("../../db/models/User");
 const {
   PASSWORD_RESTORATION_STATUSES,
 } = require("../../db/consts/passwordRestorationStatuses");
-const PasswordRestorationStatus = require("../../db/models/PasswordRestorationStatus");
 const config = require("../../config");
 const { updatePasswordSchema } = require("../../schemas/updatePasswordSchema");
 const { sendPasswordRestorationMail } = require("../../email");
@@ -25,13 +22,13 @@ const startPasswordRestoration = async (req, res) => {
 
     const { email } = value;
 
-    const UserModel = await User(connection);
-    const PasswordRestorationModel = await PasswordRestoration(connection);
-    const PasswordRestorationStatusModel = await PasswordRestorationStatus(
-      connection
-    );
+    const {
+      user,
+      password_restoration,
+      password_restoration_status,
+    } = connection.models;
 
-    const existsUsers = await UserModel.findOne({
+    const existsUsers = await user.findOne({
       where: {
         email,
       },
@@ -43,7 +40,7 @@ const startPasswordRestoration = async (req, res) => {
         .send("Пользователь с данной почтой не зарегистрирован.");
     }
 
-    const { dataValues: status } = await PasswordRestorationStatusModel.findOne(
+    const { dataValues: status } = await password_restoration_status.findOne(
       { where: { name: PASSWORD_RESTORATION_STATUSES.SEND.name } }
     );
 
@@ -53,7 +50,7 @@ const startPasswordRestoration = async (req, res) => {
       { expiresIn: "30m" }
     );
 
-    await PasswordRestorationModel.create({
+    await password_restoration.create({
       idPasswordRestorationStatus: status.id,
       token,
     });
@@ -63,7 +60,7 @@ const startPasswordRestoration = async (req, res) => {
       href: `${config.hosts.frontEnd}/restore/update?token=${token}`,
     });
 
-    res.send();
+    return res.send();
   } catch (e) {
     res.status(500).send();
   }
@@ -79,17 +76,17 @@ const updatePassword = async (req, res) => {
 
     const { token, password } = value;
 
-    const UserModel = await User(connection);
-    const PasswordRestorationModel = await PasswordRestoration(connection);
-    const PasswordRestorationStatusModel = await PasswordRestorationStatus(
-      connection
-    );
+    const {
+      user,
+      password_restoration,
+      password_restoration_status,
+    } = connection.models;
 
-    const { dataValues: status } = await PasswordRestorationStatusModel.findOne(
+    const { dataValues: status } = await password_restoration_status.findOne(
       { where: { name: PASSWORD_RESTORATION_STATUSES.SEND.name } }
     );
 
-    const passwordUpdatingProcess = await PasswordRestorationModel.findOne({
+    const passwordUpdatingProcess = await password_restoration.findOne({
       where: { idPasswordRestorationStatus: status.id, token },
     });
 
@@ -103,7 +100,7 @@ const updatePassword = async (req, res) => {
 
     const { userId } = verifiedToken;
 
-    const userToBeUpdated = await UserModel.findOne({
+    const userToBeUpdated = await user.findOne({
       where: {
         id: userId,
       },
@@ -123,22 +120,22 @@ const updatePassword = async (req, res) => {
         .send("Новый пароль должен отличаться от текущего.");
     }
 
-    await UserModel.update(
+    await user.update(
       { password: newPassword },
       { where: { id: userId } }
     );
 
     const { dataValues: completeRestorationStatus } =
-      await PasswordRestorationStatusModel.findOne({
+      await password_restoration_status.findOne({
         where: { name: PASSWORD_RESTORATION_STATUSES.ACTIVATED.name },
       });
 
-    await PasswordRestorationModel.update(
+    await password_restoration.update(
       { idPasswordRestorationStatus: completeRestorationStatus.id },
       { where: { token } }
     );
 
-    res.send();
+    return res.send();
   } catch (e) {
     if (e instanceof jwt.TokenExpiredError) {
       res

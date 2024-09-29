@@ -4,18 +4,6 @@ const { roles } = require("../../db/consts/roles");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
 const { SERVICE_INSTANCE_STATUSES } = require("../../db/consts/serviceInstanceStatuses");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
-const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const MasterInfo = require("../../db/models/MasterInfo");
-const UserImage = require("../../db/models/UserImage");
-const UserType = require("../../db/models/UserType");
-const Service = require("../../db/models/Service");
-const User = require("../../db/models/User");
 const {
   saloonDeleteMastersSchema,
 } = require("../../schemas/saloonDeleteMastersSchema");
@@ -25,20 +13,22 @@ const {
 
 const getSaloonMasters = async (req, res) => {
   try {
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const MasterInfoModel = await MasterInfo(connection);
-    const UserImageModel = await UserImage(connection);
-    const UserModel = await User(connection);
+    const {
+      saloon_master_map_status,
+      saloon_master_map,
+      user_type_map,
+      master_info,
+      user_image,
+      user,
+    } = connection.models;
 
-    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne({
+    const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne({
       where: {
         name: SALOON_MASTER_MAP_STATUSES.active.name
       },
     });
 
-    const masters = await SaloonMasterMapModel.findAll({
+    const masters = await saloon_master_map.findAll({
       where: {
         idSaloon: req.params.userTypeMapId,
         idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
@@ -53,14 +43,14 @@ const getSaloonMasters = async (req, res) => {
 
     const [mastersData] = await connection.query(
       `SELECT utm.id code, u.name name, u.email as email, u.phone as phone, uim.url as mainImage 
-      FROM \`${MasterInfoModel.tableName}\` m
-      JOIN \`${UserTypeMapModel.tableName}\` utm
+      FROM \`${master_info.tableName}\` m
+      JOIN \`${user_type_map.tableName}\` utm
       ON utm.id = m.idUserTypeMap
-      JOIN \`${UserModel.tableName}\` u
+      JOIN \`${user.tableName}\` u
       ON u.id = utm.idUser
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = m.idUserTypeMap
@@ -75,14 +65,6 @@ const getSaloonMasters = async (req, res) => {
 
 const deleteSaloonMasters = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = saloonDeleteMastersSchema.validate(req.body);
 
     if (error) {
@@ -90,8 +72,17 @@ const deleteSaloonMasters = async (req, res) => {
     }
 
     const { codes } = value;
+    const {
+      service_master_map_status,
+      saloon_master_map_status,
+      service_instance_status,
+      service_master_map,
+      saloon_master_map,
+      service_instance,
+      service,
+    } = connection.models;
 
-    const saloonMasterMapStatusesMap = (await SaloonMasterMapStatusModel.findAll({
+    const saloonMasterMapStatusesMap = (await saloon_master_map_status.findAll({
       where: {
         name: {
           [Op.in]: [SALOON_MASTER_MAP_STATUSES.active.name, SALOON_MASTER_MAP_STATUSES.removed.name],
@@ -108,7 +99,7 @@ const deleteSaloonMasters = async (req, res) => {
       );
 
     // Актуализируем информацию о том, что связка салон-мастер не актуальна
-    await SaloonMasterMapModel.update(
+    await saloon_master_map.update(
       { idSaloonMasterMapStatus: saloonMasterMapStatusesMap[SALOON_MASTER_MAP_STATUSES.removed.name] },
       {
         where: {
@@ -123,10 +114,10 @@ const deleteSaloonMasters = async (req, res) => {
 
     const serviceMasterMapElementsToBeRemoved = (await connection.query(
       `SELECT smm.id as id
-      FROM \`${ServiceMasterMapModel.tableName}\` smm
-      JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+      FROM \`${service_master_map.tableName}\` smm
+      JOIN \`${service_master_map_status.tableName}\` smms
       ON smm.idServiceMasterMapStatus = smms.id
-      JOIN \`${ServiceModel.tableName}\` s
+      JOIN \`${service.tableName}\` s
       ON smm.idService = s.id
       WHERE s.idSaloon = ${req.params.userTypeMapId}
       AND smm.idMaster IN (${codes.join(',')})
@@ -135,13 +126,13 @@ const deleteSaloonMasters = async (req, res) => {
 
     if (serviceMasterMapElementsToBeRemoved.length) {
       // Актуализируем связку сервис-мастер
-      const { dataValues: removedServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+      const { dataValues: removedServiceMasterMapStatus } = await service_master_map_status.findOne({
         where: {
           name: SERVICES_MASTER_MAP_STATUSES.removed.name,
         },
       });
 
-      await ServiceMasterMapModel.update(
+      await service_master_map.update(
         {
           idServiceMasterMapStatus: removedServiceMasterMapStatus.id,
         },
@@ -155,13 +146,13 @@ const deleteSaloonMasters = async (req, res) => {
       );
 
       // Отменяем запись услуги
-      const { dataValues: serviceInstanceRemovedStatus } = await ServiceInstanceStatusModel.findOne({
+      const { dataValues: serviceInstanceRemovedStatus } = await service_instance_status.findOne({
         where: {
           name: SERVICE_INSTANCE_STATUSES.removed.name,
         },
       });
 
-      await ServiceInstanceModel.update(
+      await service_instance.update(
         {
           idServiceInstanceStatus: serviceInstanceRemovedStatus.id,
         },
@@ -183,11 +174,6 @@ const deleteSaloonMasters = async (req, res) => {
 
 const addSaloonMaster = async (req, res) => {
   try {
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserTypeModel = await UserType(connection);
-
     const { value, error } = saloonAddMasterSchema.validate(req.body);
 
     if (error) {
@@ -195,14 +181,20 @@ const addSaloonMaster = async (req, res) => {
     }
 
     const { code } = value;
+    const {
+      saloon_master_map_status,
+      saloon_master_map,
+      user_type_map,
+      user_type,
+    } = connection.models;
 
-    const { dataValues: masterUserType } = await UserTypeModel.findOne({
+    const { dataValues: masterUserType } = await user_type.findOne({
       where: {
         name: roles.master.name,
       },
     });
 
-    const masterRecordInMap = await UserTypeMapModel.findOne({
+    const masterRecordInMap = await user_type_map.findOne({
       where: {
         id: code,
         idUserType: masterUserType.id,
@@ -215,8 +207,8 @@ const addSaloonMaster = async (req, res) => {
 
     const [activeMasters] = await connection.query(
       `SELECT *
-      FROM \`${SaloonMasterMapModel.tableName}\` smm
-      JOIN \`${SaloonMasterMapStatusModel.tableName}\` smms
+      FROM \`${saloon_master_map.tableName}\` smm
+      JOIN \`${saloon_master_map_status.tableName}\` smms
       ON smm.idSaloonMasterMapStatus = smms.id
       WHERE smm.idSaloon = ${req.params.userTypeMapId}
       AND smm.idMaster = ${code}
@@ -227,7 +219,7 @@ const addSaloonMaster = async (req, res) => {
       return res.status(400).send("Мастер уже добавлен в Ваш салон");
     }
 
-    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne(
+    const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne(
       {
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name,
@@ -235,13 +227,13 @@ const addSaloonMaster = async (req, res) => {
       },
     );
 
-    await SaloonMasterMapModel.create({
+    await saloon_master_map.create({
       idSaloon: req.params.userTypeMapId,
       idMaster: code,
       idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
     });
 
-    res.send({});
+    return res.send({});
   } catch (e) {
     res.status(500).send();
   }

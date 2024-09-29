@@ -9,6 +9,9 @@ export const saloonInfoServicesUrl = (saloonId: number) =>
 export const saloonUpdateUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/update`);
 
+export const saloonTimetableUrl = (saloonId: number, date: string) =>
+  BASE_API_URL.concat(`/saloon/${saloonId}/timetable/${date}`);
+
 export const getSaloonMastersUrl = (saloonId: number) =>
   BASE_API_URL.concat(`/saloon/${saloonId}/masters/get`);
 

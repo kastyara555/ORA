@@ -45,6 +45,7 @@ const EditServiceAddMasterForm: FC<EditServiceAddMasterFormProps> = ({
         className={classNames(
           styles.masterAvatar,
           "h-4rem",
+          "w-4rem",
           "shadow-2",
           "mr-2"
         )}

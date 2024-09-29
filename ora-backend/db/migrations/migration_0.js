@@ -1,64 +1,66 @@
 const { connection } = require("../connection");
 
-const StreetType = require("../models/StreetType");
-const ProcedureGroup = require("../models/ProcedureGroup");
-const Procedure = require("../models/Procedure");
-const City = require("../models/City");
-const UserStatus = require("../models/UserStatus");
-const ServiceInstanceStatus = require("../models/ServiceInstanceStatus");
-const User = require("../models/User");
-const Service = require("../models/Service");
-const ServiceMasterMap = require("../models/ServiceMasterMap");
-const ServiceInstance = require("../models/ServiceInstance");
-const GroupProcedureMap = require("../models/GroupProcedureMap");
-const Sex = require("../models/Sex");
-const UserType = require("../models/UserType");
-const Favorites = require("../models/Favorites");
-const SaloonInfo = require("../models/SaloonInfo");
-const ClientInfo = require("../models/ClientInfo");
-const UserTypeMap = require("../models/UserTypeMap");
-const UserImage = require("../models/UserImage");
-const MasterInfo = require("../models/MasterInfo");
-const SaloonMasterMap = require("../models/SaloonMasterMap");
-const PasswordRestorationStatus = require("../models/PasswordRestorationStatus");
-const PasswordRestoration = require("../models/PasswordRestoration");
-const SaloonMasterMapStatus = require("../models/SaloonMasterMapStatus");
-const ServiceMasterMapStatus = require("../models/ServiceMasterMapStatus");
-
 const migration = async () => {
   try {
     await connection.authenticate();
     console.log("Connection has been established successfully.");
 
-    await Sex(connection).sync();
-    await City(connection).sync();
-    await UserStatus(connection).sync();
-    await PasswordRestorationStatus(connection).sync();
-    await ServiceInstanceStatus(connection).sync();
-    await ProcedureGroup(connection).sync();
-    await UserType(connection).sync();
-    await StreetType(connection).sync();
+    const {
+      sex,
+      city,
+      user_status,
+      password_restoration_status,
+      service_instance_status,
+      procedure_group,
+      user_type,
+      street_type,
+      user,
+      procedure,
+      password_restoration,
+      user_type_map,
+      saloon_info,
+      master_info,
+      client_info,
+      saloon_master_map_status,
+      saloon_master_map,
+      service,
+      group_procedure_map,
+      user_image,
+      service_master_map_status,
+      service_master_map,
+      service_instance,
+      favorites,
+    } = connection.models;
 
-    await User(connection).sync();
-    await Procedure(connection).sync();
-    await PasswordRestoration(connection).sync();
+    await password_restoration_status.sync();
+    await service_master_map_status.sync();
+    await saloon_master_map_status.sync();
+    await service_instance_status.sync();
+    await procedure_group.sync();
+    await user_status.sync();
+    await street_type.sync();
+    await user_type.sync();
+    await city.sync();
+    await sex.sync();
 
-    await UserTypeMap(connection).sync();
-    await SaloonInfo(connection).sync();
-    await MasterInfo(connection).sync();
-    await ClientInfo(connection).sync();
+    await password_restoration.sync();
+    await procedure.sync();
+    await user.sync();
 
-    await SaloonMasterMapStatus(connection).sync();
-    await SaloonMasterMap(connection).sync();
+    await user_type_map.sync();
+    await saloon_info.sync();
+    await master_info.sync();
+    await client_info.sync();
 
-    await Service(connection).sync();
-    await GroupProcedureMap(connection).sync();
-    await UserImage(connection).sync();
+    await saloon_master_map.sync();
 
-    await ServiceMasterMapStatus(connection).sync();
-    await ServiceMasterMap(connection).sync();
-    await ServiceInstance(connection).sync();
-    await Favorites(connection).sync();
+    await group_procedure_map.sync();
+    await user_image.sync();
+    await service.sync();
+
+    await service_master_map.sync();
+    await service_instance.sync();
+    await favorites.sync();
 
     await connection.close();
   } catch (error) {

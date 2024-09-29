@@ -27,7 +27,7 @@ const SaloonInfo = (sequelize) =>
           model: StreetType(sequelize),
           key: "id",
         },
-        allowNull: false,
+        allowNull: true,
       },
       idUserTypeMap: {
         type: DataTypes.INTEGER,

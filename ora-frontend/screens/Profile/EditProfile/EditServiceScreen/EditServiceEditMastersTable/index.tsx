@@ -51,7 +51,7 @@ const EditServiceEditMastersTable: FC<EditServiceEditMastersTableProps> = ({
     <img
       src={master.mainImage}
       alt={master.mainImage}
-      className={classNames(styles.masterAvatar, "h-4rem", "shadow-2")}
+      className={classNames(styles.masterAvatar, "h-4rem", "w-4rem", "shadow-2")}
     />
   );
 

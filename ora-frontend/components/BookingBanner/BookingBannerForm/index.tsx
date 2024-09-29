@@ -1,32 +1,31 @@
 "use client";
 import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Dropdown } from "primereact/dropdown";
-import { AutoComplete } from "primereact/AutoComplete";
+import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/autocomplete";
 
-import { SelectItemOptionsType } from "primereact/selectitem";
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
 import Button from "@/components/Button";
 
-interface BookingBannerFormModel {
-  cities: SelectItemOptionsType[];
-}
+// interface BookingBannerFormModel {
+//   cities: SelectItemOptionsType[];
+// }
 
-const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
+// TODO: Когда будет много салонов в городах, разблокировать выбор города для процедуры
+const BookingBannerForm: FC = () => {
   const router = useRouter();
 
   const [selectedProcedure, setSelectedProcedure] = useState<any>(null);
-  const [selectedCity, setSelectedCity] = useState(null);
+  // const [selectedCity, setSelectedCity] = useState(null);
   const [filteredProcedures, setFilteredProcedures] = useState([]);
 
   const searchButtonDisabled = useMemo(
     () =>
       !selectedProcedure?.procedureGroupId || !selectedProcedure?.procedureId,
-    [selectedProcedure, selectedCity]
+    [selectedProcedure]
   );
 
-  const searchProcedure = useCallback(async (event: any) => {
+  const searchProcedure = useCallback(async (event: AutoCompleteCompleteEvent) => {
     const { data } = await axiosInstance.post(
       searchProceduresUrl.concat(`/${event.query}`),
       {}
@@ -36,14 +35,14 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
   }, []);
 
   const searchButtonClick = useCallback(() => {
-    if (selectedCity) {
-      router.push(
-        `/procedures/${selectedProcedure?.procedureId}/${selectedCity}`
-      );
-    } else {
-      router.push(`/procedures/${selectedProcedure?.procedureId}`);
-    }
-  }, [selectedProcedure, selectedCity]);
+    // if (selectedCity) {
+    //   router.push(
+    //     `/procedures/${selectedProcedure?.procedureId}/${selectedCity}`
+    //   );
+    // } else {
+    router.push(`/procedures/${selectedProcedure?.procedureId}`);
+    // }
+  }, [selectedProcedure]);
 
   return (
     <>
@@ -57,14 +56,14 @@ const BookingBannerForm: FC<BookingBannerFormModel> = ({ cities }) => {
           onChange={(e) => setSelectedProcedure(e.value)}
         />
       </div>
-      <Dropdown
+      {/* <Dropdown
         value={selectedCity}
         onChange={(e) => setSelectedCity(e.value)}
         options={cities}
         showClear
         placeholder="Ваш город"
         className="w-full"
-      />
+      /> */}
       <Button
         severity="secondary"
         disabled={searchButtonDisabled}

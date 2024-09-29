@@ -1,15 +1,6 @@
 const moment = require("moment");
 
 const { connection } = require("../../db/connection");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const ServiceInstanceStatus = require("../../db/models/ServiceInstanceStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const ServiceInstance = require("../../db/models/ServiceInstance");
-const SaloonInfo = require("../../db/models/SaloonInfo");
-const Procedure = require("../../db/models/Procedure");
-const UserImage = require("../../db/models/UserImage");
-const Service = require("../../db/models/Service");
-const City = require("../../db/models/City");
 const {
   SERVICE_INSTANCE_STATUSES,
 } = require("../../db/consts/serviceInstanceStatuses");
@@ -20,15 +11,17 @@ const {
 
 const getProcedureDataByCity = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const ServiceInstanceStatusModel = await ServiceInstanceStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceInstanceModel = await ServiceInstance(connection);
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const ProcedureModel = await Procedure(connection);
-    const UserImageModel = await UserImage(connection);
-    const ServiceModel = await Service(connection);
-    const CityModel = await City(connection);
+    const {
+      service_master_map_status,
+      service_instance_status,
+      service_master_map,
+      service_instance,
+      saloon_info,
+      user_image,
+      procedure,
+      service,
+      city,
+    } = connection.models;
 
     const { value, error } = procedureSaloonsSchema.validate(req.body);
 
@@ -38,7 +31,7 @@ const getProcedureDataByCity = async (req, res) => {
 
     const { pageNumber, pageSize } = value;
 
-    const existProcedure = await ProcedureModel.findOne({
+    const existProcedure = await procedure.findOne({
       where: { id: req.params.procedureId },
     });
 
@@ -46,7 +39,7 @@ const getProcedureDataByCity = async (req, res) => {
       return res.status(404).send("Процедура не существует.");
     }
 
-    const existCity = await CityModel.findOne({
+    const existCity = await city.findOne({
       where: { id: req.params.cityId },
     });
 
@@ -54,26 +47,26 @@ const getProcedureDataByCity = async (req, res) => {
       return res.status(404).send("Города не существует.");
     }
 
-    const thisTimeFormatted = moment().format("YYYY-MM-DD:HH-MM");
+    const thisTimeFormatted = moment().format("YYYY-MM-DD:HH-mm");
 
     const subQueryAvailableServices = `SELECT smm.idService as availableServiceId
-    FROM \`${ServiceMasterMapModel.tableName}\` smm
-    JOIN \`${ServiceMasterMapStatusModel.tableName}\` smms
+    FROM \`${service_master_map.tableName}\` smm
+    JOIN \`${service_master_map_status.tableName}\` smms
     ON smm.idServiceMasterMapStatus = smms.id
-    JOIN \`${ServiceInstanceModel.tableName}\` si
+    JOIN \`${service_instance.tableName}\` si
     ON smm.id = si.idServiceMasterMap
-    JOIN \`${ServiceInstanceStatusModel.tableName}\` sis
+    JOIN \`${service_instance_status.tableName}\` sis
     ON si.idServiceInstanceStatus = sis.id
     WHERE sis.name = '${SERVICE_INSTANCE_STATUSES.empty.name}'
     AND smms.name = '${SERVICES_MASTER_MAP_STATUSES.active.name}'
     AND si.time > '${thisTimeFormatted}'`;
 
     const subQueryMainImages = `SELECT idUserTypeMap, url
-    FROM \`${UserImageModel.tableName}\`
+    FROM \`${user_image.tableName}\`
     WHERE isMain = 1`;
 
-    const queryBody = `FROM \`${SaloonInfoModel.tableName}\` si
-    JOIN \`${ServiceModel.tableName}\` s
+    const queryBody = `FROM \`${saloon_info.tableName}\` si
+    JOIN \`${service.tableName}\` s
     ON s.idSaloon = si.idUserTypeMap
     JOIN (${subQueryAvailableServices}) available
     ON s.id = available.availableServiceId
@@ -99,7 +92,7 @@ const getProcedureDataByCity = async (req, res) => {
       OFFSET ${offset}`
         );
 
-    res.send({
+    return res.send({
       cityName: existCity.dataValues.name,
       procedureName: existProcedure.dataValues.name,
       saloons: { data: saloonsData, total },
@@ -109,14 +102,17 @@ const getProcedureDataByCity = async (req, res) => {
   }
 };
 
+// TODO: обдумать. Стоит ли добавлять фильтр по наличию сервис инстансов
 const getProcedureCities = async (req, res) => {
   try {
-    const SaloonInfoModel = await SaloonInfo(connection);
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
-    const CityModel = await City(connection);
+    const {
+      procedure,
+      city,
+      service,
+      saloon_info,
+    } = connection.models;
 
-    const existProcedure = await ProcedureModel.findOne({
+    const existProcedure = await procedure.findOne({
       where: { id: req.params.procedureId },
     });
 
@@ -126,15 +122,15 @@ const getProcedureCities = async (req, res) => {
 
     const [cities] = await connection.query(
       `SELECT DISTINCT c.id as id, c.name as name
-      FROM \`${ServiceModel.tableName}\` s
-      JOIN \`${SaloonInfoModel.tableName}\` si
-      ON s.idSaloon = si.idUserTypeMap
-      JOIN \`${CityModel.tableName}\` c
+      FROM \`${city.tableName}\` c
+      JOIN \`${saloon_info.tableName}\` si
       ON si.idCity = c.id
+      JOIN \`${service.tableName}\` s
+      ON s.idSaloon = si.idUserTypeMap
       WHERE s.idProcedure = ${req.params.procedureId}`
     );
 
-    res.send({ name: existProcedure.dataValues.name, cities });
+    return res.send({ name: existProcedure.dataValues.name, cities });
   } catch (e) {
     res.status(500).send();
   }

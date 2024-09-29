@@ -160,7 +160,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
           />
           <InputText
             className={classNames(styles.input, "w-full", "col-12")}
-            placeholder="Улица"
+            placeholder="Название улицы"
             maxLength={32}
             value={state.street}
             onChange={setStreet}

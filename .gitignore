@@ -15,6 +15,7 @@
 
 # production
 /ora-frontend/build
+/ora-backend/build
 
 # misc
 /ora-frontend/.DS_Store

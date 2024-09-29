@@ -3,15 +3,6 @@ const { Op } = require("sequelize");
 const { connection } = require("../../db/connection");
 const { SALOON_MASTER_MAP_STATUSES } = require("../../db/consts/saloonMasterMapStatuses");
 const { SERVICES_MASTER_MAP_STATUSES } = require("../../db/consts/serviceMasterMapStatuses");
-const ServiceMasterMapStatus = require("../../db/models/ServiceMasterMapStatus");
-const SaloonMasterMapStatus = require("../../db/models/SaloonMasterMapStatus");
-const ServiceMasterMap = require("../../db/models/ServiceMasterMap");
-const SaloonMasterMap = require("../../db/models/SaloonMasterMap");
-const UserTypeMap = require("../../db/models/UserTypeMap");
-const UserImage = require("../../db/models/UserImage");
-const Procedure = require("../../db/models/Procedure");
-const Service = require("../../db/models/Service");
-const User = require("../../db/models/User");
 const {
   serviceUpdatingSchema,
 } = require("../../schemas/serviceUpdatingSchema");
@@ -27,17 +18,19 @@ const {
 
 const getSaloonServiceInfo = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const UserTypeMapModel = await UserTypeMap(connection);
-    const UserImageModel = await UserImage(connection);
-    const ProcedureModel = await Procedure(connection);
-    const ServiceModel = await Service(connection);
-    const UserModel = await User(connection);
+    const {
+      service_master_map_status,
+      saloon_master_map_status,
+      service_master_map,
+      saloon_master_map,
+      user_type_map,
+      user_image,
+      procedure,
+      service,
+      user,
+    } = connection.models;
 
-    const serviceBaseInfo = await ServiceModel.findOne({
+    const serviceBaseInfo = await service.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
     });
 
@@ -45,7 +38,7 @@ const getSaloonServiceInfo = async (req, res) => {
       return res.status(400).send("Нет информации об услуге.");
     }
 
-    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne(
+    const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne(
       {
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name
@@ -53,7 +46,7 @@ const getSaloonServiceInfo = async (req, res) => {
       },
     );
 
-    const procedureBaseInfo = await ProcedureModel.findOne({
+    const procedureBaseInfo = await procedure.findOne({
       where: { id: serviceBaseInfo.dataValues.idProcedure },
     });
 
@@ -61,7 +54,7 @@ const getSaloonServiceInfo = async (req, res) => {
       return res.status(400).send("Нет информации о процедуре.");
     }
 
-    const saloonMasters = await SaloonMasterMapModel.findAll({
+    const saloonMasters = await saloon_master_map.findAll({
       where: {
         idSaloon: req.params.userTypeMapId,
         idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
@@ -78,20 +71,20 @@ const getSaloonServiceInfo = async (req, res) => {
 
       activeMasters = (await connection.query(
         `SELECT user_type_map.id as id, user.name as name, user.email as email, uim.url as mainImage, service_master_map.price as price
-      FROM \`${UserTypeMapModel.tableName}\` user_type_map
-      JOIN \`${UserModel.tableName}\` user
+      FROM \`${user_type_map.tableName}\` user_type_map
+      JOIN \`${user.tableName}\` user
       ON user.id = user_type_map.idUser
-      JOIN \`${ServiceMasterMapModel.tableName}\` service_master_map
+      JOIN \`${service_master_map.tableName}\` service_master_map
       ON service_master_map.idMaster = user_type_map.id
-      JOIN \`${ServiceMasterMapStatusModel.tableName}\` service_master_map_status
+      JOIN \`${service_master_map_status.tableName}\` service_master_map_status
       ON service_master_map.idServiceMasterMapStatus = service_master_map_status.id
-      JOIN \`${SaloonMasterMapModel.tableName}\` saloon_master_map
+      JOIN \`${saloon_master_map.tableName}\` saloon_master_map
       ON user_type_map.id = saloon_master_map.idMaster
-      JOIN \`${SaloonMasterMapStatusModel.tableName}\` saloon_master_map_status
+      JOIN \`${saloon_master_map_status.tableName}\` saloon_master_map_status
       ON saloon_master_map.idSaloonMasterMapStatus = saloon_master_map_status.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = user_type_map.id
@@ -104,16 +97,16 @@ const getSaloonServiceInfo = async (req, res) => {
 
       availableMasters = (await connection.query(
         `SELECT DISTINCT user_type_map.id as id, user.name as name, user.email as email, uim.url as mainImage
-      FROM \`${UserTypeMapModel.tableName}\` user_type_map
-      JOIN \`${UserModel.tableName}\` user
+      FROM \`${user_type_map.tableName}\` user_type_map
+      JOIN \`${user.tableName}\` user
       ON user.id = user_type_map.idUser
-      JOIN \`${SaloonMasterMapModel.tableName}\` saloon_master_map
+      JOIN \`${saloon_master_map.tableName}\` saloon_master_map
       ON user_type_map.id = saloon_master_map.idMaster
-      JOIN \`${SaloonMasterMapStatusModel.tableName}\` saloon_master_map_status
+      JOIN \`${saloon_master_map_status.tableName}\` saloon_master_map_status
       ON saloon_master_map.idSaloonMasterMapStatus = saloon_master_map_status.id
       LEFT JOIN (
         SELECT idUserTypeMap, url
-        FROM \`${UserImageModel.tableName}\`
+        FROM \`${user_image.tableName}\`
         WHERE isMain = 1
       ) uim
       ON uim.idUserTypeMap = user_type_map.id
@@ -140,8 +133,6 @@ const getSaloonServiceInfo = async (req, res) => {
 
 const updateService = async (req, res) => {
   try {
-    const ServiceModel = await Service(connection);
-
     const { value, error } = serviceUpdatingSchema.validate(req.body);
 
     if (error) {
@@ -149,8 +140,9 @@ const updateService = async (req, res) => {
     }
 
     const { description } = value;
+    const { service } = connection.models;
 
-    const serviceBaseInfo = await ServiceModel.findOne({
+    const serviceBaseInfo = await service.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
     });
 
@@ -158,7 +150,7 @@ const updateService = async (req, res) => {
       return res.status(400).send("Нет информации об услуге.");
     }
 
-    await ServiceModel.update(
+    await service.update(
       { description },
       {
         where: {
@@ -175,12 +167,6 @@ const updateService = async (req, res) => {
 
 const addServiceMasters = async (req, res) => {
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = serviceMastersAddingSchema.validate(req.body);
 
     if (error) {
@@ -188,8 +174,15 @@ const addServiceMasters = async (req, res) => {
     }
 
     const { masters } = value;
+    const {
+      service_master_map_status,
+      saloon_master_map_status,
+      service_master_map,
+      saloon_master_map,
+      service,
+    } = connection.models;
 
-    const serviceInfo = await ServiceModel.findOne({
+    const serviceInfo = await service.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
     });
 
@@ -197,7 +190,7 @@ const addServiceMasters = async (req, res) => {
       return res.status(400).send("Услуга не принадлежит салону");
     }
 
-    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne(
+    const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne(
       {
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name
@@ -207,7 +200,7 @@ const addServiceMasters = async (req, res) => {
 
     const requestedMasterIds = masters.map(({ id }) => id);
 
-    const saloonMasters = await SaloonMasterMapModel.findAll({
+    const saloonMasters = await saloon_master_map.findAll({
       where: {
         idSaloon: req.params.userTypeMapId,
         idMaster: { [Op.in]: requestedMasterIds },
@@ -221,13 +214,13 @@ const addServiceMasters = async (req, res) => {
         .send("Оказывать услуги могут только мастера, работающие в салоне");
     }
 
-    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+    const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
       where: {
         name: SERVICES_MASTER_MAP_STATUSES.active.name,
       },
     });
 
-    const alreadyActiveMasters = await ServiceMasterMapModel.findAll({
+    const alreadyActiveMasters = await service_master_map.findAll({
       where: {
         idService: req.params.serviceId,
         idMaster: {
@@ -243,7 +236,7 @@ const addServiceMasters = async (req, res) => {
         .send("Добавляемый(-ые) мастер(-а) уже оказывают данную услугу");
     }
 
-    await ServiceMasterMapModel.bulkCreate(
+    await service_master_map.bulkCreate(
       masters.map(({ id, price }) => ({
         idService: req.params.serviceId,
         idMaster: id,
@@ -261,10 +254,6 @@ const addServiceMasters = async (req, res) => {
 const removeServiceMasters = async (req, res) => {
   // TODO: После построения полного процесса пересмотреть удаление
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = serviceMastersRemovingSchema.validate(req.body);
 
     if (error) {
@@ -272,8 +261,13 @@ const removeServiceMasters = async (req, res) => {
     }
 
     const { codes } = value;
+    const {
+      service_master_map_status,
+      service_master_map,
+      service,
+    } = connection.models;
 
-    const serviceInfo = await ServiceModel.findOne({
+    const serviceInfo = await service.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
     });
 
@@ -287,13 +281,13 @@ const removeServiceMasters = async (req, res) => {
       return res.status(400).send("Удалить можно только уникальные записи");
     }
 
-    const { dataValues: removedServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+    const { dataValues: removedServiceMasterMapStatus } = await service_master_map_status.findOne({
       where: {
         name: SERVICES_MASTER_MAP_STATUSES.removed.name,
       },
     });
 
-    await ServiceMasterMapModel.update(
+    await service_master_map.update(
       {
         idServiceMasterMapStatus: removedServiceMasterMapStatus.id,
       },
@@ -316,12 +310,6 @@ const removeServiceMasters = async (req, res) => {
 const updateServiceMaster = async (req, res) => {
   // TODO: пересмотреть политику изменения цен после построения процесса
   try {
-    const ServiceMasterMapStatusModel = await ServiceMasterMapStatus(connection);
-    const SaloonMasterMapStatusModel = await SaloonMasterMapStatus(connection);
-    const ServiceMasterMapModel = await ServiceMasterMap(connection);
-    const SaloonMasterMapModel = await SaloonMasterMap(connection);
-    const ServiceModel = await Service(connection);
-
     const { value, error } = serviceMasterUpdatingSchema.validate(req.body);
 
     if (error) {
@@ -329,8 +317,15 @@ const updateServiceMaster = async (req, res) => {
     }
 
     const { master } = value;
+    const {
+      service_master_map_status,
+      saloon_master_map_status,
+      service_master_map,
+      saloon_master_map,
+      service,
+    } = connection.models;
 
-    const serviceInfo = await ServiceModel.findOne({
+    const serviceInfo = await service.findOne({
       where: { id: req.params.serviceId, idSaloon: req.params.userTypeMapId },
     });
 
@@ -338,7 +333,7 @@ const updateServiceMaster = async (req, res) => {
       return res.status(400).send("Услуга не принадлежит салону");
     }
 
-    const { dataValues: activeSaloonMasterMapStatus } = await SaloonMasterMapStatusModel.findOne(
+    const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne(
       {
         where: {
           name: SALOON_MASTER_MAP_STATUSES.active.name
@@ -346,7 +341,7 @@ const updateServiceMaster = async (req, res) => {
       },
     );
 
-    const saloonMasterInfo = await SaloonMasterMapModel.findOne({
+    const saloonMasterInfo = await saloon_master_map.findOne({
       where: {
         idSaloon: req.params.userTypeMapId,
         idMaster: master.id,
@@ -360,13 +355,13 @@ const updateServiceMaster = async (req, res) => {
         .send("Оказывать услуги могут только мастера, работающие в салоне");
     }
 
-    const { dataValues: activeServiceMasterMapStatus } = await ServiceMasterMapStatusModel.findOne({
+    const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
       where: {
         name: SERVICES_MASTER_MAP_STATUSES.active.name,
       },
     });
 
-    const alreadyActiveMaster = await ServiceMasterMapModel.findOne({
+    const alreadyActiveMaster = await service_master_map.findOne({
       where: {
         idService: req.params.serviceId,
         idMaster: master.id,
@@ -382,7 +377,7 @@ const updateServiceMaster = async (req, res) => {
         );
     }
 
-    await ServiceMasterMapModel.update(
+    await service_master_map.update(
       { price: master.price },
       {
         where: {

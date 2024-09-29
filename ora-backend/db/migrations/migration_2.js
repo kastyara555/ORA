@@ -2,25 +2,22 @@ const { Op } = require("sequelize");
 
 const { connection } = require("../connection");
 const { procedures } = require("../consts/categories");
-const ProcedureGroup = require("../models/ProcedureGroup");
-const Procedure = require("../models/Procedure");
-const GroupProcedureMap = require("../models/GroupProcedureMap");
-
-const sequelize = connection;
 
 const migration = async () => {
   try {
-    await sequelize.authenticate();
+    await connection.authenticate();
     console.log("Connection has been established successfully.");
 
-    const ProcedureModel = await Procedure(sequelize);
-    const ProcedureGroupModel = await ProcedureGroup(sequelize);
-    const GroupProcedureMapModel = await GroupProcedureMap(sequelize);
+    const {
+      group_procedure_map,
+      procedure_group,
+      procedure,
+    } = connection.models;
 
     for (const { name, categories } of procedures) {
-      const addedProcedure = await ProcedureModel.create({ name });
+      const addedProcedure = await procedure.create({ name });
 
-      const procedureCategories = await ProcedureGroupModel.findAll({
+      const procedureCategories = await procedure_group.findAll({
         where: {
           name: {
             [Op.or]: categories.map(({ name }) => name),
@@ -29,11 +26,11 @@ const migration = async () => {
       });
 
       for (const { id } of procedureCategories) {
-        await GroupProcedureMapModel.create({ idProcedureGroup: id, idProcedure: addedProcedure.id });
+        await group_procedure_map.create({ idProcedureGroup: id, idProcedure: addedProcedure.id });
       }
     }
 
-    await sequelize.close();
+    await connection.close();
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }

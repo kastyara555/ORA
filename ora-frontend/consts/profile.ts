@@ -77,6 +77,12 @@ export const PROFILE_SALOON_LINKS: ProfileLinkModel[] = [
     description: "Добавление, редактирование, удаление типов услуг",
   },
   {
+    href: "/profile/timetable",
+    title: "Расписание",
+    description:
+      "Просматривайте и создавайте расписание",
+  },
+  {
     href: "/profile/history",
     title: "История бронирования",
     description: "Просматривайте историю бронирования вашего салона",
@@ -120,7 +126,7 @@ export const PRIVATE_ROUTES: routeConfiguration[] = [
   },
   {
     url: "/profile/timetable",
-    availableUserTypes: [USER_TYPES.master],
+    availableUserTypes: [USER_TYPES.master, USER_TYPES.saloon],
     noStrict: true,
   },
   {

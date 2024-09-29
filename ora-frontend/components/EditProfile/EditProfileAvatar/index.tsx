@@ -2,6 +2,7 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import classNames from "classnames";
 import ImageUploading, { ImageListType } from "react-images-uploading";
+import { MessageSeverity } from "primereact/api";
 import { Message } from "primereact/message";
 
 import styles from "./style.module.scss";
@@ -44,21 +45,21 @@ const EditProfileAvatar: FC<EditProfileAvatarProps> = ({
               {errors.maxNumber && (
                 <Message
                   className={classNames(styles.errorMessage, "w-full", "mb-1")}
-                  severity="error"
+                  severity={MessageSeverity.ERROR}
                   text="Можно выбрать не более одного изображения"
                 />
               )}
               {errors.acceptType && (
                 <Message
                   className={classNames(styles.errorMessage, "w-full", "mb-1")}
-                  severity="error"
+                  severity={MessageSeverity.ERROR}
                   text="Можно добавлять только изображения"
                 />
               )}
               {errors.maxFileSize && (
                 <Message
                   className={classNames(styles.errorMessage, "w-full", "mb-1")}
-                  severity="error"
+                  severity={MessageSeverity.ERROR}
                   text="Превышен максимальный размер файла"
                 />
               )}

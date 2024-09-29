@@ -1,5 +1,5 @@
 const { updateMaster } = require("./information");
-const { timetableAvailability, timetableInformation } = require("./timetable");
+const { timetableInformation } = require("./timetable");
 const {
   getServicesBySaloon,
   createServiceInstance,
@@ -9,7 +9,6 @@ const {
 module.exports = {
   updateMaster,
   timetableInformation,
-  timetableAvailability,
   getServicesBySaloon,
   createServiceInstance,
   cancelServiceInstance,
