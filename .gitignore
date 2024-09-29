@@ -14,7 +14,7 @@
 /ora-frontend/out/
 
 # production
-/ora-frontend/build
+# /ora-frontend/build
 /ora-backend/build
 
 # misc
