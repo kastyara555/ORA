@@ -1,5 +1,3 @@
-"use client";
-
 import { memo } from "react";
 import classNames from "classnames";
 import { TabPanel, TabView } from "primereact/tabview";

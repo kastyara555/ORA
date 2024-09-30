@@ -1,4 +1,3 @@
-"use client";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { isEqual } from "lodash";
 import { useSelector } from "react-redux";

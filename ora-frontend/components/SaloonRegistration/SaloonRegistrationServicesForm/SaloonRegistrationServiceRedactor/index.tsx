@@ -1,4 +1,3 @@
-"use client";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { AutoComplete, AutoCompleteChangeEvent, AutoCompleteCompleteEvent } from "primereact/autocomplete";

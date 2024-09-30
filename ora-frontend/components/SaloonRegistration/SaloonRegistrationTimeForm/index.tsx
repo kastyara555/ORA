@@ -1,4 +1,3 @@
-"use client";
 import { FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";

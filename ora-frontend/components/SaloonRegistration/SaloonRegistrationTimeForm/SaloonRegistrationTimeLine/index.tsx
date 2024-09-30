@@ -1,4 +1,3 @@
-"use client";
 import { FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { InputSwitch, InputSwitchChangeEvent } from "primereact/inputswitch";

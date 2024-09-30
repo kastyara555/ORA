@@ -1,4 +1,3 @@
-"use client";
 import { Dispatch, FC, SetStateAction } from "react";
 import classNames from "classnames";
 import ImageUploading, { ImageListType } from "react-images-uploading";

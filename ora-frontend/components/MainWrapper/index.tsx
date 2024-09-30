@@ -1,4 +1,3 @@
-"use client";
 import { useDispatch, useSelector } from "react-redux";
 import { memo, useLayoutEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,7 +7,7 @@ import { profileGetInfo, resetProfileUserData } from "@/store/profile/actions";
 import { getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
 import { PRIVATE_ROUTES } from "@/consts/profile";
-import NotFound from "@/app/not-found";
+import NotFound from "@/pages/404";
 
 import styles from "./style.module.scss";
 

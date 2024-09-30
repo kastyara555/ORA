@@ -1,5 +1,3 @@
-"use client";
-
 import { ChangeEvent, FC, memo, useState } from "react";
 import { InputTextarea } from "primereact/inputtextarea";
 import classNames from "classnames";

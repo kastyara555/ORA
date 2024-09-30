@@ -1,4 +1,3 @@
-"use client";
 import cn from "classnames";
 import { FC, ReactNode, memo } from "react";
 import { Image } from "primereact/image";

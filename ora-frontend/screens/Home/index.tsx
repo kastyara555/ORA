@@ -1,14 +1,21 @@
+import { FC } from "react";
+import { MenuItem } from "primereact/menuitem";
+
 import Advantages from "@/components/Advantages";
-import BookingBanner from "@/components/BookingBanner";
-import Categories from "@/components/Categories";
 import Recomended from "@/components/Recomended";
+import BookingBanner from "@/components/BookingBanner";
+import CategoriesMenu from "@/components/CategoriesMenu";
 
 import InfoBlock from "./InfoBlock";
 import styles from "./style.module.scss";
 
-const HomeScreen = () => (
+interface HomeScreenProps {
+  categoriesTree: MenuItem[];
+}
+
+const HomeScreen: FC<HomeScreenProps> = ({ categoriesTree }) => (
   <div className={styles.main}>
-    <Categories />
+    <CategoriesMenu categoriesTree={categoriesTree} />
     <BookingBanner />
     <Advantages />
     <Recomended />

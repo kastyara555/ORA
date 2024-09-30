@@ -1,4 +1,3 @@
-"use client";
 import { FC } from "react";
 import { BiMenu, BiSolidUser } from "react-icons/bi";
 import Link from "next/link";

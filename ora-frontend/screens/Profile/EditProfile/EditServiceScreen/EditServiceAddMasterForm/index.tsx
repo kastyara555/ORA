@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, memo, useState } from "react";
 import {
   Dropdown,

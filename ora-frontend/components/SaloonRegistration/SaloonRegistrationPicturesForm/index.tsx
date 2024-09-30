@@ -1,4 +1,3 @@
-"use client";
 import { FC } from "react";
 import classNames from "classnames";
 import { Button } from "primereact/button";

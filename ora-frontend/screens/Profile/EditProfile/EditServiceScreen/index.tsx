@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, memo, useCallback, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TabPanel, TabView } from "primereact/tabview";

@@ -1,4 +1,3 @@
-"use client";
 import React, { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

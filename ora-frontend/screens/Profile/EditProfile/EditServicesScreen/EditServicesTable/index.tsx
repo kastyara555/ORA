@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, memo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";

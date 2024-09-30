@@ -1,4 +1,3 @@
-"use client";
 import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/autocomplete";

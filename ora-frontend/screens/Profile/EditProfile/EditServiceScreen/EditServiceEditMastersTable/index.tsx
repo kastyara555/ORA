@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, memo, useState } from "react";
 import { Column, ColumnEditorOptions, ColumnEvent } from "primereact/column";
 import { InputNumber } from "primereact/inputnumber";
