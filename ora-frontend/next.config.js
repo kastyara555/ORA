@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  distDir: "build",
   images: {
     domains: ["cdn.shopify.com", "s0.2mdn.net"],
     formats: ["image/avif", "image/webp"],
