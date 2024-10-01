@@ -6,9 +6,8 @@ module.exports = {
             args: 'start',
             error_file: './logs/service_gateway.err',
             exec_mode: 'cluster',
-            instances: 4,
+            instances: 2,
             // max_memory_restart: '500M',
-            // version: '0.9.1',
         }
     ]
 }
