@@ -2,12 +2,13 @@ module.exports = {
     apps: [
         {
             name: 'ora-frontend',
-            script: 'npm run start',
+            // script: 'npm run start',
             cwd: './ora-frontend',
-            // args: '-p 4000',
+            args: 'npm run start',
             error_file: './logs/service_gateway.err',
             exec_mode: 'cluster',
-            instances: 'max'
+            instances: 'max',
+            version: '0.9.1',
         }
     ]
 }
