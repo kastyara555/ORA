@@ -3,8 +3,7 @@ module.exports = {
         {
             name: 'ora-frontend',
             cwd: '/ora-frontend',
-            script: 'npm',
-            args: 'start',
+            script: 'npm start',
             error_file: './logs/service_gateway.err',
             exec_mode: 'cluster',
             instances: 'max',
