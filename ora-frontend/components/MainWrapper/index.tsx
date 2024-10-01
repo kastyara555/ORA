@@ -19,9 +19,10 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
 
   const privateRouteInfo = useMemo(
     () =>
-      PRIVATE_ROUTES.find(({ url, noStrict }) =>
-        noStrict ? pathname.includes(url) : url === pathname
-      ),
+      pathname ?
+        PRIVATE_ROUTES.find(({ url, noStrict }) =>
+          noStrict ? pathname.includes(url) : url === pathname
+        ) : undefined,
     [pathname]
   );
 
@@ -50,7 +51,7 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
         router.push("/login");
       }
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <main className={styles.content}>

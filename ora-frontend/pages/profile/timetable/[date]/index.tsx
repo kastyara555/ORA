@@ -1,24 +1,35 @@
-import { memo } from "react";
-import { usePathname } from "next/navigation";
+import { GetServerSidePropsContext } from "next";
+import { FC, memo } from "react";
 import moment from "moment";
 
 import ContentWrapper from "@/components/ContentWrapper";
 import ProfileTimeTableScreen from "@/screens/Profile/ProfileTimeTableScreen";
 
-const TeamPage = () => {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/");
-  const dateFromPath = pathParts[pathParts.length - 1];
-  const date = moment(dateFromPath, "DD-MM-YYYY", true);
+interface TimetablePageProps {
+  date: string;
+}
+
+const TimetablePage: FC<TimetablePageProps> = ({ date }) => {
+  const formattedDate = moment(date, "DD-MM-YYYY", true);
 
   return (
     <ContentWrapper
       backHref="/profile/timetable"
       title="Расписание"
     >
-      <ProfileTimeTableScreen date={date} />
+      <ProfileTimeTableScreen date={formattedDate} />
     </ContentWrapper>
   );
 };
 
-export default memo(TeamPage);
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { date } = ctx.query as { date: string };
+
+  return {
+    props: {
+      date,
+    },
+  }
+};
+
+export default memo(TimetablePage);

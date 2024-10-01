@@ -23,9 +23,11 @@ const App = ({ Component, pageProps }: { Component: any, pageProps: Record<strin
       <PersistGate loading={null} persistor={persistor}>
         <Header
           withoutAuthorization={
-            pathname.includes("/registration") ||
-            pathname.includes("/login") ||
-            pathname.includes("/restore")
+            !!pathname && (
+              pathname.includes("/registration") ||
+              pathname.includes("/login") ||
+              pathname.includes("/restore")
+            )
           }
         />
         <MainWrapper>

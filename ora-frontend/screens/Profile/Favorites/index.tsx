@@ -31,7 +31,7 @@ const FavoritesScreen: FC = () => {
 
       setFavorites(data);
       setFavoritesIds(data.map(({ id }) => id));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Избранное",
