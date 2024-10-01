@@ -2,7 +2,8 @@ module.exports = {
     apps: [
         {
             name: 'ora-frontend',
-            script: 'ora-frontend/node_modules/next/dist/bin/next',
+            cwd: '/ora-frontend',
+            script: 'npm',
             args: 'start',
             error_file: './logs/service_gateway.err',
             exec_mode: 'cluster',
