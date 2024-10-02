@@ -6,7 +6,8 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   env: {
-    BASE_URL: 'http://127.0.0.1:3003',
+    BASE_URL: 'http://orabeauty.by',
+    // BASE_URL: 'http://127.0.0.1:3003',
   },
 };
 
