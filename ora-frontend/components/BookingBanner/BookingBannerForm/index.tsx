@@ -6,6 +6,8 @@ import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
 import Button from "@/components/Button";
 
+import styles from "./style.module.scss";
+
 // interface BookingBannerFormModel {
 //   cities: SelectItemOptionsType[];
 // }
@@ -51,6 +53,7 @@ const BookingBannerForm: FC = () => {
           field="procedureName"
           value={selectedProcedure}
           suggestions={filteredProcedures}
+          panelClassName={styles.autocomplete}
           completeMethod={searchProcedure}
           onChange={(e) => setSelectedProcedure(e.value)}
         />
