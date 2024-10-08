@@ -6,7 +6,7 @@ import { ListBox } from "primereact/listbox";
 
 import Button from "@/components/Button";
 
-type City = { id: number; name: string };
+export type City = { id: number; name: string; alias: string; };
 
 interface ProcedureCitiesProps {
   procedureId: number;
@@ -59,7 +59,7 @@ const ProcedureCities: FC<ProcedureCitiesProps> = ({ cities, procedureId }) => {
           formik.setFieldValue("city", e.value);
         }}
         options={cities}
-        optionValue="id"
+        optionValue="alias"
         optionLabel="name"
         className={classNames("w-full", "mt-2")}
         listStyle={{ maxHeight: 256 }}

@@ -5,12 +5,12 @@ import axiosInstance from "@/api";
 import { getCitiesProcedureIdUrl } from "@/api/categories";
 // import NotFound from "@/pages/404";
 import ContentWrapper from "@/components/ContentWrapper";
-import ProcedureCities from "@/screens/ProcedureCities";
+import ProcedureCities, { City } from "@/screens/ProcedureCities";
 
 interface ProcedureCitiesResponseModel {
   id: number;
   name: string;
-  cities: { id: number; name: string }[];
+  cities: City[];
 }
 
 interface ProcedurePageProps {

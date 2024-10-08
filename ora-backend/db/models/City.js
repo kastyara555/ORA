@@ -13,6 +13,10 @@ const City = (sequelize) =>
         type: DataTypes.STRING,
         allowNull: false,
       },
+      alias: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       priority: {
         type: DataTypes.INTEGER,
         allowNull: false,
