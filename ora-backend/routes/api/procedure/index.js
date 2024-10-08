@@ -6,7 +6,7 @@ const {
 
 var procedureRouter = express.Router();
 
-procedureRouter.post("/:procedureId/cities/:cityId", function (req, res) {
+procedureRouter.post("/:procedureId/cities/:cityAlias", function (req, res) {
   getProcedureDataByCity(req, res);
 });
 

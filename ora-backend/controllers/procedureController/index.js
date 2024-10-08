@@ -40,7 +40,7 @@ const getProcedureDataByCity = async (req, res) => {
     }
 
     const existCity = await city.findOne({
-      where: { id: req.params.cityId },
+      where: { alias: req.params.cityAlias },
     });
 
     if (!existCity) {
@@ -121,7 +121,7 @@ const getProcedureCities = async (req, res) => {
     }
 
     const [cities] = await connection.query(
-      `SELECT DISTINCT c.id as id, c.name as name
+      `SELECT DISTINCT c.id as id, c.name as name, c.alias as alias
       FROM \`${city.tableName}\` c
       JOIN \`${saloon_info.tableName}\` si
       ON si.idCity = c.id

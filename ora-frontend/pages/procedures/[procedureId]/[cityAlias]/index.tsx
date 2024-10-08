@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { GetServerSidePropsContext } from "next";
 import { ProcedureDataModel } from "@/models/procedure";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import { getProcedureDataUrl } from "@/api/categories";
@@ -30,27 +31,32 @@ const ProcedureInCityPage: FC<ProcedureInCityPageProps> = ({
   }
 
   return (
-    <ContentWrapper
-      backHref={`/procedures/${procedureId}`}
-      title={`${procedureInfo.procedureName} (г.${procedureInfo.cityName})`}
-    >
-      {procedureInfo.saloons.data.length ? (
-        <Procedure initialProcedure={procedureInfo} />
-      ) : (
-        <p className="my-4">
-          Отсутствуют доступные салоны согласно заданным критериям.
-        </p>
-      )}
-    </ContentWrapper>
+    <>
+      <Head>
+        <title>ORA - Записаться на процедуру {procedureInfo.procedureName.toLowerCase()} в городе {procedureInfo.cityName}</title>
+      </Head>
+      <ContentWrapper
+        backHref={`/procedures/${procedureId}`}
+        title={`${procedureInfo.procedureName} (г.${procedureInfo.cityName})`}
+      >
+        {procedureInfo.saloons.data.length ? (
+          <Procedure initialProcedure={procedureInfo} />
+        ) : (
+          <p className="my-4">
+            Отсутствуют доступные салоны согласно заданным критериям.
+          </p>
+        )}
+      </ContentWrapper>
+    </>
   );
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { procedureId, cityId } = ctx.query as { procedureId: string, cityId: string };
+  const { procedureId, cityAlias } = ctx.query as { procedureId: string, cityAlias: string };
 
   try {
     const { data } = await axiosInstance.post(
-      getProcedureDataUrl(procedureId, cityId),
+      getProcedureDataUrl(procedureId, cityAlias),
       {
         pageSize: SALOONS_PAGE_SIZE,
         pageNumber: 1,

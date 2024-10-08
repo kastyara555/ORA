@@ -284,11 +284,11 @@ const BookingSidebarContent: FC<BookingSidebarContentProps> = ({ data }) => {
                   handleApplyLogin={applyLoginCheckoutForm}
                 />
               ))}
-            <Message
+            {!saloonBaseInfo.street && <Message
               severity={MessageSeverity.INFO}
               className={classNames("w-full", "mt-2")}
               text={`Салон оказывает услуги с выездом${saloonBaseInfo.visitPayment ? `, стоимость посещения - ${saloonBaseInfo.visitPayment}` : ''}`}
-            />
+            />}
           </> : null}
         </div>
       </div>
