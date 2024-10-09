@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
 import storage from "redux-persist/lib/storage";
-import { useRouter } from "next/navigation";
 
 import ContentWrapper from "@/components/ContentWrapper";
 import { resetProfileUserData } from "@/store/profile/actions";
@@ -11,13 +10,13 @@ import Button from "@/components/Button";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const handleLogout = async () => {
     dispatch(resetProfileUserData());
     await storage.removeItem("root");
     deleteCookie(AUTH_COOKIE_NAME);
-    router.push("/");
+    window.history.pushState(undefined, '', "/");
+    window.location.reload();
   };
 
   return (
