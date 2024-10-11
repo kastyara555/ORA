@@ -36,7 +36,7 @@ const updateMaster = async (req, res) => {
         data.indexOf(",") === -1 ||
         fileType.indexOf("image/") !== 0 ||
         fileName.indexOf(".") < 1 ||
-        !IMAGE_EXTENSIONS.includes(fileName.split(".")[1])
+        !IMAGE_EXTENSIONS.includes(fileName.split(".")[1].toLowerCase())
       ) {
         return res.status(400).send("Неверный формат/размер изображения.");
       }

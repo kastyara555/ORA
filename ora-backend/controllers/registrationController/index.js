@@ -64,7 +64,7 @@ const registrationSaloon = async (req, res) => {
         picturesForm.mainImage.data.indexOf(",") === -1 ||
         picturesForm.mainImage.fileType.indexOf("image/") !== 0 ||
         picturesForm.mainImage.fileName.indexOf(".") < 1 ||
-        !IMAGE_EXTENSIONS.includes(picturesForm.mainImage.fileName.split(".")[1])
+        !IMAGE_EXTENSIONS.includes(picturesForm.mainImage.fileName.split(".")[1].toLowerCase())
       );
 
     if (suspectPicture) {
