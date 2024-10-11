@@ -3,7 +3,7 @@ import cn from "classnames";
 import { Divider } from "primereact/divider";
 import { Tooltip } from "primereact/tooltip";
 
-import { DEFAULT_BASE_URL_BACK } from "@/api";
+import { BASE_URL_BACK } from "@/api";
 import { prepareTime } from "@/utils";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 
@@ -61,7 +61,7 @@ const Timetable: FC<TimetableProps> = ({ classNames, title, timetable, showFromH
             >
               <img
                 src={mainImage
-                  ? DEFAULT_BASE_URL_BACK.concat(mainImage)
+                  ? BASE_URL_BACK.concat(mainImage)
                   : DEFAULT_PROFILE_IMAGE}
                 alt={name}
                 className={cn(styles.masterAvatar, "h-3rem", "w-3rem", "shadow-2")}

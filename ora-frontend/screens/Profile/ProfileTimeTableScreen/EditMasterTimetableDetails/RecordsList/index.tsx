@@ -4,7 +4,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 
-import { DEFAULT_BASE_URL_BACK } from "@/api";
+import { BASE_URL_BACK } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 
 import { CreateServiceTimetableModel } from "../types";
@@ -43,7 +43,7 @@ const RecordsList: FC<RecordsListProps> = ({ serviceInstances, onCancel }) =>
             <img
               src={
                 saloon.mainImage
-                  ? DEFAULT_BASE_URL_BACK.concat(saloon.mainImage)
+                  ? BASE_URL_BACK.concat(saloon.mainImage)
                   : DEFAULT_PROFILE_IMAGE
               }
               alt={saloon.mainImage ?? "Главное изображение салона"}

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Column } from "primereact/column";
 import { DataTable, DataTableSelection } from "primereact/datatable";
 
-import axiosInstance, { DEFAULT_BASE_URL_BACK } from "@/api";
+import axiosInstance, { BASE_URL_BACK } from "@/api";
 import { getSaloonMastersUrl, deleteSaloonMastersUrl } from "@/api/saloon";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
@@ -93,7 +93,7 @@ const EditTeamMastersTable = () => {
 
   const mainImageTemplate = (master: MasterModel) => {
     const imageUrl = master.mainImage
-      ? DEFAULT_BASE_URL_BACK.concat(master.mainImage)
+      ? BASE_URL_BACK.concat(master.mainImage)
       : DEFAULT_PROFILE_IMAGE;
 
     return (
