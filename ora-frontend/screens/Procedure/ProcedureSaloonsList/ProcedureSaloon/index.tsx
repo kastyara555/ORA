@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 
-import { BASE_URL } from "@/api";
+import { DEFAULT_BASE_URL_BACK } from "@/api";
 import Button from "@/components/Button";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { ProcedureSaloonSaloonModel } from "@/models/procedure";
@@ -42,7 +42,7 @@ const ProcedureSaloon: FC<ProcedureSaloonProps> = ({ saloonInfo, isFavorite, han
             <img
               src={
                 saloonInfo.mainImage
-                  ? BASE_URL.concat(saloonInfo.mainImage)
+                  ? DEFAULT_BASE_URL_BACK.concat(saloonInfo.mainImage)
                   : DEFAULT_PROFILE_IMAGE
               }
               alt={saloonInfo.mainImage ?? "Главное изображение салона"}

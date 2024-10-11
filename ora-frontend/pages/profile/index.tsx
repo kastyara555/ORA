@@ -15,7 +15,7 @@ const ProfilePage = () => {
     dispatch(resetProfileUserData());
     await storage.removeItem("root");
     deleteCookie(AUTH_COOKIE_NAME);
-    window.history.pushState(undefined, '', "/");
+    window.history.pushState(undefined, "", "/");
     window.location.reload();
   };
 

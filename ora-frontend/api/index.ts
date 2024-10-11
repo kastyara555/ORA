@@ -3,13 +3,15 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { deleteCookie, getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
 
-const DEFAULT_BASE_URL = "http://127.0.0.1:3003";
+const DEFAULT_BASE_URL_BACK = "http://127.0.0.1:3003";
+const DEFAULT_BASE_URL_FRONT = "http://127.0.0.1:3000";
 
-export const BASE_URL = process.env.BASE_URL ?? DEFAULT_BASE_URL;
+export const BASE_URL_BACK = process.env.BASE_URL_BACK ?? DEFAULT_BASE_URL_BACK;
+export const BASE_URL_FRONT = process.env.BASE_URL_FRONT ?? DEFAULT_BASE_URL_FRONT;
 
-export const BASE_API_URL = BASE_URL.concat("/api");
+export const BASE_API_URL = BASE_URL_BACK.concat("/api");
 
-export const BASE_ASSETS_URL = BASE_URL.concat("/assets");
+export const BASE_ASSETS_URL = BASE_URL_FRONT.concat("/assets");
 
 const axiosInstance = axios.create({
   baseURL: BASE_API_URL,

@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { Divider } from "primereact/divider";
 import Link from "next/link";
 
-import { BASE_URL } from "@/api";
+import { DEFAULT_BASE_URL_BACK } from "@/api";
 import Button from "@/components/Button";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { FavoriteServiceModel } from "@/models/favorites";
@@ -25,7 +25,7 @@ const FavoriteService: FC<FavoriteServiceProps> = ({ isFavorite, service: { salo
         <img
           src={
             mainImage
-              ? BASE_URL.concat(mainImage)
+              ? DEFAULT_BASE_URL_BACK.concat(mainImage)
               : DEFAULT_PROFILE_IMAGE
           }
           alt={mainImage ?? "Главное изображение салона"}
@@ -64,7 +64,7 @@ const FavoriteService: FC<FavoriteServiceProps> = ({ isFavorite, service: { salo
           <img
             src={
               mainImage
-                ? BASE_URL.concat(mainImage)
+                ? DEFAULT_BASE_URL_BACK.concat(mainImage)
                 : DEFAULT_PROFILE_IMAGE
             }
             alt={mainImage ?? "Главное изображение салона"}
