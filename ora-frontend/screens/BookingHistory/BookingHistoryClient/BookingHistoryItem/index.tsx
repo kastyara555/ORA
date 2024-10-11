@@ -7,7 +7,7 @@ import { Divider } from "primereact/divider";
 import { ProfileClientHistoryModel } from "@/models/profile";
 import { DAYS_OF_WEEK } from "@/consts";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
-import { BASE_URL } from "@/api";
+import { DEFAULT_BASE_URL_BACK } from "@/api";
 
 import styles from "./style.module.scss";
 
@@ -27,7 +27,7 @@ const InfoBlock: FC<InfoBlockProps> = ({ title, image, label }) => (
         <div className={classNames("flex", "align-items-center", "mt-2")}>
             <img
                 src={image
-                    ? BASE_URL.concat(image)
+                    ? DEFAULT_BASE_URL_BACK.concat(image)
                     : DEFAULT_PROFILE_IMAGE}
                 alt="Главное изображение"
                 className={classNames(

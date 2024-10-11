@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/api";
+import { DEFAULT_BASE_URL_BACK } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { ClientProfileModel, SaloonProfileModel } from "@/models/profile";
 import { profileEditClientForm } from "@/components/EditProfile/ClientEditProfile";
@@ -59,10 +59,10 @@ export const prepareProfileData = (
   const result = {
     ...userInfo,
     mainImage: userInfo.mainImage
-      ? BASE_URL.concat(userInfo.mainImage)
+      ? DEFAULT_BASE_URL_BACK.concat(userInfo.mainImage)
       : DEFAULT_PROFILE_IMAGE,
     gallery: userInfo.gallery.map((galleryItem: string) =>
-      BASE_URL.concat(galleryItem)
+      DEFAULT_BASE_URL_BACK.concat(galleryItem)
     ),
   };
 

@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { Divider } from "primereact/divider";
 
 import { SaloonBaseDataModel } from "@/models/saloon";
-import { BASE_URL } from "@/api";
+import { DEFAULT_BASE_URL_BACK } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 
 import SaloonWorkingTime from "./SaloonWorkingTime";
@@ -21,7 +21,7 @@ const SaloonScreen: FC<SaloonScreenProps> = ({ saloonData }) => (
       <img
         src={
           saloonData.mainImage
-            ? BASE_URL.concat(saloonData.mainImage)
+            ? DEFAULT_BASE_URL_BACK.concat(saloonData.mainImage)
             : DEFAULT_PROFILE_IMAGE
         }
         alt={saloonData.mainImage ?? "Главное изображение салона"}

@@ -5,7 +5,7 @@ import moment from "moment";
 import { ListBox } from "primereact/listbox";
 import { Skeleton } from "primereact/skeleton";
 
-import axiosInstance, { BASE_URL } from "@/api";
+import axiosInstance, { DEFAULT_BASE_URL_BACK } from "@/api";
 import { getAvailableMastersForProcedureBySaloonAndDateUrl } from "@/api/serviceInstance";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
@@ -50,7 +50,7 @@ const BookingMasterStep: FC<BookingMasterStepProps> = ({
         availableMasters.map((availableMaster: ResponseBookingMaster) => ({
           ...availableMaster,
           mainImage: availableMaster.mainImage
-            ? BASE_URL.concat(availableMaster.mainImage)
+            ? DEFAULT_BASE_URL_BACK.concat(availableMaster.mainImage)
             : DEFAULT_PROFILE_IMAGE,
         }))
       );
