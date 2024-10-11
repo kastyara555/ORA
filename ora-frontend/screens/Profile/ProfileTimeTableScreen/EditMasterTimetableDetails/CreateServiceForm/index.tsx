@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button as ButtonPrimeReact } from "primereact/button";
 
 import Button from "@/components/Button";
-import axiosInstance, { BASE_URL_BACK } from "@/api";
+import axiosInstance, { BASE_STATIC_URL } from "@/api";
 import { masterServices } from "@/api/master";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
 import { HOURS_SALOON, MINUTES_SALOON } from "@/consts/saloon";
@@ -51,7 +51,7 @@ const CreateServiceForm: FC<CreateServiceFormProps> = ({
       <img
         src={
           option.mainImage
-            ? BASE_URL_BACK.concat(option.mainImage)
+            ? BASE_STATIC_URL.concat(option.mainImage)
             : DEFAULT_PROFILE_IMAGE
         }
         alt={option.mainImage ?? "Главное изображение салона"}

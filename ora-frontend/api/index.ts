@@ -13,6 +13,8 @@ export const BASE_API_URL = BASE_URL_BACK.concat("/api");
 
 export const BASE_ASSETS_URL = BASE_URL_FRONT.concat("/assets");
 
+export const BASE_STATIC_URL = BASE_URL_BACK;
+
 const axiosInstance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 2000,

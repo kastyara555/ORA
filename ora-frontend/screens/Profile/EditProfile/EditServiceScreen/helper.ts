@@ -3,20 +3,20 @@ import {
   ActiveMasterInfoModel,
   MasterInfoModel,
 } from "@/screens/Profile/EditProfile/EditServiceScreen/types";
-import { BASE_URL_BACK } from "@/api";
+import { BASE_STATIC_URL } from "@/api";
 
 export const prepareServiceInfo = (data: any) => ({
   ...data,
   availableMasters: data.availableMasters.map((master: MasterInfoModel) => ({
     ...master,
     mainImage: master.mainImage
-      ? BASE_URL_BACK.concat(master.mainImage)
+      ? BASE_STATIC_URL.concat(master.mainImage)
       : DEFAULT_PROFILE_IMAGE,
   })),
   activeMasters: data.activeMasters.map((master: ActiveMasterInfoModel) => ({
     ...master,
     mainImage: master.mainImage
-      ? BASE_URL_BACK.concat(master.mainImage)
+      ? BASE_STATIC_URL.concat(master.mainImage)
       : DEFAULT_PROFILE_IMAGE,
   })),
 });

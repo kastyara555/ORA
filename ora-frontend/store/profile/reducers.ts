@@ -6,7 +6,7 @@ import {
   profileUpdate,
   resetProfileUserData,
 } from "@/store/profile/actions";
-import { BASE_URL_BACK } from "@/api";
+import { BASE_STATIC_URL } from "@/api";
 import { getCookie } from "@/utils/cookie";
 import { AUTH_COOKIE_NAME } from "@/consts";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
@@ -37,7 +37,7 @@ export const profile: Reducer<ProfileStoreModel> = createReducer(
           state.userData = {
             ...payload.data,
             mainImage: payload.data.mainImage
-              ? BASE_URL_BACK.concat(payload.data.mainImage)
+              ? BASE_STATIC_URL.concat(payload.data.mainImage)
               : DEFAULT_PROFILE_IMAGE,
           };
         }
