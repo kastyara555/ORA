@@ -18,7 +18,9 @@ app.use(logger("dev"));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+// Для локали
+// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, '../', "public")));
 
 // This code makes sure that any request that does not matches a static file
 // in the build folder, will just serve index.html. Client side routing is
