@@ -28,7 +28,7 @@ const sendMail = (emailConfig) =>
 const sendRegistrationMail = ({ to, username }) => {
   const source = fs
     .readFileSync(
-      path.resolve("..", __dirname, "./templates/registration-template.html"),
+      path.resolve(__dirname, "..",  "./email/templates/registration-template.html"),
       // path.resolve(__dirname, "./templates/registration-template.html"),
       "utf-8"
     )
@@ -51,7 +51,7 @@ const sendRegistrationMail = ({ to, username }) => {
 const sendPasswordRestorationMail = ({ to, href }) => {
   const source = fs
     .readFileSync(
-      path.resolve("..", __dirname, "./templates/password-restoration-template.html"),
+      path.resolve(__dirname, "..",  "./email/templates/password-restoration-template.html"),
       // path.resolve(__dirname, "./templates/password-restoration-template.html"),
       "utf-8"
     )
