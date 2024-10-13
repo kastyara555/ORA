@@ -26,47 +26,49 @@ const sendMail = (emailConfig) =>
   });
 
 const sendRegistrationMail = ({ to, username }) => {
-  // const source = fs
-  //   .readFileSync(
-  //     path.resolve(__dirname, "./templates/registration-template.html"),
-  //     "utf-8"
-  //   )
-  //   .toString();
-  // const template = handlebars.compile(source);
-  // const replacements = {
-  //   username,
-  // };
-  // const htmlToSend = template(replacements);
+  const source = fs
+    .readFileSync(
+      path.resolve(__dirname, "..", "./templates/registration-template.html"),
+      // path.resolve(__dirname, "./templates/registration-template.html"),
+      "utf-8"
+    )
+    .toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    username,
+  };
+  const htmlToSend = template(replacements);
 
-  // sendMail({
-  //   sender: "ORA-Email Service",
-  //   subject: "Регистрация ora-beauty.by",
-  //   to,
-  //   text: "", // при отправке html смысловой нагрузки не несёт, но рекомендуют оставлять
-  //   html: htmlToSend,
-  // });
+  sendMail({
+    sender: "ORA-Email Service",
+    subject: "Регистрация ora-beauty.by",
+    to,
+    text: "", // при отправке html смысловой нагрузки не несёт, но рекомендуют оставлять
+    html: htmlToSend,
+  });
 };
 
 const sendPasswordRestorationMail = ({ to, href }) => {
-  // const source = fs
-  //   .readFileSync(
-  //     path.resolve(__dirname, "./templates/password-restoration-template.html"),
-  //     "utf-8"
-  //   )
-  //   .toString();
-  // const template = handlebars.compile(source);
-  // const replacements = {
-  //   href,
-  // };
-  // const htmlToSend = template(replacements);
+  const source = fs
+    .readFileSync(
+      path.resolve(__dirname, "..", "./templates/password-restoration-template.html"),
+      // path.resolve(__dirname, "./templates/password-restoration-template.html"),
+      "utf-8"
+    )
+    .toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    href,
+  };
+  const htmlToSend = template(replacements);
 
-  // sendMail({
-  //   sender: "ORA-Email Service",
-  //   subject: "Обновление пароля учётной записи ora-beauty.by",
-  //   to,
-  //   text: "", // при отправке html смысловой нагрузки не несёт, но рекомендуют оставлять
-  //   html: htmlToSend,
-  // });
+  sendMail({
+    sender: "ORA-Email Service",
+    subject: "Обновление пароля учётной записи ora-beauty.by",
+    to,
+    text: "", // при отправке html смысловой нагрузки не несёт, но рекомендуют оставлять
+    html: htmlToSend,
+  });
 };
 
 module.exports = { sendRegistrationMail, sendPasswordRestorationMail };
