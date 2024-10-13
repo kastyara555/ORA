@@ -337,6 +337,8 @@ const registrationUser = async (req, res) => {
     await transaction.commit();
     return res.send(addedUser);
   } catch (e) {
+    console.log('e');
+    console.log(e);
     await transaction.rollback();
     res.status(500).send();
   }
