@@ -185,7 +185,7 @@ const registrationSaloon = async (req, res) => {
       );
 
       if (servicesForm.services.length) {
-        const addedServices = await service.bulkCreate(
+        await service.bulkCreate(
           servicesForm.services.map(({ procedureId, time }) => ({
             idSaloon: addedUserSaloonType.id,
             idProcedure: procedureId,
@@ -193,24 +193,20 @@ const registrationSaloon = async (req, res) => {
             time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
               }`,
           })),
-          { returning: true, transaction }
+          { transaction }
         );
 
-        console.log('addedServices');
-        console.log(addedServices);
+        const addedServices = await service.findAll({
+          where: {
+            idSaloon: addedUserSaloonType.id,
+          },
+        });
 
         const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
           where: {
             name: SERVICES_MASTER_MAP_STATUSES.active.name,
           },
         });
-
-        console.log(addedServices.map(({ dataValues }, index) => ({
-          idService: dataValues.id,
-          idMaster: addedUserMasterType.id,
-          price: servicesForm.services[index].price,
-          idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
-        })));
 
         await service_master_map.bulkCreate(
           addedServices.map(({ dataValues }, index) => ({
