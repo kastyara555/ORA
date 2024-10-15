@@ -196,21 +196,15 @@ const registrationSaloon = async (req, res) => {
           { returning: true, transaction }
         );
 
+        console.log('addedServices');
+        console.log(addedServices);
+
         const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
           where: {
             name: SERVICES_MASTER_MAP_STATUSES.active.name,
           },
         });
 
-        console.log('addedServices');
-        console.log(addedServices);
-        console.log('addedUserMasterType');
-        console.log(addedUserMasterType);
-        console.log('servicesForm.services');
-        console.log(servicesForm.services);
-        console.log('activeServiceMasterMapStatus');
-        console.log(activeServiceMasterMapStatus);
-        console.log('mapped array');
         console.log(addedServices.map(({ dataValues }, index) => ({
           idService: dataValues.id,
           idMaster: addedUserMasterType.id,
@@ -255,9 +249,7 @@ const registrationSaloon = async (req, res) => {
 
     await transaction.commit();
     return res.send(addedUser);
-  } catch (e) {
-    console.log('e');
-    console.log(e);
+  } catch {
     await transaction.rollback();
     res.status(500).send("Что-то пошло не так");
   }
