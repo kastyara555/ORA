@@ -143,6 +143,78 @@ const registrationSaloon = async (req, res) => {
       { transaction }
     );
 
+    if (isSelfEmployed) {
+      const { dataValues: masterType } = await user_type.findOne({
+        where: {
+          name: roles.master.name,
+        },
+      });
+
+      const { dataValues: addedUserMasterType } = await user_type_map.create(
+        {
+          idUser: addedUser.id,
+          idUserType: masterType.id,
+          idUserStatus: activeUserStatus.id,
+          hash: generateHash(`${addedUser.id}-${masterType.id}`),
+          bonusCount: 0,
+        },
+        { transaction }
+      );
+
+      await master_info.create(
+        {
+          idUserTypeMap: addedUserMasterType.id,
+          description: "",
+        },
+        { transaction }
+      );
+
+      const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne({
+        where: {
+          name: SALOON_MASTER_MAP_STATUSES.active.name,
+        },
+      });
+
+      await saloon_master_map.create(
+        {
+          idMaster: addedUserMasterType.id,
+          idSaloon: addedUserSaloonType.id,
+          idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
+        },
+        { transaction }
+      );
+
+      if (servicesForm.services.length) {
+        // TODO: здесь баг, тк транзакция не закоммичена
+        const addedServices = await service.bulkCreate(
+          servicesForm.services.map(({ procedureId, time }) => ({
+            idSaloon: addedUserSaloonType.id,
+            idProcedure: procedureId,
+            description: "",
+            time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
+              }`,
+          })),
+          { returning: true, transaction },
+        );
+
+        const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
+          where: {
+            name: SERVICES_MASTER_MAP_STATUSES.active.name,
+          },
+        });
+
+        await service_master_map.bulkCreate(
+          addedServices.map(({ dataValues }, index) => ({
+            idService: dataValues.id,
+            idMaster: addedUserMasterType.id,
+            price: servicesForm.services[index].price,
+            idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
+          })),
+          { transaction },
+        );
+      }
+    }
+
     if (picturesForm.mainImage) {
       const dirName = "/userUploads/" + addedUserSaloonType.id + "/images/";
       const fullDirName = "public" + dirName;
@@ -167,69 +239,6 @@ const registrationSaloon = async (req, res) => {
     }
 
     await transaction.commit();
-
-    if (isSelfEmployed) {
-      const { dataValues: masterType } = await user_type.findOne({
-        where: {
-          name: roles.master.name,
-        },
-      });
-
-      const { dataValues: addedUserMasterType } = await user_type_map.create({
-        idUser: addedUser.id,
-        idUserType: masterType.id,
-        idUserStatus: activeUserStatus.id,
-        hash: generateHash(`${addedUser.id}-${masterType.id}`),
-        bonusCount: 0,
-      });
-
-      await master_info.create({
-        idUserTypeMap: addedUserMasterType.id,
-        description: "",
-      });
-
-      const { dataValues: activeSaloonMasterMapStatus } = await saloon_master_map_status.findOne({
-        where: {
-          name: SALOON_MASTER_MAP_STATUSES.active.name,
-        },
-      });
-
-      await saloon_master_map.create({
-        idMaster: addedUserMasterType.id,
-        idSaloon: addedUserSaloonType.id,
-        idSaloonMasterMapStatus: activeSaloonMasterMapStatus.id,
-      });
-
-      // Свято верим, что транзакция тут избыточна
-      if (servicesForm.services.length) {
-        const addedServices = await service.bulkCreate(
-          servicesForm.services.map(({ procedureId, time }) => ({
-            idSaloon: addedUserSaloonType.id,
-            idProcedure: procedureId,
-            description: "",
-            time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
-              }`,
-          })),
-          { returning: true }
-        );
-
-        const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
-          where: {
-            name: SERVICES_MASTER_MAP_STATUSES.active.name,
-          },
-        });
-
-        await service_master_map.bulkCreate(
-          addedServices.map(({ dataValues }, index) => ({
-            idService: dataValues.id,
-            idMaster: addedUserMasterType.id,
-            price: servicesForm.services[index].price,
-            idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
-          })),
-        );
-      }
-    }
-
     return res.send(addedUser);
   } catch {
     await transaction.rollback();
