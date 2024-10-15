@@ -202,6 +202,22 @@ const registrationSaloon = async (req, res) => {
           },
         });
 
+        console.log('addedServices');
+        console.log(addedServices);
+        console.log('addedUserMasterType');
+        console.log(addedUserMasterType);
+        console.log('servicesForm.services');
+        console.log(servicesForm.services);
+        console.log('activeServiceMasterMapStatus');
+        console.log(activeServiceMasterMapStatus);
+        console.log('mapped array');
+        console.log(addedServices.map(({ dataValues }, index) => ({
+          idService: dataValues.id,
+          idMaster: addedUserMasterType.id,
+          price: servicesForm.services[index].price,
+          idServiceMasterMapStatus: activeServiceMasterMapStatus.id,
+        })));
+
         await service_master_map.bulkCreate(
           addedServices.map(({ dataValues }, index) => ({
             idService: dataValues.id,
@@ -240,8 +256,10 @@ const registrationSaloon = async (req, res) => {
     await transaction.commit();
     return res.send(addedUser);
   } catch (e) {
+    console.log('e');
+    console.log(e);
     await transaction.rollback();
-    res.status(500).send();
+    res.status(500).send("Что-то пошло не так");
   }
 };
 
