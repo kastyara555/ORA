@@ -27,6 +27,8 @@ const registrationSaloon = async (req, res) => {
     const { value, error } = saloonRegistrationSchema.validate(req.body);
 
     if (error) {
+      console.log('error');
+      console.log(error);
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
@@ -255,7 +257,9 @@ const registrationSaloon = async (req, res) => {
     }
 
     return res.send(addedUser);
-  } catch {
+  } catch (e) {
+    console.log('e');
+    console.log(e);
     await transaction.rollback();
     res.status(500).send("Что-то пошло не так");
   }
