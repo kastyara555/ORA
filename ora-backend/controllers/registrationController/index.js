@@ -27,8 +27,7 @@ const registrationSaloon = async (req, res) => {
     const { value, error } = saloonRegistrationSchema.validate(req.body);
 
     if (error) {
-      console.log('error');
-      console.log(error);
+      await transaction.rollback();
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
@@ -70,6 +69,7 @@ const registrationSaloon = async (req, res) => {
       );
 
     if (suspectPicture) {
+      await transaction.rollback();
       return res.status(400).send("Неверный формат/размер изображения.");
     }
 
@@ -87,6 +87,7 @@ const registrationSaloon = async (req, res) => {
     });
 
     if (existsUsers) {
+      await transaction.rollback();
       return res
         .status(400)
         .send(
@@ -258,8 +259,6 @@ const registrationSaloon = async (req, res) => {
 
     return res.send(addedUser);
   } catch (e) {
-    console.log('e');
-    console.log(e);
     await transaction.rollback();
     res.status(500).send("Что-то пошло не так");
   }
@@ -272,6 +271,7 @@ const registrationUser = async (req, res) => {
     const { value, error } = userRegistrationSchema.validate(req.body);
 
     if (error) {
+      await transaction.rollback();
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
@@ -300,6 +300,7 @@ const registrationUser = async (req, res) => {
     });
 
     if (existsUsers.length) {
+      await transaction.rollback();
       return res
         .status(400)
         .send(
@@ -369,6 +370,7 @@ const registrationMaster = async (req, res) => {
     const { value, error } = masterRegistrationSchema.validate(req.body);
 
     if (error) {
+      await transaction.rollback();
       return res.status(400).send("Проверьте правильность введённых данных");
     }
 
@@ -399,6 +401,7 @@ const registrationMaster = async (req, res) => {
     });
 
     if (existsUsers.length) {
+      await transaction.rollback();
       return res
         .status(400)
         .send(
@@ -421,6 +424,7 @@ const registrationMaster = async (req, res) => {
       });
 
       if (!saloonToBeRelated) {
+        await transaction.rollback();
         return res
           .status(400)
           .send("Салон, на который ссылается форма не существует.");

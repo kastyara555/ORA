@@ -65,9 +65,9 @@ const servicesFormSchema = Joi.object({
 });
 
 const pictureSchema = Joi.object({
-  data: Joi.string().max(3000000).required(),
+  data: Joi.string().max(4500000).required(),
   fileName: Joi.string().required(),
-  fileSize: Joi.number().min(0).max(3000000).required(),
+  fileSize: Joi.number().min(0).max(4500000).required(),
   fileType: Joi.string().required(),
 });
 
