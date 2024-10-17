@@ -230,7 +230,7 @@ const registrationSaloon = async (req, res) => {
       });
 
       // TODO: здесь баг, тк транзакция не закоммичена
-      const addedServices = await service.bulkCreate(
+      await service.bulkCreate(
         servicesForm.services.map(({ procedureId, time }) => ({
           idSaloon: addedUserSaloonType.id,
           idProcedure: procedureId,
@@ -238,7 +238,6 @@ const registrationSaloon = async (req, res) => {
           time: `${time.hours < 10 ? "0".concat(time.hours) : time.hours}:${time.minutes < 10 ? "0".concat(time.minutes) : time.minutes
             }`,
         })),
-        { returning: true },
       );
 
       const { dataValues: activeServiceMasterMapStatus } = await service_master_map_status.findOne({
@@ -247,11 +246,11 @@ const registrationSaloon = async (req, res) => {
         },
       });
 
-      console.log('addedServices');
-      console.log(addedServices);
-      console.log(addedServices[0]);
-      console.log(addedServices[0].id);
-      console.log(addedServices[0].primaryKey);
+      const addedServices = await service.findAll({
+        where: {
+          idSaloon: addedUserSaloonType.id,
+        },
+      });
 
       await service_master_map.bulkCreate(
         addedServices.map(({ dataValues }, index) => ({
