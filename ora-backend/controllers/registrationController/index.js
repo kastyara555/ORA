@@ -247,6 +247,12 @@ const registrationSaloon = async (req, res) => {
         },
       });
 
+      console.log('addedServices');
+      console.log(addedServices);
+      console.log(addedServices[0]);
+      console.log(addedServices[0].id);
+      console.log(addedServices[0].primaryKey);
+
       await service_master_map.bulkCreate(
         addedServices.map(({ dataValues }, index) => ({
           idService: dataValues.id,
