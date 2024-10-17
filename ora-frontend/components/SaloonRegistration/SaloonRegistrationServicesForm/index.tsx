@@ -12,6 +12,8 @@ import {
 } from "@/models/SaloonRegistration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetServicesForm } from "@/store/registrationSaloon/actions";
+import { commonSetUiToast } from "@/store/common/actions";
+import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import Button from "@/components/Button";
 
 import styles from "./style.module.scss";
@@ -38,11 +40,22 @@ const SaloonRegistrationServicesForm: FC<
   };
 
   const appendService = (newService: SaloonRegistrationServiceModel) => {
-    setState((oldState) => ({
-      ...oldState,
-      services: [...oldState.services, newService],
-    }));
-    setAddingMode(false);
+    if (state.services.map(({ procedure }) => procedure.procedureId).includes(newService.procedure?.procedureId)) {
+      const toastToBeShown = {
+        severity: TOAST_SEVERITIES.ERROR,
+        summary: "Регистрация",
+        detail: "Данная услуга уже добавлена в список оказываемых",
+        life: TOAST_DEFAULT_LIFE,
+      };
+
+      dispatch(commonSetUiToast(toastToBeShown));
+    } else {
+      setState((oldState) => ({
+        ...oldState,
+        services: [...oldState.services, newService],
+      }));
+      setAddingMode(false);
+    }
   };
 
   const deleteService = (index: number) => {

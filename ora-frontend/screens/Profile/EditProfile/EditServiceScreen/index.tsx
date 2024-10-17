@@ -55,7 +55,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
       );
 
       setServiceInfo(prepareServiceInfo(data));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Профиль",
@@ -86,7 +86,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
 
       dispatch(commonSetUiToast(toastToBeShown));
       setServiceInfo(prepareServiceInfo(data));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Профиль",
@@ -117,7 +117,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
 
       dispatch(commonSetUiToast(toastToBeShown));
       setServiceInfo(prepareServiceInfo(data));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Профиль",
@@ -148,7 +148,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
 
       dispatch(commonSetUiToast(toastToBeShown));
       setServiceInfo(prepareServiceInfo(data));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Профиль",
@@ -179,7 +179,7 @@ const EditServiceScreen: FC<EditServiceScreenProps> = ({ serviceId }) => {
 
       dispatch(commonSetUiToast(toastToBeShown));
       setServiceInfo(prepareServiceInfo(data));
-    } catch (e) {
+    } catch {
       const toastToBeShown = {
         severity: TOAST_SEVERITIES.ERROR,
         summary: "Профиль",
