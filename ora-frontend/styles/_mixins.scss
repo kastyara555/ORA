@@ -15,6 +15,21 @@
     line-height: 18px;
 }
 
+@mixin text-18-24 {
+    font-size: 18px;
+    line-height: 24px;
+}
+
+@mixin text-20-26 {
+    font-size: 20px;
+    line-height: 26px;
+}
+
+@mixin text-24-32 {
+    font-size: 24px;
+    line-height: 32px;
+}
+
 @mixin text-ellipsis {
     white-space: nowrap;
     overflow: hidden;

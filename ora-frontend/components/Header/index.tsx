@@ -4,6 +4,7 @@ import Link from "next/link";
 import classNames from "classnames";
 import { useSelector } from "react-redux";
 
+import { LOGO_IMAGE } from "@/consts";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 
 import styles from "./style.module.scss";
@@ -18,7 +19,7 @@ const Header: FC<HeaderModel> = ({ withoutAuthorization }) => {
   return (
     <header className={styles.header}>
       <Link href="/">
-        <h2>ORA</h2>
+        <img height={52} src={LOGO_IMAGE} alt="ORA - Находи и бронируй запись у профессионалов бьюти индустрии" />
       </Link>
 
       {!withoutAuthorization && (

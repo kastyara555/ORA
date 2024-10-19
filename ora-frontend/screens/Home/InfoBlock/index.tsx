@@ -9,6 +9,7 @@ interface InfoBlockProps {
   content: string | ReactNode;
   imageSrc: string;
   order?: "default" | "reverse";
+  className?: string;
 }
 
 const InfoBlock: FC<InfoBlockProps> = ({
@@ -16,21 +17,22 @@ const InfoBlock: FC<InfoBlockProps> = ({
   content,
   imageSrc,
   order = "default",
+  className = null,
 }) => {
   const textBlock = <p className="p-2">{content}</p>;
   const imageBlock = (
     <Image
       loading="lazy"
       src={imageSrc}
-      alt={imageSrc}
-      width="320px"
+      alt={title}
+      width="360px"
       className="p-2"
     />
   );
 
   return (
-    <div className={cn(styles.wrapper, "py-2")}>
-      <h3 className="px-2">{title}</h3>
+    <div className={cn(styles.wrapper, className, "py-2")}>
+      <h2 className="px-2">{title}</h2>
       <div className={cn(styles.info, "mt-2")}>
         {order === "reverse" ? (
           <>

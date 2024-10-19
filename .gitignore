@@ -26,9 +26,6 @@
 /ora-frontend/yarn-debug.log*
 /ora-frontend/yarn-error.log*
 
-# local env files
-/ora-frontend/.env*.local
-
 # vercel
 /ora-frontend/.vercel
 

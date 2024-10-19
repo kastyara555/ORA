@@ -1,8 +1,9 @@
 import { FC } from "react";
 import { MenuItem } from "primereact/menuitem";
 
+import { HOME_CONTENT_IMAGE_1, HOME_CONTENT_IMAGE_2, HOME_CONTENT_IMAGE_3 } from "@/consts/home";
 import Advantages from "@/components/Advantages";
-import Recomended from "@/components/Recomended";
+// import Recomended from "@/components/Recomended";
 import BookingBanner from "@/components/BookingBanner";
 import CategoriesMenu from "@/components/CategoriesMenu";
 
@@ -18,29 +19,26 @@ const HomeScreen: FC<HomeScreenProps> = ({ categoriesTree }) => (
     <CategoriesMenu categoriesTree={categoriesTree} />
     <BookingBanner />
     <Advantages />
-    <Recomended />
+    {/* TODO: обдумать блок рекомендаций */}
+    {/* <Recomended /> */}
     <InfoBlock
-      title="Appointments done better!"
-      imageSrc="https://s0.2mdn.net/simgad/13085765977942103482"
-      content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id
-      faucibus diam. Orci varius natoque penatibus et magnis dis parturient
-      montes, nascetur ridiculus mus. Phasellus in leo tempus, convallis mi
-      at, imperdiet massa. Nullam lacinia orci suscipit, sagittis ligula
-      sed, facilisis purus. Nam finibus in odio cursus tempus. Etiam tempus
-      facilisis nisi, at ultricies nibh scelerisque a. Donec cursus lacus
-      nec tellus mattis ornare. Mauris et eros nibh."
+      className="mt-8"
+      title="Планируй свою жизнь лучше"
+      imageSrc={HOME_CONTENT_IMAGE_1}
+      content={
+        <>Ищешь для себя процедуру у местного мастера по ногтям, бровиста или барбера? Тебе нужно записаться на укладку волос или на прием к косметологу?<br /><br />ORA - это бесплатное приложение по поиску и бронированию лучших услуг в твоем городе. Больше никаких телефонных заметок, звонков мастерам для уточнения свободных мест. Бронируй в любое время и в любом месте 24/7.<br /><br />Сделай свою жизнь еще комфортнее и лучше с ORA.</>
+      }
     />
     <InfoBlock
-      title="Appointments done better!"
-      imageSrc="https://s0.2mdn.net/simgad/13085765977942103482"
-      content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id
-      faucibus diam. Orci varius natoque penatibus et magnis dis parturient
-      montes, nascetur ridiculus mus. Phasellus in leo tempus, convallis mi
-      at, imperdiet massa. Nullam lacinia orci suscipit, sagittis ligula
-      sed, facilisis purus. Nam finibus in odio cursus tempus. Etiam tempus
-      facilisis nisi, at ultricies nibh scelerisque a. Donec cursus lacus
-      nec tellus mattis ornare. Mauris et eros nibh."
+      title="Огромный выбор услуг и мастеров"
+      imageSrc={HOME_CONTENT_IMAGE_2}
+      content="Вас ждет широчайший выбор услуг и опытных мастеров, готовых подарить вам моменты истинного блаженства и красоты. От парикмахерских услуг до массажа и косметологии — у нас вы найдете все, что нужно для идеального образа и полного расслабления."
       order="reverse"
+    />
+    <InfoBlock
+      title="Уникальная система лояльности"
+      imageSrc={HOME_CONTENT_IMAGE_3}
+      content={<>А это еще не все! Радуйтесь эксклюзивным бонусам, скидкам и программе лояльности, которые подарят вам дополнительные приятные моменты и превратят ваш опыт в незабываемое путешествие по миру красоты!<br /><br />Присоединяйтесь к нам и познайте простоту и радость онлайн-записи, делая вашу жизнь ярче и краше с каждым кликом!</>}
     />
   </div>
 );

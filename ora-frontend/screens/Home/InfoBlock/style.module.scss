@@ -1,11 +1,26 @@
+@import '../../../styles/mixins';
+
 .wrapper {
   max-width: 960px;
   align-self: center;
+
+  h2 {
+    font-weight: bold;
+  }
 }
 
 .info {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+
+  p {
+    @include text-18-24;
+  }
+
+  img {
+    pointer-events: none;
+  }
 }
 
 @media (max-width: 896px) {
