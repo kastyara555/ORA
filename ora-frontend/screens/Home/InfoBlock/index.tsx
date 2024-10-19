@@ -25,7 +25,7 @@ const InfoBlock: FC<InfoBlockProps> = ({
       loading="lazy"
       src={imageSrc}
       alt={title}
-      width="360px"
+      width="272px"
       className="p-2"
     />
   );

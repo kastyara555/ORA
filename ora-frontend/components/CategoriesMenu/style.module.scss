@@ -1,4 +1,6 @@
 .navigation {
+    padding: 8px 72px;
+
     :global(a[role="menuitem"]) svg {
         display: none;
     }
@@ -11,6 +13,7 @@
 @media (max-width: 896px) {
     .navigation {
         border-width: 0 !important;
+        padding: unset;
 
         :global(ul.p-megamenu-submenu) {
             width: 100%;

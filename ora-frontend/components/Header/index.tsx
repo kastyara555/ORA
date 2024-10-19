@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { BiMenu, BiSolidUser } from "react-icons/bi";
+import { BiSolidUser } from "react-icons/bi";
 import Link from "next/link";
 import classNames from "classnames";
 import { useSelector } from "react-redux";
@@ -32,14 +32,11 @@ const Header: FC<HeaderModel> = ({ withoutAuthorization }) => {
               >
                 Размещайтесь на ORA
               </Link>
-              <Link href="/login" className={styles.linkToLogin}>
-                <BiMenu color="white" />
-                <BiSolidUser color="white" />
-              </Link>
+              <Link href="/profile" className={styles.linkToLogin}>Войти</Link>
             </>
           ) : (
             <Link href="/profile" className={styles.linkToLogin}>
-              <BiSolidUser color="white" />
+              <div><BiSolidUser color="white" /></div>&nbsp;<p>{profileInfo.name}</p>
             </Link>
           )}
         </div>

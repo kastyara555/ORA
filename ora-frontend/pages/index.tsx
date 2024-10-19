@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Head from "next/head";
 import { MenuItem } from "primereact/menuitem";
 
 import axiosInstance from "@/api";
@@ -38,7 +39,12 @@ const Home: FC<HomeProps> = ({ proceduresTree }) => {
     ],
   } as MenuItem));
 
-  return <HomeScreen categoriesTree={categoriesTree} />;
+  return <>
+    <Head>
+      <title>ORA - Находи и бронируй запись у профессионалов бьюти индустрии</title>
+    </Head>
+    <HomeScreen categoriesTree={categoriesTree} />
+  </>;
 };
 
 export const getServerSideProps = async () => {

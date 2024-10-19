@@ -1,6 +1,7 @@
 import { FC, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AutoComplete, AutoCompleteCompleteEvent } from "primereact/autocomplete";
+import cn from "classnames";
 
 import { searchProceduresUrl } from "@/api/categories";
 import axiosInstance from "@/api";
@@ -12,8 +13,12 @@ import styles from "./style.module.scss";
 //   cities: SelectItemOptionsType[];
 // }
 
+interface BookingBannerFormProps {
+  className?: string;
+}
+
 // TODO: Когда будет много салонов в городах, разблокировать выбор города для процедуры
-const BookingBannerForm: FC = () => {
+const BookingBannerForm: FC<BookingBannerFormProps> = ({ className }) => {
   const router = useRouter();
 
   const [selectedProcedure, setSelectedProcedure] = useState<any>(null);
@@ -47,7 +52,7 @@ const BookingBannerForm: FC = () => {
 
   return (
     <>
-      <div className="card p-fluid">
+      <div className={cn(className, "card", "p-fluid")}>
         <AutoComplete
           placeholder="Поиск процедур"
           field="procedureName"

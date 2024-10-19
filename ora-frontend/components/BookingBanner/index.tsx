@@ -14,7 +14,7 @@ const BookingBanner = () => {
     <div className={styles.banner}>
       <div className={styles.form}>
         <h2>Находи и бронируй запись у профессионалов бьюти индустрии</h2>
-        <BookingBannerForm />
+        <BookingBannerForm className="mt-3" />
       </div>
     </div>
   );

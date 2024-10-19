@@ -12,11 +12,8 @@
     .form {
         display: flex;
         flex-direction: column;
+        gap: 8px;
         width: 420px;
-
-        & > * {
-            margin-top: 8px;
-        }
     }
 }
 
