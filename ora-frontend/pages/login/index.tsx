@@ -172,7 +172,7 @@ const Login = () => {
             Войти
           </Button>
           <Link
-            href="/registration/user"
+            href="/registration/client"
             className={classNames(styles.link, "mb-3")}
           >
             Регистрация
