@@ -33,7 +33,7 @@ const ProcedureInCityPage: FC<ProcedureInCityPageProps> = ({
   return (
     <>
       <Head>
-        <title>ORA - Записаться на процедуру {procedureInfo.procedureName.toLowerCase()} в городе {procedureInfo.cityName}</title>
+        <title>ORA - Записаться на {procedureInfo.procedureName.toLowerCase()} в городе {procedureInfo.cityName}</title>
       </Head>
       <ContentWrapper
         backHref={`/procedures/${procedureId}`}

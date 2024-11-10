@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import { saloonBaseInfoUrl } from "@/api/saloon";
@@ -24,9 +25,14 @@ const SaloonPage: FC<SaloonPageProps> = ({ status, saloonInfo }) => {
   }
 
   return (
-    <ContentWrapper>
-      <SaloonScreen saloonData={saloonInfo} />
-    </ContentWrapper>
+    <>
+      <Head>
+        <title>ORA - салон {saloonInfo.name}</title>
+      </Head>
+      <ContentWrapper>
+        <SaloonScreen saloonData={saloonInfo} />
+      </ContentWrapper>
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import { getCitiesProcedureIdUrl } from "@/api/categories";
@@ -30,18 +31,23 @@ const ProcedurePage: FC<ProcedurePageProps> = ({ status, procedureId, procedureI
   }
 
   return (
-    <ContentWrapper title={procedureInfo.name} backHref="/">
-      {procedureInfo.cities.length ? (
-        <ProcedureCities
-          procedureId={procedureId}
-          cities={procedureInfo.cities}
-        />
-      ) : (
-        <p className="my-4">
-          Данную услугу через наш сервис пока никто не оказывает :(
-        </p>
-      )}
-    </ContentWrapper>
+    <>
+      <Head>
+        <title>ORA - Записаться на {procedureInfo.name.toLowerCase()}</title>
+      </Head>
+      <ContentWrapper title={procedureInfo.name} backHref="/">
+        {procedureInfo.cities.length ? (
+          <ProcedureCities
+            procedureId={procedureId}
+            cities={procedureInfo.cities}
+          />
+        ) : (
+          <p className="my-4">
+            Данную услугу через наш сервис пока никто не оказывает :(
+          </p>
+        )}
+      </ContentWrapper>
+    </>
   );
 };
 

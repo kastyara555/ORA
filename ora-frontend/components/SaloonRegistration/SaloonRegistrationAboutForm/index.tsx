@@ -2,9 +2,11 @@ import { ChangeEvent, FC, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import BY from "country-flag-icons/react/3x2/BY";
+import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
-import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
+import { MessageSeverity } from "primereact/api";
 import { InputTextarea } from "primereact/inputtextarea";
+import { InputMask, InputMaskChangeEvent } from "primereact/inputmask";
 
 import axiosInstance from "@/api";
 import { postCheckCredentialsAvailabilityUrl } from "@/api/registration";
@@ -13,6 +15,7 @@ import { RegistrationSaloonAboutFormModel } from "@/models/SaloonRegistration";
 import { CredentialsAvailabilityModel } from "@/models/registration";
 import { registrationSaloonSetAboutForm } from "@/store/registrationSaloon/actions";
 import { commonSetUiToast } from "@/store/common/actions";
+import { WRONG_PHONE_CODE } from "@/consts/messages";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import Button from "@/components/Button";
 
@@ -92,17 +95,20 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
     }));
   };
 
-  const disabledButton = useMemo<boolean>(() => {
-    if (
-      state.name.trim().length < 2 ||
-      !state.saloonName.trim().length ||
-      state.phone.replace(/[^0-9]/g, "").length < 12 ||
-      !["25", "29", "33", "44"].includes(state.phone.slice(5, 7))
-    )
-      return true;
+  const phoneError: string | undefined = useMemo(() => {
+    if (state.phone.replace(/[^0-9]/g, "").length < 12) {
+      return "";
+    } else if (!["25", "29", "33", "44"].includes(state.phone.slice(5, 7))
+    ) {
+      return WRONG_PHONE_CODE;
+    }
 
-    return false;
-  }, [state]);
+    return undefined;
+  }, [state.phone]);
+
+  const disabledButton = state.name.trim().length < 2 ||
+    !state.saloonName.trim().length ||
+    phoneError !== undefined;
 
   return (
     <div
@@ -153,6 +159,7 @@ const SaloonRegistrationAboutForm: FC<SaloonRegistrationAboutFormModel> = ({
           onChange={setPhone}
           mask="+375-99-999-99-99"
         />
+        {phoneError ? <Message className={classNames("mt-2", "w-full", "justify-content-start")} severity={MessageSeverity.ERROR} text={phoneError} /> : null}
       </div>
       <Button
         className={classNames(

@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { FC, memo } from "react";
 import moment from "moment";
+import Head from "next/head";
 
 import ContentWrapper from "@/components/ContentWrapper";
 import ProfileTimeTableScreen from "@/screens/Profile/ProfileTimeTableScreen";
@@ -13,12 +14,17 @@ const TimetablePage: FC<TimetablePageProps> = ({ date }) => {
   const formattedDate = moment(date, "DD-MM-YYYY", true);
 
   return (
-    <ContentWrapper
-      backHref="/profile/timetable"
-      title="Расписание"
-    >
-      <ProfileTimeTableScreen date={formattedDate} />
-    </ContentWrapper>
+    <>
+      <Head>
+        <title>ORA - Расписание</title>
+      </Head>
+      <ContentWrapper
+        backHref="/profile/timetable"
+        title="Расписание"
+      >
+        <ProfileTimeTableScreen date={formattedDate} />
+      </ContentWrapper>
+    </>
   );
 };
 

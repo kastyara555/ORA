@@ -1,7 +1,9 @@
-import { ChangeEvent, FC, useState, useMemo } from "react";
+import { ChangeEvent, FC, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
+import { Message } from "primereact/message";
 import { InputText } from "primereact/inputtext";
+import { MessageSeverity } from "primereact/api";
 
 import axiosInstance from "@/api";
 import { postCheckCredentialsAvailabilityUrl } from "@/api/registration";
@@ -11,6 +13,7 @@ import { CredentialsAvailabilityModel } from "@/models/registration";
 import { registrationSaloonSelectedValuesSelector } from "@/store/registrationSaloon/selectors";
 import { registrationSaloonSetEmailForm } from "@/store/registrationSaloon/actions";
 import { commonSetUiToast } from "@/store/common/actions";
+import { WRONG_EMAIL_FORMAT } from "@/consts/messages";
 import { isEmailValid } from "@/utils/forms";
 import Button from "@/components/Button";
 
@@ -69,11 +72,8 @@ const SaloonRegistrationEmailForm: FC<SaloonRegistrationEmailFormModel> = ({
     }));
   };
 
-  const disabledButton = useMemo<boolean>(() => {
-    if (!state.email.length || !isEmailValid(state.email)) return true;
-
-    return false;
-  }, [state]);
+  const isValid = isEmailValid(state.email);
+  const disabledButton = !state.email.length || !isValid
 
   return (
     <div
@@ -100,6 +100,7 @@ const SaloonRegistrationEmailForm: FC<SaloonRegistrationEmailFormModel> = ({
         onChange={setEmail}
         maxLength={32}
       />
+      {state.email.length && !isValid ? <Message className={classNames("mt-2", "w-full", "justify-content-start")} severity={MessageSeverity.ERROR} text={WRONG_EMAIL_FORMAT} /> : null}
       <Button
         className={classNames(
           "flex",

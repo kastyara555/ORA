@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import storage from "redux-persist/lib/storage";
+import Head from "next/head";
 
 import ContentWrapper from "@/components/ContentWrapper";
 import { resetProfileUserData } from "@/store/profile/actions";
@@ -20,17 +21,22 @@ const ProfilePage = () => {
   };
 
   return (
-    <ContentWrapper>
-      <Profile />
-      <Button
-        className="my-4"
-        onClick={handleLogout}
-        severity="secondary"
-        outlined
-      >
-        Выйти
-      </Button>
-    </ContentWrapper>
+    <>
+      <Head>
+        <title>ORA - Профиль</title>
+      </Head>
+      <ContentWrapper>
+        <Profile />
+        <Button
+          className="my-4"
+          onClick={handleLogout}
+          severity="secondary"
+          outlined
+        >
+          Выйти
+        </Button>
+      </ContentWrapper>
+    </>
   );
 };
 

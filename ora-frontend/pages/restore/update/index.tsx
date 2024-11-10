@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { object, string } from "yup";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import Button from "@/components/Button";
@@ -83,85 +84,90 @@ const Restore = () => {
   });
 
   return (
-    <form
-      className={classNames(styles.main, "px-2")}
-      onSubmit={formik.handleSubmit}
-    >
-      <div className={styles.updateFormWrapper}>
-        {loading ? (
-          <Skeleton width="100%" height="256px" />
-        ) : (
-          <>
-            <h2 className={classNames(styles.title, "pb-2", "mb-4", "w-full")}>
-              Обновление пароля
-            </h2>
-            <div className={classNames("mb-4", "w-full")}>
-              <label className={styles.lightText} htmlFor="passwordFirst">
-                Введите новый пароль
-              </label>
-              <Password
-                id="passwordFirst"
-                className="w-full"
-                inputClassName={classNames(
-                  styles.input,
-                  styles.password,
-                  "mt-2"
-                )}
-                placeholder="Пароль"
-                promptLabel="Введите пароль"
-                weakLabel="Лёгкий пароль"
-                mediumLabel="Средний пароль"
-                strongLabel="Тяжёлый пароль"
-                value={formik.values.passwordFirst}
-                onChange={(e) =>
-                  formik.setFieldValue("passwordFirst", e.target.value)
-                }
-                maxLength={32}
-                toggleMask
-              />
-            </div>
+    <>
+      <Head>
+        <title>ORA - обновление пароля</title>
+      </Head>
+      <form
+        className={classNames(styles.main, "px-2")}
+        onSubmit={formik.handleSubmit}
+      >
+        <div className={styles.updateFormWrapper}>
+          {loading ? (
+            <Skeleton width="100%" height="256px" />
+          ) : (
+            <>
+              <h2 className={classNames(styles.title, "pb-2", "mb-4", "w-full")}>
+                Обновление пароля
+              </h2>
+              <div className={classNames("mb-4", "w-full")}>
+                <label className={styles.lightText} htmlFor="passwordFirst">
+                  Введите новый пароль
+                </label>
+                <Password
+                  id="passwordFirst"
+                  className="w-full"
+                  inputClassName={classNames(
+                    styles.input,
+                    styles.password,
+                    "mt-2"
+                  )}
+                  placeholder="Пароль"
+                  promptLabel="Введите пароль"
+                  weakLabel="Лёгкий пароль"
+                  mediumLabel="Средний пароль"
+                  strongLabel="Тяжёлый пароль"
+                  value={formik.values.passwordFirst}
+                  onChange={(e) =>
+                    formik.setFieldValue("passwordFirst", e.target.value)
+                  }
+                  maxLength={32}
+                  toggleMask
+                />
+              </div>
 
-            <div className={classNames("mb-4", "w-full")}>
-              <label className={styles.lightText} htmlFor="passwordSecond">
-                Повторите новый пароль
-              </label>
-              <Password
-                id="passwordSecond"
-                className="w-full"
-                inputClassName={classNames(
-                  styles.input,
-                  styles.password,
-                  "mt-2"
+              <div className={classNames("mb-4", "w-full")}>
+                <label className={styles.lightText} htmlFor="passwordSecond">
+                  Повторите новый пароль
+                </label>
+                <Password
+                  id="passwordSecond"
+                  className="w-full"
+                  inputClassName={classNames(
+                    styles.input,
+                    styles.password,
+                    "mt-2"
+                  )}
+                  placeholder="Пароль"
+                  promptLabel="Введите пароль"
+                  weakLabel="Лёгкий пароль"
+                  mediumLabel="Средний пароль"
+                  strongLabel="Тяжёлый пароль"
+                  value={formik.values.passwordSecond}
+                  onChange={(e) =>
+                    formik.setFieldValue("passwordSecond", e.target.value)
+                  }
+                  maxLength={32}
+                  toggleMask
+                />
+              </div>
+              <Button
+                className={classNames(
+                  "mb-5",
+                  "w-full",
+                  "flex",
+                  "align-items-center",
+                  "justify-content-center"
                 )}
-                placeholder="Пароль"
-                promptLabel="Введите пароль"
-                weakLabel="Лёгкий пароль"
-                mediumLabel="Средний пароль"
-                strongLabel="Тяжёлый пароль"
-                value={formik.values.passwordSecond}
-                onChange={(e) =>
-                  formik.setFieldValue("passwordSecond", e.target.value)
-                }
-                maxLength={32}
-                toggleMask
-              />
-            </div>
-            <Button
-              className={classNames(
-                "mb-5",
-                "w-full",
-                "flex",
-                "align-items-center",
-                "justify-content-center"
-              )}
-              disabled={!formik.isValid}
-            >
-              Обновить
-            </Button>
-          </>
-        )}
-      </div>
-    </form>
+                disabled={!formik.isValid}
+              >
+                Обновить
+              </Button>
+            </>
+          )}
+        </div>
+      </form>
+    </>
   );
 };
 

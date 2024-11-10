@@ -8,6 +8,7 @@ import { Password } from "primereact/password";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { useRouter } from "next/navigation";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import { loginUrl } from "@/api/authorization";
@@ -121,6 +122,9 @@ const Login = () => {
 
   return (
     <>
+      <Head>
+        <title>ORA - Логин</title>
+      </Head>
       <div className={classNames(styles.main, "px-2")}>
         <div className={styles.loginFormWrapper}>
           <h2 className={classNames(styles.title, "pb-2", "mb-4", "w-full")}>

@@ -1,17 +1,21 @@
 import classNames from "classnames";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
-import { InputText } from "primereact/inputtext";
-import { InputMask } from "primereact/inputmask";
+import { Message } from "primereact/message";
 import { Password } from "primereact/password";
+import { InputMask } from "primereact/inputmask";
+import { InputText } from "primereact/inputtext";
+import { MessageSeverity } from "primereact/api";
 import { InputTextarea } from "primereact/inputtextarea";
 import { useRouter, useSearchParams } from "next/navigation";
 import { object, string } from "yup";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import { postMasterRegistrationUrl } from "@/api/registration";
 import { commonSetUiToast } from "@/store/common/actions";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
+import { WRONG_EMAIL_FORMAT, WRONG_PHONE_CODE } from "@/consts/messages";
 import { isNumeric } from "@/utils";
 import Button from "@/components/Button";
 
@@ -49,19 +53,31 @@ const Registration = () => {
     initialValues: REGISTRATION_INITIAL_STATE,
     validateOnMount: true,
     validate: (data) => {
+      const errors: Record<string, string> = {};
+
+      try {
+        if (data.email) {
+          string().email().trim().validateSync(data.email);
+        }
+      } catch {
+        errors.email = WRONG_EMAIL_FORMAT;
+      }
+
+      if (data.phone.replace(/[^0-9]/g, "").length < 12) {
+        errors.phone = "";
+      } else if (!["25", "29", "33", "44"].includes(data.phone.slice(5, 7))
+      ) {
+        errors.phone = WRONG_PHONE_CODE;
+      }
+
+      if (Object.keys(errors).length) {
+        return errors as any;
+      }
+
       try {
         masterSchema.validateSync(data);
       } catch (e) {
         return JSON.stringify(e);
-      }
-
-      if (
-        data.phone.replace(/[^0-9]/g, "").length < 12 ||
-        !["25", "29", "33", "44"].includes(data.phone.slice(5, 7))
-      ) {
-        return {
-          phone: "Ошибка валидации телефона.",
-        } as MasterRegistrationStateModel;
       }
 
       return {};
@@ -109,112 +125,119 @@ const Registration = () => {
   });
 
   return (
-    <form
-      className={classNames("pt-5", "px-2", "flex", "justify-content-center")}
-      onSubmit={formik.handleSubmit}
-    >
-      <div className={styles.registrationFormWrapper}>
-        <h2 className={classNames(styles.lightText, "pl-2", "mb-4", "w-full")}>
-          Добро пожаловать в ORA!
-        </h2>
+    <>
+      <Head>
+        <title>ORA - Регистрация мастера</title>
+      </Head>
+      <form
+        className={classNames("pt-5", "px-2", "flex", "justify-content-center")}
+        onSubmit={formik.handleSubmit}
+      >
+        <div className={styles.registrationFormWrapper}>
+          <h2 className={classNames(styles.lightText, "pl-2", "mb-4", "w-full")}>
+            Добро пожаловать в ORA!
+          </h2>
 
-        <div className={classNames("grid", "w-full", "pb-1")}>
-          <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-            <label className={styles.lightText} htmlFor="name">
-              Имя
-            </label>
-            <InputText
-              id="name"
-              className={classNames(styles.input, "w-full", "mt-2")}
-              placeholder="Имя"
-              value={formik.values.name}
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              maxLength={32}
-            />
+          <div className={classNames("grid", "w-full", "pb-1")}>
+            <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
+              <label className={styles.lightText} htmlFor="name">
+                Имя
+              </label>
+              <InputText
+                id="name"
+                className={classNames(styles.input, "w-full", "mt-2")}
+                placeholder="Имя"
+                value={formik.values.name}
+                onChange={(e) => formik.setFieldValue("name", e.target.value)}
+                maxLength={32}
+              />
+            </div>
+
+            <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
+              <label className={styles.lightText} htmlFor="email">
+                Email
+              </label>
+              <InputText
+                id="email"
+                className={classNames(styles.input, "w-full", "mt-2", { "p-invalid": formik.errors.email })}
+                placeholder="Email"
+                type="email"
+                value={formik.values.email}
+                onChange={(e) => formik.setFieldValue("email", e.target.value)}
+                maxLength={32}
+              />
+              {formik.errors.email ? <Message className={classNames("mt-2", "w-full", "justify-content-start")} severity={MessageSeverity.ERROR} text={formik.errors.email} /> : null}
+            </div>
+
+            <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
+              <label className={styles.lightText} htmlFor="password">
+                Пароль
+              </label>
+              <Password
+                id="password"
+                className={classNames("p-0", "w-full", "mt-2")}
+                inputClassName={classNames(styles.input, styles.password)}
+                placeholder="Пароль"
+                promptLabel="Введите пароль"
+                weakLabel="Лёгкий пароль"
+                mediumLabel="Средний пароль"
+                strongLabel="Тяжёлый пароль"
+                value={formik.values.password}
+                onChange={(e) => formik.setFieldValue("password", e.target.value)}
+                maxLength={32}
+                toggleMask
+              />
+            </div>
+
+            <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
+              <label className={styles.lightText} htmlFor="phone">
+                Номер телефона
+              </label>
+              <InputMask
+                id="phone"
+                className={classNames(styles.input, "w-full", "mt-2", { "p-invalid": formik.errors.phone })}
+                placeholder="Номер телефона"
+                mask="+375-99-999-99-99"
+                value={formik.values.phone}
+                onChange={(e) => formik.setFieldValue("phone", e.target.value)}
+              />
+              {formik.errors.phone ? <Message className={classNames("mt-2", "w-full", "justify-content-start")} severity={MessageSeverity.ERROR} text={formik.errors.phone} /> : null}
+            </div>
+
+            <div className={classNames("col-12", "mb-2")}>
+              <label className={styles.lightText} htmlFor="description">
+                Описание
+              </label>
+              <InputTextarea
+                id="description"
+                className={classNames(styles.input, "w-full", "mt-2")}
+                placeholder="Описание (опционально)"
+                value={formik.values.description}
+                onChange={(e) =>
+                  formik.setFieldValue("description", e.target.value)
+                }
+                maxLength={256}
+                rows={3}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className={classNames(
+                "flex",
+                "align-items-center",
+                "justify-content-center",
+                "w-full",
+                "mx-2"
+              )}
+              disabled={!formik.isValid}
+            >
+              Присоединиться к ORA
+            </Button>
           </div>
-
-          <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
-            <label className={styles.lightText} htmlFor="email">
-              Email
-            </label>
-            <InputText
-              id="email"
-              className={classNames(styles.input, "w-full", "mt-2")}
-              placeholder="Email"
-              type="email"
-              value={formik.values.email}
-              onChange={(e) => formik.setFieldValue("email", e.target.value)}
-              maxLength={32}
-            />
-          </div>
-
-          <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
-            <label className={styles.lightText} htmlFor="password">
-              Пароль
-            </label>
-            <Password
-              id="password"
-              className={classNames("p-0", "w-full", "mt-2")}
-              inputClassName={classNames(styles.input, styles.password)}
-              placeholder="Пароль"
-              promptLabel="Введите пароль"
-              weakLabel="Лёгкий пароль"
-              mediumLabel="Средний пароль"
-              strongLabel="Тяжёлый пароль"
-              value={formik.values.password}
-              onChange={(e) => formik.setFieldValue("password", e.target.value)}
-              maxLength={32}
-              toggleMask
-            />
-          </div>
-
-          <div className={classNames("col-12", "lg:col-6", "xl:col-6", "pb-1")}>
-            <label className={styles.lightText} htmlFor="phone">
-              Номер телефона
-            </label>
-            <InputMask
-              id="phone"
-              className={classNames(styles.input, "w-full", "mt-2")}
-              placeholder="Номер телефона"
-              mask="+375-99-999-99-99"
-              value={formik.values.phone}
-              onChange={(e) => formik.setFieldValue("phone", e.target.value)}
-            />
-          </div>
-
-          <div className={classNames("col-12", "mb-2")}>
-            <label className={styles.lightText} htmlFor="description">
-              Описание
-            </label>
-            <InputTextarea
-              id="description"
-              className={classNames(styles.input, "w-full", "mt-2")}
-              placeholder="Описание (опционально)"
-              value={formik.values.description}
-              onChange={(e) =>
-                formik.setFieldValue("description", e.target.value)
-              }
-              maxLength={256}
-              rows={3}
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className={classNames(
-              "flex",
-              "align-items-center",
-              "justify-content-center",
-              "w-full",
-              "mx-2"
-            )}
-            disabled={!formik.isValid}
-          >
-            Присоединиться к ORA
-          </Button>
         </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 };
 

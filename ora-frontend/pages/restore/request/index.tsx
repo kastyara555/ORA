@@ -5,6 +5,7 @@ import { Skeleton } from "primereact/skeleton";
 import { object, string } from "yup";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
+import Head from "next/head";
 
 import axiosInstance from "@/api";
 import Button from "@/components/Button";
@@ -76,42 +77,47 @@ const Restore = () => {
   });
 
   return (
-    <form
-      className={classNames(styles.main, "px-2")}
-      onSubmit={formik.handleSubmit}
-    >
-      <div className={styles.restoreFormWrapper}>
-        {loading ? (
-          <Skeleton width="100%" height="256px" />
-        ) : (
-          <>
-            <h2 className={classNames(styles.title, "pb-2", "mb-4", "w-full")}>
-              Восстановление пароля
-            </h2>
-            <InputText
-              type="email"
-              className={classNames(styles.input, "mb-4", "w-full")}
-              placeholder="Введите email"
-              maxLength={32}
-              value={formik.values.email}
-              onChange={(e) => formik.setFieldValue("email", e.target.value)}
-            />
-            <Button
-              className={classNames(
-                "mb-5",
-                "w-full",
-                "flex",
-                "align-items-center",
-                "justify-content-center"
-              )}
-              disabled={!formik.isValid}
-            >
-              Отправить ссылку
-            </Button>
-          </>
-        )}
-      </div>
-    </form>
+    <>
+      <Head>
+        <title>ORA - Восстановление пароля</title>
+      </Head>
+      <form
+        className={classNames(styles.main, "px-2")}
+        onSubmit={formik.handleSubmit}
+      >
+        <div className={styles.restoreFormWrapper}>
+          {loading ? (
+            <Skeleton width="100%" height="256px" />
+          ) : (
+            <>
+              <h2 className={classNames(styles.title, "pb-2", "mb-4", "w-full")}>
+                Восстановление пароля
+              </h2>
+              <InputText
+                type="email"
+                className={classNames(styles.input, "mb-4", "w-full")}
+                placeholder="Введите email"
+                maxLength={32}
+                value={formik.values.email}
+                onChange={(e) => formik.setFieldValue("email", e.target.value)}
+              />
+              <Button
+                className={classNames(
+                  "mb-5",
+                  "w-full",
+                  "flex",
+                  "align-items-center",
+                  "justify-content-center"
+                )}
+                disabled={!formik.isValid}
+              >
+                Отправить ссылку
+              </Button>
+            </>
+          )}
+        </div>
+      </form>
+    </>
   );
 };
 

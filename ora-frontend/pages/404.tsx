@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import styles from './not-found.module.scss';
 
+// TODO: заголовок страницы. Пересмотреть использования.
 const NotFound = () => (
   <div className={classNames("mt-4", "ml-4")}>
     <h2>Страница не найдена.</h2>
