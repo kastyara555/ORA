@@ -134,6 +134,8 @@ const registrationSaloon = async (req, res) => {
         idCity: adressForm.city,
         idStreetType: hasAdress ? adressForm.streetType : null,
         idUserTypeMap: addedUserSaloonType.id,
+        xCoordinate: hasAdress ? adressForm.xCoordinate : null,
+        yCoordinate: hasAdress ? adressForm.yCoordinate : null,
         street: hasAdress ? adressForm.street : "",
         building: hasAdress ? adressForm.building : "",
         stage: hasAdress ? adressForm.stage : "",

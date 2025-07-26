@@ -13,6 +13,14 @@ const SaloonInfo = (sequelize) =>
         autoIncrement: true,
         primaryKey: true,
       },
+      idUserTypeMap: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: UserTypeMap(sequelize),
+          key: "id",
+        },
+        allowNull: false,
+      },
       idCity: {
         type: DataTypes.INTEGER,
         references: {
@@ -29,14 +37,6 @@ const SaloonInfo = (sequelize) =>
         },
         allowNull: true,
       },
-      idUserTypeMap: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: UserTypeMap(sequelize),
-          key: "id",
-        },
-        allowNull: false,
-      },
       street: {
         type: DataTypes.STRING,
       },
@@ -48,6 +48,14 @@ const SaloonInfo = (sequelize) =>
       },
       office: {
         type: DataTypes.STRING,
+      },
+      xCoordinate: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+      },
+      yCoordinate: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
       },
       visitPayment: {
         type: DataTypes.INTEGER,

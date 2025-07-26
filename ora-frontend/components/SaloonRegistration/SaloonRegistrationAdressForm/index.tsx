@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { InputText } from "primereact/inputtext";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { Skeleton } from "primereact/skeleton";
+import { Map, MapState, Placemark, YMaps, ZoomControl } from "react-yandex-maps";
 
 import {
   registrationSaloonLoadingSelector,
@@ -19,6 +20,8 @@ import {
 import { RegistrationSaloonAdressFormModel } from "@/models/SaloonRegistration";
 import { isNumeric } from "@/utils";
 import Button from "@/components/Button";
+import { ZOOM_LEVELS } from "@/consts/maps";
+import placemarkIcon from "@/public/assets/images/map/pin.png";
 
 import styles from "./style.module.scss";
 
@@ -36,7 +39,7 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
   const citiesList = useSelector(registrationSaloonCitiesSelector);
   const streetTypesList = useSelector(registrationSaloonStreetTypesSelector);
   const loading = useSelector(registrationSaloonLoadingSelector);
-
+  const [mapState, setMapState] = useState<MapState | null>(null);
   const [state, setState] =
     useState<RegistrationSaloonAdressFormModel>(adressForm);
 
@@ -79,8 +82,23 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
     setState((oldState) => ({
       ...oldState,
       city: e.value,
+      coordinates: null,
     }));
+    if (hasAdress) {
+      setMapState({
+        center: [e.value.yCoordinate, e.value.xCoordinate],
+        zoom: ZOOM_LEVELS.CITY,
+      });
+    }
   };
+
+  // TODO: Не нашёл тип события клика по карте
+  const setCoordinates = (e: any) => {
+    setState((oldState) => ({
+      ...oldState,
+      coordinates: e?.get("coords"),
+    }));
+  }
 
   const setStreetType = (e: DropdownChangeEvent) => {
     setState((oldState) => ({
@@ -117,6 +135,20 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
 
   useEffect(() => {
     fetchAdressBaseInfo();
+
+    if (hasAdress) {
+      if (state.coordinates) {
+        setMapState({
+          center: state.coordinates,
+          zoom: ZOOM_LEVELS.STREET,
+        });
+      } else if (state.city) {
+        setMapState({
+          center: [state.city.yCoordinate, state.city.xCoordinate],
+          zoom: ZOOM_LEVELS.CITY,
+        });
+      }
+    }
   }, []);
 
   return !loading ? (
@@ -189,6 +221,34 @@ const SaloonRegistrationAdressForm: FC<SaloonRegistrationAdressFormModel> = ({
             onChange={setOffice}
             style={{ height: 45 }}
           />
+
+          {!!state.city && !!mapState && <div className={classNames("w-full", "col-12")}>
+            <p className={classNames(styles.lightText, styles.title, "mb-2")}>
+              Метка на карте (необязательно)
+            </p>
+            <YMaps>
+              <Map
+                width="100%"
+                height={256}
+                state={mapState}
+                onClick={setCoordinates}
+                onBoundsChange={(e: any) => setMapState({
+                  center: e.originalEvent.newCenter,
+                  zoom: e.originalEvent.newZoom,
+                })}
+              >
+                <ZoomControl />
+                {!!state.coordinates && <Placemark
+                  geometry={state.coordinates}
+                  options={{
+                    iconLayout: "default#image",
+                    iconImageHref: placemarkIcon.src,
+                    iconImageSize: [20, 32],
+                  }}
+                />}
+              </Map>
+            </YMaps>
+          </div>}
         </div>
       )}
       <Button

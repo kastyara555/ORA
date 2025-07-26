@@ -103,6 +103,8 @@ const getUserData = async (req, res) => {
         building,
         stage,
         office,
+        xCoordinate,
+        yCoordinate,
         visitPayment,
         workingTime,
         idCity,
@@ -123,6 +125,8 @@ const getUserData = async (req, res) => {
             building,
             stage,
             office,
+            xCoordinate,
+            yCoordinate,
             streetType: streetTypeInfo ? { id: streetTypeInfo.dataValues.id, name: streetTypeInfo.dataValues.name } : null,
           }
           : null;

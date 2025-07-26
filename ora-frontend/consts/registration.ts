@@ -152,6 +152,7 @@ export const ADRESS_FORM_INITIAL_STATE: RegistrationSaloonAdressFormModel = {
   city: null,
   streetType: null,
   street: "",
+  coordinates: null,
   building: "",
   stage: "",
   office: "",

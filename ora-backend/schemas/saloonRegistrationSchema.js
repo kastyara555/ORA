@@ -31,6 +31,8 @@ const adressFormSchema = Joi.object({
   city: Joi.number().required(),
   streetType: Joi.number().allow(null).required(),
   street: Joi.string().allow("").trim().max(32),
+  xCoordinate: Joi.number().allow(null),
+  yCoordinate: Joi.number().allow(null),
   building: Joi.string()
     .allow("")
     .trim()

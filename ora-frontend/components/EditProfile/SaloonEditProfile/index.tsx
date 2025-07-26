@@ -7,7 +7,10 @@ import { InputMask } from "primereact/inputmask";
 import { InputText } from "primereact/inputtext";
 import { Skeleton } from "primereact/skeleton";
 import { object, string } from "yup";
+import { Map, Placemark, YMaps, ZoomControl } from "react-yandex-maps";
 
+import { ZOOM_LEVELS } from "@/consts/maps";
+import { SaloonProfileModel } from "@/models/profile";
 import { profileUpdate } from "@/store/profile/actions";
 import {
   profileLoadingSelector,
@@ -17,6 +20,7 @@ import EditProfileAvatar from "@/components/EditProfile/EditProfileAvatar";
 import SaloonEditTime from "@/components/EditProfile/SaloonEditProfile/SaloonEditTime";
 import WorkTableModel from "@/models/WorkTableModel";
 import Button from "@/components/Button";
+import placemarkIcon from "@/public/assets/images/map/pin.png";
 
 import styles from "./style.module.scss";
 
@@ -33,7 +37,7 @@ const profileSchema = object().shape({
 });
 
 const SaloonEditProfile = () => {
-  const profileInfo = useSelector(profileUserDataSelector);
+  const profileInfo: SaloonProfileModel = useSelector(profileUserDataSelector);
   const loading = useSelector(profileLoadingSelector);
   const [picturesForm, setPicturesForm] = useState<ImageListType>([]);
   const [profileForm, setProfileForm] = useState<profileEditForm>({
@@ -91,14 +95,14 @@ const SaloonEditProfile = () => {
       )}
     >
       <EditProfileAvatar
-        defaultImage={profileInfo.mainImage}
+        defaultImage={profileInfo.mainImage as string}
         picturesForm={picturesForm}
         setPicturesForm={setPicturesForm}
       />
 
       <div className={classNames("grid", "w-full", "pb-1", "mt-2")}>
         <div className="col-12">
-          <label className={styles.lightText} htmlFor="saloonName">
+          <label htmlFor="saloonName">
             Название салона
           </label>
           <InputText
@@ -110,7 +114,7 @@ const SaloonEditProfile = () => {
         </div>
 
         <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-          <label className={styles.lightText} htmlFor="name">
+          <label htmlFor="name">
             Имя
           </label>
           <InputText
@@ -121,7 +125,7 @@ const SaloonEditProfile = () => {
           />
         </div>
         <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-          <label className={styles.lightText} htmlFor="email">
+          <label htmlFor="email">
             Email
           </label>
           <InputText
@@ -134,7 +138,7 @@ const SaloonEditProfile = () => {
         </div>
 
         <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-          <label className={styles.lightText} htmlFor="phone">
+          <label htmlFor="phone">
             Номер телефона
           </label>
           <InputMask
@@ -147,7 +151,7 @@ const SaloonEditProfile = () => {
           />
         </div>
         <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-          <label className={styles.lightText} htmlFor="description">
+          <label htmlFor="description">
             Описание
           </label>
           <InputTextarea
@@ -162,7 +166,7 @@ const SaloonEditProfile = () => {
         </div>
 
         <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-          <label className={styles.lightText} htmlFor="city">
+          <label htmlFor="city">
             Город
           </label>
           <InputText
@@ -175,19 +179,19 @@ const SaloonEditProfile = () => {
         {profileInfo.address ? (
           <>
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-              <label className={styles.lightText} htmlFor="streetType">
+              <label htmlFor="streetType">
                 Тип улицы
               </label>
               <InputText
                 id="streetType"
                 className={classNames("w-full", "mt-2")}
-                value={profileInfo.address.streetType.name}
+                value={profileInfo.address.streetType?.name}
                 disabled
               />
             </div>
 
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-              <label className={styles.lightText} htmlFor="street">
+              <label htmlFor="street">
                 Название улицы
               </label>
               <InputText
@@ -199,7 +203,7 @@ const SaloonEditProfile = () => {
             </div>
 
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-              <label className={styles.lightText} htmlFor="building">
+              <label htmlFor="building">
                 Строение
               </label>
               <InputText
@@ -210,7 +214,7 @@ const SaloonEditProfile = () => {
               />
             </div>
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-              <label className={styles.lightText} htmlFor="stage">
+              <label htmlFor="stage">
                 Этаж
               </label>
               <InputText
@@ -221,7 +225,7 @@ const SaloonEditProfile = () => {
               />
             </div>
             <div className={classNames("col-12", "lg:col-4", "xl:col-4")}>
-              <label className={styles.lightText} htmlFor="office">
+              <label htmlFor="office">
                 Офис
               </label>
               <InputText
@@ -231,16 +235,44 @@ const SaloonEditProfile = () => {
                 disabled
               />
             </div>
+
+            {!!(profileInfo.address.yCoordinate && profileInfo.address.xCoordinate) && <div className="col-12">
+              <span>
+                Метка на карте
+              </span>
+              <div className="mt-2">
+                <YMaps>
+                  <Map
+                    width="100%"
+                    height={256}
+                    defaultState={{
+                      center: [profileInfo.address.yCoordinate, profileInfo.address.xCoordinate],
+                      zoom: ZOOM_LEVELS.STREET,
+                    }}
+                  >
+                    <ZoomControl />
+                    <Placemark
+                      geometry={[profileInfo.address.yCoordinate, profileInfo.address.xCoordinate]}
+                      options={{
+                        iconLayout: "default#image",
+                        iconImageHref: placemarkIcon.src,
+                        iconImageSize: [20, 32],
+                      }}
+                    />
+                  </Map>
+                </YMaps>
+              </div>
+            </div>}
           </>
         ) : (
           <div className={classNames("col-12", "lg:col-6", "xl:col-6")}>
-            <label className={styles.lightText} htmlFor="visitPayment">
+            <label htmlFor="visitPayment">
               Стоимость визита
             </label>
             <InputText
               id="visitPayment"
               className={classNames("w-full", "mt-2")}
-              value={profileInfo.visitPayment}
+              value={String(profileInfo.visitPayment)}
               disabled
             />
           </div>

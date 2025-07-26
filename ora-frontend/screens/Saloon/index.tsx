@@ -2,10 +2,13 @@
 import { FC } from "react";
 import classNames from "classnames";
 import { Divider } from "primereact/divider";
+import { Map, Placemark, YMaps, ZoomControl } from "react-yandex-maps";
 
 import { SaloonBaseDataModel } from "@/models/saloon";
 import { BASE_STATIC_URL } from "@/api";
 import { DEFAULT_PROFILE_IMAGE } from "@/consts/profile";
+import { ZOOM_LEVELS } from "@/consts/maps";
+import placemarkIcon from "@/public/assets/images/map/pin.png";
 
 import SaloonWorkingTime from "./SaloonWorkingTime";
 import SaloonServices from "./SaloonServices";
@@ -48,6 +51,29 @@ const SaloonScreen: FC<SaloonScreenProps> = ({ saloonData }) => (
         }`
         : "По выезду"}
     </h2>
+
+    {!!(saloonData.yCoordinate && saloonData.xCoordinate) && <div className="mt-2">
+      <YMaps>
+        <Map
+          width="100%"
+          height={256}
+          defaultState={{
+            center: [saloonData.yCoordinate, saloonData.xCoordinate],
+            zoom: ZOOM_LEVELS.STREET,
+          }}
+        >
+          <ZoomControl />
+          <Placemark
+            geometry={[saloonData.yCoordinate, saloonData.xCoordinate]}
+            options={{
+              iconLayout: "default#image",
+              iconImageHref: placemarkIcon.src,
+              iconImageSize: [20, 32],
+            }}
+          />
+        </Map>
+      </YMaps>
+    </div>}
 
     <Divider />
 

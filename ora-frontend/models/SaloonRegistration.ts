@@ -23,6 +23,7 @@ export interface RegistrationSaloonAdressFormModel {
   city: any;
   streetType: any;
   street: string;
+  coordinates: number[] | null;
   building: string;
   stage: string;
   office: string;

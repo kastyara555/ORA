@@ -105,7 +105,7 @@ const getSaloonBaseInfo = async (req, res) => {
     } = connection.models;
 
     const [saloonInfo] = await connection.query(
-      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, si.visitPayment as visitPayment, c.name as cityName, si.idStreetType as idStreetType, si.street as street, si.building as building, si.stage as stage, si.office as office, uim.url as mainImage
+      `SELECT si.idUserTypeMap as id, si.name as name, si.description as description, si.workingTime as workingTime, si.visitPayment as visitPayment, c.name as cityName, si.idStreetType as idStreetType, si.street as street, si.building as building, si.stage as stage, si.office as office, si.xCoordinate as xCoordinate, si.yCoordinate as yCoordinate, uim.url as mainImage
       FROM \`${saloon_info.tableName}\` si
       JOIN \`${city.tableName}\` c
       ON si.idCity = c.id
@@ -126,6 +126,7 @@ const getSaloonBaseInfo = async (req, res) => {
 
     let streetType = "";
 
+    // TODO: сделать в предыдущем запросе
     if (idStreetType) {
       const { dataValues } = await street_type.findOne({ where: { id: idStreetType } });
       streetType = dataValues.shortName;

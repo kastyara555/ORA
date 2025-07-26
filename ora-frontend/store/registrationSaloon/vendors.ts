@@ -19,24 +19,36 @@ export const prepareSaloonRegistrationForm = (
     phone: aboutForm.phone.replace(/\D/g, ""),
   };
 
+  const { coordinates, ...adressData } = adressForm;
+
   result.adressForm = {
-    ...adressForm,
+    ...adressData,
     city: +adressForm.city.code,
-    streetType: adressTypeForm.hasAdress
-      ? +adressForm.streetType.code
-      : null,
-    street: adressTypeForm.hasAdress
-      ? adressForm.street.trim()
-      : "",
-    building: adressTypeForm.hasAdress
-      ? adressForm.building.trim()
-      : "",
-    stage: adressTypeForm.hasAdress
-      ? adressForm.stage.trim()
-      : "",
-    office: adressTypeForm.hasAdress
-      ? adressForm.office.trim()
-      : "",
+    ...(adressTypeForm.hasAdress
+      ? {
+        streetType: +adressForm.streetType.code,
+        street: adressForm.street.trim(),
+        ...(Array.isArray(coordinates) ? {
+          xCoordinate: coordinates[1],
+          yCoordinate: coordinates[0],
+        } : {
+          xCoordinate: null,
+          yCoordinate: null,
+        }),
+        building: adressForm.building.trim(),
+        stage: adressForm.stage.trim(),
+        office: adressForm.office.trim(),
+      }
+      : {
+        streetType: null,
+        street: "",
+        xCoordinate: null,
+        yCoordinate: null,
+        building: "",
+        stage: "",
+        office: "",
+      }
+    ),
   };
 
   result.servicesForm = {

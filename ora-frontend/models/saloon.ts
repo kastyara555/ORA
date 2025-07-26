@@ -10,6 +10,8 @@ export interface SaloonBaseDataModel {
   building: string | null;
   stage: string | null;
   office: string | null;
+  xCoordinate: number | null;
+  yCoordinate: number | null;
   visitPayment: number;
 }
 

@@ -50,6 +50,8 @@ export interface ProfileAddressModel {
   building: string;
   stage: string;
   office: string;
+  xCoordinate: number | null;
+  yCoordinate: number | null;
 }
 
 export interface ProfileStreetTypeModel {

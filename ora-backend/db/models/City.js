@@ -21,6 +21,14 @@ const City = (sequelize) =>
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      xCoordinate: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      yCoordinate: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
     },
     {
       tableName: "city",

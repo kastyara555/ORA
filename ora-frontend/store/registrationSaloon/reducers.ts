@@ -105,9 +105,11 @@ export const registrationSaloon: Reducer<RegistrationSaloonStoreModel> =
         registrationSaloonFetchCities.fulfilled,
         (state, { payload }) => {
           const mappedCities = payload.map(
-            ({ id, name }: { id: number; name: string }) => ({
+            ({ id, name, xCoordinate, yCoordinate }: { id: number; name: string; xCoordinate: number; yCoordinate: number }) => ({
               code: id.toString(),
               name,
+              xCoordinate,
+              yCoordinate
             })
           );
 
