@@ -32,7 +32,7 @@ const Header: FC<HeaderModel> = ({ withoutAuthorization }) => {
               >
                 Размещайтесь на ORA
               </Link>
-              <Link href="/profile" className={styles.linkToLogin}>Войти</Link>
+              <Link href="/login" className={styles.linkToLogin}>Войти</Link>
             </>
           ) : (
             <Link href="/profile" className={styles.linkToLogin}>

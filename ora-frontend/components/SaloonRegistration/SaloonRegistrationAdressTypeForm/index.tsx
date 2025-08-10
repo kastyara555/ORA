@@ -50,11 +50,8 @@ const SaloonRegistrationAdressTypeForm: FC<
       )}
     >
       <h2 className={classNames(styles.title, styles.lightText)}>
-        В какой категории клиент сможет найти вас?
+        Вы работаете работаете стационарно или по выезду?
       </h2>
-      <p className={classNames(styles.lightText, styles.subtitle)}>
-        Вы работаете в салоне или работаете по выезду
-      </p>
 
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
         <RadioButton
@@ -68,8 +65,7 @@ const SaloonRegistrationAdressTypeForm: FC<
           className={classNames(styles.lightText, "ml-2")}
         >
           <h3 className={classNames(styles.lightText, "mb-1")}>Стационарно</h3>
-          Работаем стационарно. Имею личный салон, работаю с другими мастерами
-          разных услуг в одном помещении.
+          Клиенты приходят для оказание услуги в салон.
         </label>
       </div>
       <div className={classNames("flex", "pb-2", "w-full", "col-12")}>
@@ -84,7 +80,7 @@ const SaloonRegistrationAdressTypeForm: FC<
           className={classNames(styles.lightText, "ml-2")}
         >
           <h3 className={classNames(styles.lightText, "mb-1")}>По выезду</h3>
-          Предоставляю услуги в месте выбранным клиентом.
+          Предоставляем услуги в удобном клиенту месте.
         </label>
       </div>
       <Button

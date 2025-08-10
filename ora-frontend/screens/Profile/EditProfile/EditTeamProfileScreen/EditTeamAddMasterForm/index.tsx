@@ -8,7 +8,7 @@ import { Panel } from "primereact/panel";
 import { Message } from "primereact/message";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 
-import axiosInstance from "@/api";
+import axiosInstance, { BASE_URL_FRONT } from "@/api";
 import { profileUserDataSelector } from "@/store/profile/selectors";
 import { TOAST_DEFAULT_LIFE, TOAST_SEVERITIES } from "@/consts/toast";
 import { commonSetUiToast } from "@/store/common/actions";
@@ -63,8 +63,19 @@ const EditTeamAddMasterForm = () => {
   const handleCopy = useCallback(
     () =>
       navigator.clipboard.writeText(
-        `${window.location.host}/registration/master?saloonReference=${userTypeMapId}`
-      ),
+        `${BASE_URL_FRONT}/registration/master?saloonReference=${userTypeMapId}`
+      )
+      .then(() => {
+        const toastToBeShown = {
+          severity: TOAST_SEVERITIES.INFO,
+          summary: "Профиль",
+          detail: "Ссылка скопирована",
+          life: TOAST_DEFAULT_LIFE,
+        };
+
+        dispatch(commonSetUiToast(toastToBeShown));
+      })
+      ,
     [code]
   );
 
@@ -105,12 +116,6 @@ const EditTeamAddMasterForm = () => {
         header="Ссылка для самостоятельной регистрации мастера"
       >
         <Button
-          tooltip="Ссылка скопирована."
-          tooltipOptions={{
-            showDelay: 100,
-            hideDelay: 500,
-            showEvent: "click",
-          }}
           onClick={handleCopy}
           outlined
         >
