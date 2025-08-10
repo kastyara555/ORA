@@ -145,7 +145,7 @@ const clientHistory = async (req, res) => {
       total === 0 || offset >= total
         ? [[]]
         : await connection.query(
-          `SELECT si.id as id, si.time as date, p.name as procedureName, saloon.name as saloonName, saloon_image.url as saloonImage, u.name as masterName, master_image.url as masterImage, sis.name as statusName
+          `SELECT si.id as id, si.time as date, p.name as procedureName, saloon.idUserTypeMap as saloonId, saloon.name as saloonName, saloon_image.url as saloonImage, u.name as masterName, master_image.url as masterImage, sis.name as statusName
           FROM \`${service_instance.tableName}\` si
           JOIN \`${service_master_map.tableName}\` smm
           ON si.idServiceMasterMap = smm.id

@@ -1,5 +1,14 @@
 @import "../../../../styles/mixins";
+@import "../../../../styles/variables";
 
 .avatar {
     @include avatar;
+}
+
+.infoLink {
+    width: fit-content;
+
+    &:hover {
+        color: $gray-300;
+    }
 }

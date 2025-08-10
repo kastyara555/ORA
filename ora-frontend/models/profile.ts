@@ -75,6 +75,7 @@ export interface ProfileClientHistoryModel {
   date: string;
   procedureName: string;
   statusName: string;
+  saloonId: number;
   saloonName: string;
   saloonImage: string | null;
   masterName: string;
